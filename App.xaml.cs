@@ -1,4 +1,6 @@
-﻿using System.Configuration;
+﻿// Ignore Spelling: App
+
+using System.Configuration;
 using System.Data;
 using System.Windows;
 
