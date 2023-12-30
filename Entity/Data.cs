@@ -124,7 +124,7 @@ namespace Capital.Entity
 
         private void CalcPercentDown()
         {
-            if (ResultDepo == 0) ResultDepo = 1;
+            if (ResultDepo == 0) ResultDepo = 1;  //Исключил 0 в ResultDepo
             decimal percent = MaxDrawDoun * 100 / ResultDepo;
 
             if (percent > PercentDrawDown) PercentDrawDown = Math.Round(percent, 2);
