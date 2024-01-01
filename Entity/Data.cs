@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Capital.Entity
 {
-    public class Data
+    public class Data // класс с данными
     {
         public Data(decimal depoStart, StrategyType strategyType)
         {
@@ -16,116 +16,115 @@ namespace Capital.Entity
             Depo = depoStart;
         }
 
-        #region Propertirs =================================
+        #region====================Properties======================
 
-        public StrategyType StrategyType { get; set; }
+        public StrategyType StrategyType { get; set; } 
 
 
-        public decimal Depo
+        public decimal Depo 
         {
-            get => _depo;
+            get => _depo; 
 
             set
             {
-                _depo = value;
-                ResultDepo = value;
+                _depo = value; 
+                ResultDepo = value; 
             }
         }
-        decimal _depo;
+        decimal _depo; 
 
-        /// <summary>
+        // <summary>
         /// Результат эквити (депо)
-        /// </summary>
-        public decimal ResultDepo
+        /// </summary> 
+        public decimal ResultDepo 
         {
-            get => _resultDepo;
+            get => _resultDepo; 
 
             set
             {
-                _resultDepo = value;
+                _resultDepo = value; 
 
-                Profit = ResultDepo - Depo;
+                Profit = ResultDepo - Depo; 
 
-                PercentProfit = Profit * 100 / Depo;
+                PercentProfit = Profit * 100 / Depo; 
 
-                LisrEquity.Add(ResultDepo);
+                ListEquity.Add(ResultDepo); //  В ListEquity добавляем новое значение депо
 
-                CalcDrawDown();
+                CalcDrawDown(); 
             }
         }
-        decimal _resultDepo;
+        decimal _resultDepo; 
 
-        public decimal Profit { get; set; }
+        public decimal Profit { get; set; } 
 
         /// <summary>
         /// Относительный профит в процентах
-        /// </summary>
-        public decimal PercentProfit { get; set; }
+        /// </summary> 
+        public decimal PercentProfit { get; set; } 
 
         /// <summary>
-        /// Максимальная абсолбтная просадка в деньгах
-        /// </summary>
-        public decimal MaxDrawDoun
+        /// Максимальная абсолютная просадка в деньгах
+        /// </summary> 
+        public decimal MaxDrawDown 
         {
-            get => _maxDrawDoun;
+            get => _maxDrawDown; 
 
             set
             {
-                _maxDrawDoun = value;
+                _maxDrawDown = value; 
 
-                CalcPercentDown();
+                CalcPercentDrawDown();  
             }
         }
-        decimal _maxDrawDoun;
+        decimal _maxDrawDown; 
 
         /// <summary>
-        /// Максимальная относительная просадка в процентах
-        /// </summary>
-        public decimal PercentDrawDown { get; set; }
+        /// Относительный профит в процентах
+        /// </summary> 
+        public decimal PercentDrawDown { get; set; } 
 
         #endregion
 
-        #region Fields =========================================
+        #region===============================Fields=======================================
 
-        List<decimal> LisrEquity = new List<decimal>();
-
-        private decimal _max = 0;
+        List<decimal> ListEquity = new List<decimal>(); //   лист для фиксиции нового значение депо
 
         private decimal _min = 0;
 
+        private decimal _max = 0;
+
+
 
         #endregion
 
-        #region Methods ==========================================
+        #region===============================Methods=======================================
 
-        public List<decimal> GetListEquity()
+        public List<decimal> GetListEquity() 
         {
-            return LisrEquity;
+            return ListEquity; // возвращаем ListEquity через этот метод, так как поле List<decimal> ListEquity приватное
         }
-
         private void CalcDrawDown()
         {
-            if (_max < ResultDepo)
+            if (_max < ResultDepo) // если _max меньше ResultDepo
             {
-                _max = ResultDepo;
-                _min = ResultDepo;
+                _max = ResultDepo; // то в _max присваиваем ResultDepo
+                _min = ResultDepo; // минимум иакже обновляем
             }
 
-            if (_min > ResultDepo)
+            if (_min > ResultDepo) // если _min стал больше нового ResultDepo
             {
-                _min = ResultDepo;
+                _min = ResultDepo; // в минимум присваиваем ResultDepo
 
-                if(MaxDrawDoun < _max - _min)
+                if (MaxDrawDown < _max - _min)
                 {
-                    MaxDrawDoun = _max - _min;
+                    MaxDrawDown = _max - _min;
                 }
             }
         }
 
-        private void CalcPercentDown()
+        private void CalcPercentDrawDown() // метод для расчета относительной просадки
         {
-            if (ResultDepo == 0) ResultDepo = 1;  //Исключил 0 в ResultDepo
-            decimal percent = MaxDrawDoun * 100 / ResultDepo;
+            decimal percent = MaxDrawDown * 100 / ResultDepo;
 
             if (percent > PercentDrawDown) PercentDrawDown = Math.Round(percent, 2);
         }
