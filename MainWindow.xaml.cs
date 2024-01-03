@@ -25,6 +25,16 @@ namespace Capital
             Init();
         }
 
+        //public event EventHandler? SizeChanged;
+
+        private void _canvas_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            //List<Data> datas = Calculate();
+            //Draw(datas);
+            //MessageBox.Show("Изменился размер окна");
+        }
+
+
         #region Fields ========================================
 
         List<StrategyType> _strategies = new List<StrategyType>()
@@ -64,6 +74,8 @@ namespace Capital
             ComboBox comboBox = (ComboBox)sender;
 
             int index = comboBox.SelectedIndex;
+            
+
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
