@@ -9,12 +9,13 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="150"/>
-            <ColumnDefinition Width="*"
+            <ColumnDefinition Width="25*"
                               MinWidth="50"
                               MaxWidth="150"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="21*"/>
+            <ColumnDefinition Width="129*"/>
         </Grid.ColumnDefinitions>
-        
+
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
             <RowDefinition Height="30"/>
@@ -49,9 +50,9 @@
         <TextBlock Text="Гарант. обесп."
                     Grid.Row="9"/>
         <ComboBox Name="_comboBox"
-                    Grid.Row="11" Margin="5,0"/>
+                    Grid.Row="11" Margin="5,0,5,0"/>
 
-        
+
         <TextBox x:Name="_depo"
                  Grid.Column="1"/>
         <TextBox x:Name="_startLot"
@@ -76,15 +77,16 @@
 
         <GroupBox Header="Таблица результатов"
                   Grid.Column="2" Grid.RowSpan="12"
-                  Margin="10,1">
+                  Margin="10,1,10,1" Grid.ColumnSpan="2">
             <DataGrid x:Name="_dataGrid"
                          Margin="5"/>
         </GroupBox>
 
         <Canvas x:Name="_canvas"
-                Grid.Row = "13"
-                Grid.ColumnSpan="3"
-                Margin="10" Background="LightGray">
+                Grid.Row = "12"
+                Grid.ColumnSpan="4"
+                Margin="10,10,10,10" Background="LightGray"
+                SizeChanged="_canvas_SizeChanged">
         </Canvas>
     </Grid>
 </Window>
