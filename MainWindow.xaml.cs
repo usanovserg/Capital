@@ -18,6 +18,7 @@ namespace Capital
     /// </summary>
     public partial class MainWindow : Window
     {
+
         public MainWindow()
         {
             InitializeComponent();
@@ -37,11 +38,13 @@ namespace Capital
 
         Random _random = new Random();
 
+        List<Data> datas = new List<Data>();
+
         #endregion
 
         #region Methods ===========================================
 
-       private void Init()
+        private void Init()
        {
             _comboBox.ItemsSource = _strategies;
             
@@ -64,13 +67,21 @@ namespace Capital
             ComboBox comboBox = (ComboBox)sender;
 
             int index = comboBox.SelectedIndex;
+
+            if (datas.Count != 0)
+            {
+                Draw(datas, index);
+            }               
+
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             List<Data> datas = Calculate();
 
-            Draw(datas);
+            int index = _comboBox.SelectedIndex;
+            
+            Draw(datas, index);
         }
 
         private List<Data>Calculate()
@@ -85,7 +96,9 @@ namespace Capital
             decimal minStartPercent = GetDecimalFromString(_minStartPercent.Text);
             decimal go = GetDecimalFromString(_go.Text);
 
-            List<Data> datas = new List<Data>();
+            //List<Data> datas = new List<Data>();
+            
+            datas.Clear();
 
             foreach (StrategyType type in _strategies)
             {
@@ -162,11 +175,11 @@ namespace Capital
             return datas;
         }
 
-        private void Draw(List<Data> datas)
+        private void Draw(List<Data> datas, int index)
         {
             _canvas.Children.Clear();
 
-            int index = _comboBox.SelectedIndex;
+            //int index = _comboBox.SelectedIndex;
 
             List<decimal> listEquity = datas[index].GetListEquity();
 
@@ -186,7 +199,7 @@ namespace Capital
             {
                 y1 = y2;
                 y2 = _canvas.ActualHeight - (double)(listEquity[i] - minEquity) / koef;
-               
+
 
                 Line vertL = new Line();
                 vertL.X1 = x;
@@ -202,12 +215,11 @@ namespace Capital
                 //    Stroke = Brushes.Black
                 //};
 
-                //     Canvas.SetLeft(vertL);
-                //     Canvas.SetTop(vertL);
+                    //Canvas.SetLeft(vertL);
+                    //Canvas.SetTop(vertL);
 
                 _canvas.Children.Add(vertL);
-
-
+                
                 x += steoX;
             }
         }
