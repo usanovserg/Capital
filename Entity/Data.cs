@@ -1,4 +1,4 @@
-﻿using Capital.Enams;
+﻿using Capital.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,15 +11,14 @@ namespace Capital.Entity
     {
         public Data(decimal depoStart, StrategyType strategyType)
         {
-            StrategyType = strategyType;
-
             Depo = depoStart;
+
+            StrategyType = strategyType;
         }
 
-        #region Propertirs =================================
+        #region Properties =====================
 
         public StrategyType StrategyType { get; set; }
-
 
         public decimal Depo
         {
@@ -33,9 +32,6 @@ namespace Capital.Entity
         }
         decimal _depo;
 
-        /// <summary>
-        /// Результат эквити (депо)
-        /// </summary>
         public decimal ResultDepo
         {
             get => _resultDepo;
@@ -44,88 +40,77 @@ namespace Capital.Entity
             {
                 _resultDepo = value;
 
-                Profit = ResultDepo - Depo;
+                Profit = ResultDepo - Depo;             // вычисляем результат в руб
 
-                PercentProfit = Profit * 100 / Depo;
+                PercentProfit = Profit * 100 / Depo;    // вычисляем результат в %
 
-                LisrEquity.Add(ResultDepo);
+                ListEquity.Add(ResultDepo);             // поместили результат в список
 
-                CalcDrawDown();
+                CalcDrawDown();                         // вызов метода, вычисляющего максимальную просадку
             }
         }
         decimal _resultDepo;
 
         public decimal Profit { get; set; }
 
-        /// <summary>
-        /// Относительный профит в процентах
-        /// </summary>
         public decimal PercentProfit { get; set; }
 
-        /// <summary>
-        /// Максимальная абсолбтная просадка в деньгах
-        /// </summary>
-        public decimal MaxDrawDoun
+        public decimal MaxDrawDown
         {
-            get => _maxDrawDoun;
+            get => _maxDrawDown;
 
             set
             {
-                _maxDrawDoun = value;
+                _maxDrawDown = value;
 
-                CalcPercentDown();
+                CalcPercentDrawDown();  // при обновлении макс просадки в руб проверяем макс просадку в %
             }
         }
-        decimal _maxDrawDoun;
+        decimal _maxDrawDown;
 
-        /// <summary>
-        /// Максимальная относительная просадка в процентах
-        /// </summary>
         public decimal PercentDrawDown { get; set; }
 
         #endregion
 
-        #region Fields =========================================
+        #region Fields =====================
 
-        List<decimal> LisrEquity = new List<decimal>();
+        List<decimal> ListEquity = new List<decimal>(); // список для вычисления относительной просадки
 
-        private decimal _max = 0;
+        private decimal _max = 0;       // в этой переменной будем запоминать максимум капитала
 
-        private decimal _min = 0;
-
+        private decimal _min = 0;       // в этой переменной будем запоминать минимум капитала
 
         #endregion
 
-        #region Methods ==========================================
+        #region Methods =====================
 
-        public List<decimal> GetListEquity()
+        public List<decimal> GetListEquity()    // метод обращается к приватному полю ListEquity
         {
-            return LisrEquity;
+            return ListEquity;
         }
 
-        private void CalcDrawDown()
+        private void CalcDrawDown()     // метод вычисляет максимальную просадку в руб
         {
             if (_max < ResultDepo)
             {
-                _max = ResultDepo;
-                _min = ResultDepo;
+                _max = ResultDepo;      // запомнили новый максимум
+                _min = ResultDepo;      // т.к. новый максимум, то начинаем отслеживать минимум
             }
 
             if (_min > ResultDepo)
             {
-                _min = ResultDepo;
+                _min = ResultDepo;      // запомнили новый минимум
 
-                if(MaxDrawDoun < _max - _min)
+                if (MaxDrawDown < _max - _min)
                 {
-                    MaxDrawDoun = _max - _min;
+                    MaxDrawDown = _max - _min;  // запоминаем новую максимальную просадку
                 }
             }
         }
 
-        private void CalcPercentDown()
+        private void CalcPercentDrawDown()  // метод вычисляет максимальную просадку в %
         {
-            if (ResultDepo == 0) ResultDepo = 1;  //Исключил 0 в ResultDepo
-            decimal percent = MaxDrawDoun * 100 / ResultDepo;
+            decimal percent = MaxDrawDown * 100 / ResultDepo;   // текущая просадка в %
 
             if (percent > PercentDrawDown) PercentDrawDown = Math.Round(percent, 2);
         }
