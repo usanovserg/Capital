@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:Capital"
         mc:Ignorable="d"
         ResizeMode="CanResizeWithGrip"
+        SizeChanged="Window_SizeChanged"
         Title="MainWindow" Height="800" Width="1200">
     <Grid>
         <Grid.ColumnDefinitions>

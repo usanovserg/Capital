@@ -27,6 +27,7 @@ namespace Capital
 
         }
 
+  
         #region Fields ========================================
 
         List<StrategyType> _strategies = new List<StrategyType>()
@@ -62,6 +63,16 @@ namespace Capital
             _go.Text = "5000";
             _minStartPercent.Text = "20";
        }
+
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            int index = _comboBox.SelectedIndex;
+
+            if (datas.Count != 0)
+            {
+                Draw(datas, index);
+            }
+        }
 
         private void _comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -248,7 +259,9 @@ namespace Capital
             return 0;
         }
 
-             #endregion
-     }
+        #endregion
+
+    }
 }
+
 
