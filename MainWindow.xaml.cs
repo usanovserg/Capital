@@ -24,6 +24,7 @@ namespace Capital
             InitializeComponent();
 
             Init();
+
         }
 
         #region Fields ========================================
@@ -148,21 +149,21 @@ namespace Capital
                 {
                     // Сделка убыточная
                     //============ 1 strategy =================
-                    datas[0].ResultDepo -= (take + comiss) * startLot;
+                    datas[0].ResultDepo -= (stop + comiss) * startLot;
 
                     //============ 2 strategy ==================
 
-                    datas[1].ResultDepo -= (take + comiss) * lotPercent;
+                    datas[1].ResultDepo -= (stop + comiss) * lotPercent;
 
                     //============ 3 strategy ==================
 
-                    datas[2].ResultDepo -= (take + comiss) * lotProgress;
+                    datas[2].ResultDepo -= (stop + comiss) * lotProgress;
 
                     lotProgress = CalculateLot(depoStart, minStartPercent, go);
 
                     //============ 4 strategy ==================
 
-                    datas[3].ResultDepo -= (take + comiss) * lotDown;
+                    datas[3].ResultDepo -= (stop + comiss) * lotDown;
 
                     lotDown /= 2;
 
@@ -250,3 +251,4 @@ namespace Capital
              #endregion
      }
 }
+
