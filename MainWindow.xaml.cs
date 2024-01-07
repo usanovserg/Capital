@@ -174,7 +174,7 @@ namespace Capital
             decimal maxEquity = listEquity.Max();
             decimal minEquity = listEquity.Min();
 
-            double steoX = _canvas.ActualWidth / count;
+            double stepX = _canvas.ActualWidth / count;
             double koef = (double)(maxEquity - minEquity) / _canvas.ActualHeight;
 
             double x = 0;
@@ -190,7 +190,7 @@ namespace Capital
 
                 Line vertL = new Line();
                 vertL.X1 = x;
-                vertL.X2 = x + steoX;
+                vertL.X2 = x + stepX;
                 vertL.Y1 = y1;
                 vertL.Y2 = y2;
                 vertL.Stroke = Brushes.Black;
@@ -208,7 +208,7 @@ namespace Capital
                 _canvas.Children.Add(vertL);
 
 
-                x += steoX;
+                x += stepX;
             }
         }
 

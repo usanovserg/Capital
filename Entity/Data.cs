@@ -63,7 +63,7 @@ namespace Capital.Entity
         public decimal PercentProfit { get; set; }
 
         /// <summary>
-        /// Максимальная абсолбтная просадка в деньгах
+        /// Максимальная абсолютная просадка в деньгах
         /// </summary>
         public decimal MaxDrawDoun
         {
