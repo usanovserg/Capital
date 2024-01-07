@@ -1,4 +1,4 @@
-﻿using Capital.Enams;
+﻿using Capital.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,19 +12,15 @@ namespace Capital.Entity
         public Data(decimal depoStart, StrategyType strategyType)
         {
             StrategyType = strategyType;
-
             Depo = depoStart;
         }
 
-        #region Propertirs =================================
+        #region Properties ===================================================
 
         public StrategyType StrategyType { get; set; }
 
-
         public decimal Depo
-        {
-            get => _depo;
-
+        { get => _depo;
             set
             {
                 _depo = value;
@@ -33,103 +29,90 @@ namespace Capital.Entity
         }
         decimal _depo;
 
-        /// <summary>
-        /// Результат эквити (депо)
-        /// </summary>
         public decimal ResultDepo
         {
             get => _resultDepo;
-
             set
             {
                 _resultDepo = value;
-
                 Profit = ResultDepo - Depo;
+                PercentProfit = Math.Round(Profit / Depo * 100,2);
+                CalcMaxDrawDown();
+                ListEquity.Add(ResultDepo);
 
-                PercentProfit = Profit * 100 / Depo;
 
-                LisrEquity.Add(ResultDepo);
 
-                CalcDrawDown();
             }
         }
         decimal _resultDepo;
 
         public decimal Profit { get; set; }
-
+       
         /// <summary>
-        /// Относительный профит в процентах
+        /// Относительный доход в процентах
         /// </summary>
         public decimal PercentProfit { get; set; }
 
         /// <summary>
-        /// Максимальная абсолбтная просадка в деньгах
+        /// Максимальная абсолютная просадка
         /// </summary>
-        public decimal MaxDrawDoun
+        public decimal MaxDrawDown
         {
-            get => _maxDrawDoun;
-
+            get => _maxDrawDown;
             set
             {
-                _maxDrawDoun = value;
-
-                CalcPercentDown();
+                _maxDrawDown = value;
+                CalcPercentMaxDrawDown();
             }
         }
-        decimal _maxDrawDoun;
+        decimal _maxDrawDown;
 
         /// <summary>
-        /// Максимальная относительная просадка в процентах
+        /// Максимальная относительная просадка
         /// </summary>
         public decimal PercentDrawDown { get; set; }
 
         #endregion
 
-        #region Fields =========================================
+        #region Fields ===================================================
+       
+        List<decimal> ListEquity = new List<decimal>();
 
-        List<decimal> LisrEquity = new List<decimal>();
 
-        private decimal _max = 0;
-
-        private decimal _min = 0;
-
+        decimal _min = 0;
+        decimal _max = 0;
 
         #endregion
 
-        #region Methods ==========================================
+        #region Methods ===================================================
 
         public List<decimal> GetListEquity()
         {
-            return LisrEquity;
+            return ListEquity;
+ 
         }
 
-        private void CalcDrawDown()
+        private void CalcPercentMaxDrawDown()
         {
+            
+            decimal percent = Math.Round(MaxDrawDown / _max * 100,2);
+            if (percent > PercentDrawDown) PercentDrawDown = percent;
+        }
+        private void CalcMaxDrawDown()
+        {
+            if (_min == 0 && _max == 0) _min = Depo; _max = Depo;
             if (_max < ResultDepo)
             {
                 _max = ResultDepo;
                 _min = ResultDepo;
             }
-
             if (_min > ResultDepo)
             {
                 _min = ResultDepo;
-
-                if(MaxDrawDoun < _max - _min)
-                {
-                    MaxDrawDoun = _max - _min;
-                }
+                if (MaxDrawDown < _max - _min) MaxDrawDown = _max - _min;
             }
+           
         }
-
-        private void CalcPercentDown()
-        {
-            if (ResultDepo == 0) ResultDepo = 1;  //Исключил 0 в ResultDepo
-            decimal percent = MaxDrawDoun * 100 / ResultDepo;
-
-            if (percent > PercentDrawDown) PercentDrawDown = Math.Round(percent, 2);
-        }
-
         #endregion
     }
 }
