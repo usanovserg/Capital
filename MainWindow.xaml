@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Capital"
         mc:Ignorable="d"
+        SizeChanged="Window_SizeChanged"
         Title="MainWindow" Height="800" Width="1200">
     <Grid>
         <Grid.ColumnDefinitions>
@@ -31,22 +32,22 @@
             <RowDefinition Height="*" MinHeight="350"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="Депозит"/>
-        <TextBlock Text="Начальный лот"
+        <TextBlock Text=" Депозит"/>
+        <TextBlock Text=" Начальный лот"
                    Grid.Row="1"/>
-        <TextBlock Text="Тейк"
+        <TextBlock Text=" Тейк"
                    Grid.Row="2"/>
-        <TextBlock Text="Стоп"
+        <TextBlock Text=" Стоп"
                     Grid.Row="3"/>
-        <TextBlock Text="Комиссия"
+        <TextBlock Text=" Комиссия"
                     Grid.Row="4"/>
-        <TextBlock Text="% Проц прибыли"
+        <TextBlock Text=" % Проц прибыли"
                     Grid.Row="5"/>
-        <TextBlock Text="Кол-во сделок"
+        <TextBlock Text=" Кол-во сделок"
                     Grid.Row="6"/>
-        <TextBlock Text="Мин. % Депо"
+        <TextBlock Text=" Мин. % Депо"
                     Grid.Row="7"/>
-        <TextBlock Text="Гарант. обесп."
+        <TextBlock Text=" Гарант. обесп."
                     Grid.Row="9"/>
         <ComboBox Name="_comboBox"
                     Grid.Row="11" Margin="5,0"/>

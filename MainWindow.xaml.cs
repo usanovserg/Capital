@@ -23,6 +23,10 @@ namespace Capital
             InitializeComponent();
 
             Init();
+
+            Last_datas = Calculate();
+
+            Draw(Last_datas);
         }
 
         #region Fields ========================================
@@ -37,16 +41,17 @@ namespace Capital
 
         Random _random = new Random();
 
+        List<Data> Last_datas;
+
         #endregion
 
         #region Methods ===========================================
 
-       private void Init()
+        private void Init()
        {
             _comboBox.ItemsSource = _strategies;
-            
-            _comboBox.SelectionChanged += _comboBox_SelectionChanged;
             _comboBox.SelectedIndex = 0;
+            _comboBox.SelectionChanged += _comboBox_SelectionChanged;
 
             _depo.Text = "100000";
             _startLot.Text = "10";
@@ -61,16 +66,27 @@ namespace Capital
 
         private void _comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ComboBox comboBox = (ComboBox)sender;
+            //ComboBox comboBox = (ComboBox)sender;
 
-            int index = comboBox.SelectedIndex;
+           // int index = comboBox.SelectedIndex;
+
+            Draw(Last_datas);
+        }
+
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            //ComboBox comboBox = (ComboBox)sender;
+
+            // int index = comboBox.SelectedIndex;
+
+            Draw(Last_datas);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            List<Data> datas = Calculate();
+            Last_datas = Calculate();
 
-            Draw(datas);
+            Draw(Last_datas);
         }
 
         private List<Data>Calculate()
@@ -193,7 +209,7 @@ namespace Capital
                 vertL.X2 = x + stepX;
                 vertL.Y1 = y1;
                 vertL.Y2 = y2;
-                vertL.Stroke = Brushes.Black;
+                vertL.Stroke = Brushes.Blue;
 
                 //Ellipse ellips = new Ellipse()
                 //{
@@ -206,7 +222,6 @@ namespace Capital
                 //     Canvas.SetTop(vertL);
 
                 _canvas.Children.Add(vertL);
-
 
                 x += stepX;
             }
