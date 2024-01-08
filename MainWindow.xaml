@@ -5,7 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Capital"
         mc:Ignorable="d"
-        Title="Capital" Height="800" Width="1200">
+        Title="Capital" Height="800" Width="1200"
+        SizeChanged="MainWindow_SizeChanged"
+        
+        >
     <Grid>
         <Grid.Resources>
             <Style TargetType="TextBlock">
@@ -31,8 +34,9 @@
             <RowDefinition Height="25"/>
             <RowDefinition Height="25"/>
             <RowDefinition Height="25"/>
-            <RowDefinition Height="25"/>
             <RowDefinition Height="40"/>
+            <RowDefinition Height="25"/>
+           
             <RowDefinition Height="*" MinHeight="50"/>
         </Grid.RowDefinitions>
 
@@ -51,13 +55,13 @@
                    Grid.Row="6"/>
         <TextBlock Text="Min % Депо" 
                    Grid.Row="7"/>
-        <TextBlock Text="" 
-                   Grid.Row="8"/>
         <TextBlock Text="Гарант. обеспеч." 
+                   Grid.Row="8"/>
+        <TextBlock Text="" 
                    Grid.Row="9"/>
 
         <ComboBox x:Name="_comboBox"
-                  Grid.Row="11"
+                  Grid.Row="10"
                   Margin="10,0,5,0"
                   />
 
@@ -78,12 +82,19 @@
         <TextBox x:Name="_minStartPercent"
                  Grid.Column="1" Grid.Row="7"/>
         <TextBox x:Name="_go"
-                 Grid.Column="1" Grid.Row="9"/>
+                 Grid.Column="1" Grid.Row="8"/>
 
         <!--x:Name="_button"-->
         <Button Content="Рассчитать"
                 Click="Button_Click"
-                Grid.Column="1" Grid.Row="11"/>
+                Grid.Column="1" 
+                Grid.Row="10"/>
+
+        <Button x:Name="_buttonClear"
+                        Content="Clear"
+                        Click="Button_Clear_Click"
+                        Margin="10,3,5,3"                        
+                        Grid.Row="11"/>
 
         <GroupBox Header="Таблица результатов"
                   Grid.Column="2"
@@ -96,24 +107,13 @@
 
 
         </GroupBox>
-        <Viewbox x:Name="_viewBox" 
-                 Grid.Row="13"
-                 Grid.ColumnSpan="3"
-                 Margin="10"
-                 Stretch="Uniform">
-
-            <Canvas x:Name="_canvas"
-                    Width="1175"
-                    Height="430"
-                  Background="LightGray">
-
-                <Button x:Name="_buttonClear"
-                        Content="Clear"
-                        Click="Button_Clear_Click"
-                        Margin="5"/>
-
-            </Canvas>
-        </Viewbox>
+        
+        <Canvas x:Name="_canvas"
+                    Grid.Row="12"
+                    Grid.ColumnSpan="3"
+                    Margin="10"
+                    Background="LightGray">
+        </Canvas>
 
     </Grid>
 </Window>

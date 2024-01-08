@@ -44,13 +44,18 @@ namespace Capital
         /// <summary>
         /// набор цветов для StrategyType
         /// </summary>
-        List<string?> _colorString = new List<string?>() //
+        List<string?> _colorString = new List<string?>() 
         {
             "Black",
             "Blue",
             "Green",
             "Red"
         };
+
+        /// <summary>
+        /// Будет запоминать индексы выбранных к показу графиков для данного Расчета
+        /// </summary>
+        List<int> _index = new List<int>();
 
         /// <summary>
         /// данные - точки для построения графика
@@ -117,26 +122,40 @@ namespace Capital
 
             int index = comboBox.SelectedIndex;
 
+            if (!_index.Contains(index)) _index.Add(index); //добавляем индекс графика к показу
+
             if (datas.Count != 0)
-                Drow(); // (datas) //если данные уже были расчитаны, то прорисовка графика
+                Draw(index); // (datas) //если данные уже были расчитаны, то прорисовка графика
 
         }
 
         private void Button_Clear_Click(object sender, RoutedEventArgs e)
         {
+            _index.Clear();
+
             ChartClear();
 
         }
 
+
+        /// <summary>
+        /// Кнопка Рассчитать
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             datas.Clear();
 
             datas = Calculate();
 
+            _index.Clear();
+
             ChartClear();
 
-            Drow(); //(datas)
+            _index.Add(_comboBox.SelectedIndex); //индекс текущиго выбранного графика добавляем к списку отображаемых
+
+            Draw(_comboBox.SelectedIndex); //(datas)
         }
 
         /// <summary>
@@ -146,7 +165,7 @@ namespace Capital
         {
             _canvas.Children.Clear();
 
-            _canvas.Children.Add(_buttonClear);
+            //_canvas.Children.Add(_buttonClear);
         }
 
         private List<Data> Calculate()
@@ -168,6 +187,7 @@ namespace Capital
             decimal minStartPercent = GetDecimalFromString(_minStartPercent.Text);
 
             decimal go = GetDecimalFromString(_go.Text);
+
             List<Data> datas = new List<Data>();
 
             foreach (StrategyType type in _strategies)
@@ -288,11 +308,9 @@ namespace Capital
         /// <summary>
         /// Отрисовка графика 
         /// </summary>
-        private void Drow() //List<Data> datas
-        {
-            //_canvas.Children.Clear();
-
-            int index = _comboBox.SelectedIndex;
+        private void Draw(int index) 
+        {            
+            //int index = _comboBox.SelectedIndex;
 
             List<decimal> listEquity = datas[index].GetListEquity();
 
@@ -362,13 +380,8 @@ namespace Capital
                 _canvas.Children.Add(ellipse); //в children расположены все элементы, которые мы размещаем на Canvas*/
 
 
-
                 polyline.Points.Add(new Point(x, y));
-
-                //polyline.Stroke=Brushes.Black;
-
-                //_canvas.Children.Add(polyline);
-
+                
                 x += stepX;
             }
 
@@ -376,10 +389,20 @@ namespace Capital
 
         }
 
+        private void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
 
+            if (datas.Count != 0)
+            {
+                ChartClear();
 
-        #endregion
+                foreach (int i in _index ) Draw(i);
+            }
+                
+        }
+        
+        #endregion = Methods =
 
-
+        
     }
 }
