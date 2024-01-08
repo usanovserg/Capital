@@ -161,7 +161,7 @@ namespace Capital
 
             return datas;
         }
-
+        
         private void Draw(List<Data> datas)
         {
             _canvas.Children.Clear();
