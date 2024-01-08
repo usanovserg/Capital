@@ -1,5 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Shapes;
 using Capital.Entity;
 using Capital.Enums;
 
@@ -27,6 +29,7 @@ public partial class MainWindow : Window
 
     private readonly Random _random = Random.Shared;
 
+    private List<Data>? _datas;
 
     private void Init()
     {
@@ -42,20 +45,30 @@ public partial class MainWindow : Window
         _percentProfit.Text = "30";
         _go.Text = "5000";
         _minStartPercent.Text = "20";
+
+        _canvas.SizeChanged += CanvasOnSizeChanged;
     }
 
     private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        var comboBox = (ComboBox)sender;
-        var index = comboBox.SelectedIndex;
+        if (_datas != null)
+            Draw(_datas);
+    }
+
+    private void CanvasOnSizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        if (_datas != null)
+            Draw(_datas);
     }
 
     private void Button_Click(object sender, RoutedEventArgs e)
     {
-        Calculate();
+        _datas = Calculate();
+        
+        Draw(_datas);
     }
 
-    private void Calculate()
+    private List<Data> Calculate()
     {
         var depoStart = GetDecimalFromString(_depo.Text);
         var startLot = GetIntFromString(_startLot.Text);
@@ -128,6 +141,45 @@ public partial class MainWindow : Window
         }
 
         _dataGrid.ItemsSource = datas;
+
+        return datas;
+    }
+
+    private void Draw(List<Data> datas)
+    {
+        _canvas.Children.Clear();
+        int index = _comboBox.SelectedIndex;
+        List<decimal> listEquity = datas[index].GetListEquity();
+        int count = listEquity.Count;
+        decimal maxEquity = listEquity.Max();
+        decimal minEquity = listEquity.Min();
+        double stepX = _canvas.ActualWidth / count;
+        double koef = (double) (maxEquity - minEquity) / _canvas.ActualHeight;
+        double x = 0;
+        double y = 0;
+        double x2 = 0;
+        double y2 = 0;
+
+        for (int i = 0; i < count; i++)
+        {
+            y = _canvas.ActualHeight - (double)(listEquity[i] - minEquity) / koef;
+
+            var line = new Line
+            {
+                X1 = x,
+                Y1 = y,
+                X2 = x2,
+                Y2 = y2,
+                Stroke = Brushes.Black
+            };
+
+            _canvas.Children.Add(line);
+
+
+            x2 = x;
+            y2 = y;
+            x += stepX;
+        }
     }
 
     private int CalculateLot(decimal currentDepo, decimal percent, decimal go)

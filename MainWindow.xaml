@@ -80,5 +80,9 @@
                       Margin="5" />
         </GroupBox>
 
+        <Canvas x:Name="_canvas"
+                Grid.Row="12"
+                Grid.ColumnSpan="3"
+                Margin="10" Background="LightGray" />
     </Grid>
 </Window>
