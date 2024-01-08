@@ -1,5 +1,6 @@
-﻿using Capital.Entity;
-using Capital.Enams;
+﻿using Capital.Enams;
+using Capital.Entity;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -23,29 +24,35 @@ namespace Capital
             InitializeComponent();
 
             Init();
+        
         }
 
-        #region Fields ========================================
+
+        #region Fields=========================================================================================
 
         List<StrategyType> _strategies = new List<StrategyType>()
+
         {
-            StrategyType.FIX,
-            StrategyType.CAPITALIZATION,
-            StrategyType.PROGRESS,
-            StrategyType.DOWNGRADE
+                StrategyType.FIX,
+                StrategyType.CAPITALIZATION,
+                StrategyType.PROGRESS,
+                StrategyType.DOWNGRADE
         };
 
         Random _random = new Random();
 
         #endregion
 
-        #region Methods ===========================================
 
-       private void Init()
-       {
+
+        #region Methods=======================================================================================
+
+        private void Init()
+        {
             _comboBox.ItemsSource = _strategies;
             
             _comboBox.SelectionChanged += _comboBox_SelectionChanged;
+            
             _comboBox.SelectedIndex = 0;
 
             _depo.Text = "100000";
@@ -54,10 +61,21 @@ namespace Capital
             _stop.Text = "100";
             _comiss.Text = "5";
             _countTrades.Text = "1000";
-            _percentProfit.Text = "30";
+            _persentProfit.Text = "30";
             _go.Text = "5000";
             _minStartPercent.Text = "20";
-       }
+
+            /*List<StrategyType> strategyTypes = new List<StrategyType>();
+                
+                strategyTypes.Add(StrategyType.FIX);
+                strategyTypes.Add(StrategyType.CAPITALIZATION);
+                strategyTypes.Add(StrategyType.PROGRESS);
+                strategyTypes.Add(StrategyType.DOWNGRADE);
+            
+            _comboBox.ItemsSource = strategyTypes;*/
+
+
+        }
 
         private void _comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -68,22 +86,21 @@ namespace Capital
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            List<Data> datas = Calculate();
-
-            Draw(datas);
+            Calculate();
         }
 
-        private List<Data>Calculate()
+        private void Calculate()
         {
             decimal depoStart = GetDecimalFromString(_depo.Text);
             int startLot = GetIntFromString(_startLot.Text);
             decimal take = GetDecimalFromString(_take.Text);
             decimal stop = GetDecimalFromString(_stop.Text);
             decimal comiss = GetDecimalFromString(_comiss.Text);
-            int countTrades = GetIntFromString(_countTrades.Text);
-            decimal percProfit = GetDecimalFromString(_percentProfit.Text);
-            decimal minStartPercent = GetDecimalFromString(_minStartPercent.Text);
+            int countTrade = GetIntFromString(_countTrades.Text);
+            decimal percProfit = GetDecimalFromString(_persentProfit.Text);
+            decimal minStartPersent = GetDecimalFromString(_minStartPercent.Text);
             decimal go = GetDecimalFromString(_go.Text);
+
 
             List<Data> datas = new List<Data>();
 
@@ -96,122 +113,76 @@ namespace Capital
             decimal percent = startLot * go * 100 / depoStart;
 
             decimal multiply = take / stop;
-            int lotProgress = CalculateLot(depoStart, minStartPercent, go);
+            decimal lotProgress = CalculateLot(depoStart, minStartPersent, go);
 
             int lotDown = startLot;
 
-            for (int i = 0; i < countTrades; i++)
+            for (int i = 0; i < countTrade; i++)
             {
-                int rnd = _random.Next(1, 100);
+                int rnd = _random.Next(1,100);
 
                 if (rnd <= percProfit)
+                
                 {
                     // Сделка прибыльная
 
-                    //============ 1 strategy =================
+                    //===================== 1 strategy ===========================================================
+
                     datas[0].ResultDepo += (take - comiss) * startLot;
 
-                    //============ 2 strategy ================
+                    //===================== 2 strategy ===========================================================
 
                     datas[1].ResultDepo += (take - comiss) * lotPercent;
 
                     int newLot = CalculateLot(datas[1].ResultDepo, percent, go);
 
-                    if (lotPercent< newLot) lotPercent = newLot;
+                    if (lotPercent < newLot) lotPercent = newLot;
 
-                    //============ 3 strategy ================
+                    //===================== 3 strategy ===========================================================
 
                     datas[2].ResultDepo += (take - comiss) * lotProgress;
+                    
+                    lotProgress=CalculateLot(depoStart,minStartPersent*multiply, go);
 
-                    lotPercent = CalculateLot(depoStart, minStartPercent * multiply, go);
-
-                    //=========== 4 strategy ================== 
+                    //===================== 4 strategy ===========================================================
 
                     datas[3].ResultDepo += (take - comiss) * lotDown;
 
                     lotDown = startLot;
+                               
                 }
                 else
                 {
                     // Сделка убыточная
-                    //============ 1 strategy =================
-                    datas[0].ResultDepo -= (take + comiss) * startLot;
 
-                    //============ 2 strategy ==================
+                    //===================== 1 strategy ===========================================================
 
-                    datas[1].ResultDepo -= (take + comiss) * lotPercent;
+                    datas[0].ResultDepo -= (stop + comiss) * startLot;
 
-                    //============ 3 strategy ==================
+                    //===================== 2 strategy ===========================================================
 
-                    datas[2].ResultDepo -= (take + comiss) * lotProgress;
+                    datas[1].ResultDepo -= (stop + comiss) * lotPercent;
 
-                    lotProgress = CalculateLot(depoStart, minStartPercent, go);
+                    //===================== 3 strategy ===========================================================
 
-                    //============ 4 strategy ==================
+                    datas[2].ResultDepo -= (stop + comiss) * lotProgress;
 
-                    datas[3].ResultDepo -= (take + comiss) * lotDown;
+                    lotProgress = CalculateLot(depoStart, minStartPersent, go);
+
+                    //===================== 4 strategy ===========================================================
+
+                    datas[3].ResultDepo -= (stop + comiss) * lotDown;
 
                     lotDown /= 2;
 
                     if (lotDown == 0) lotDown = 1;
                 }
+
             }
 
             _dataGrid.ItemsSource = datas;
 
-            return datas;
         }
-        
-        private void Draw(List<Data> datas)
-        {
-            _canvas.Children.Clear();
-
-            int index = _comboBox.SelectedIndex;
-
-            List<decimal> listEquity = datas[index].GetListEquity();
-
-            int count = listEquity.Count;
-            decimal maxEquity = listEquity.Max();
-            decimal minEquity = listEquity.Min();
-
-            double steoX = _canvas.ActualWidth / count;
-            double koef = (double)(maxEquity - minEquity) / _canvas.ActualHeight;
-
-            double x = 0;
-            
-            double y1= 0;
-            double y2= 0;
-
-            for (int i = 0; i < count; i++)
-            {
-                y1 = y2;
-                y2 = _canvas.ActualHeight - (double)(listEquity[i] - minEquity) / koef;
-               
-
-                Line vertL = new Line();
-                vertL.X1 = x;
-                vertL.X2 = x + steoX;
-                vertL.Y1 = y1;
-                vertL.Y2 = y2;
-                vertL.Stroke = Brushes.Black;
-
-                //Ellipse ellips = new Ellipse()
-                //{
-                //    Width = 2,
-                //    Height = 2,
-                //    Stroke = Brushes.Black
-                //};
-
-                //     Canvas.SetLeft(vertL);
-                //     Canvas.SetTop(vertL);
-
-                _canvas.Children.Add(vertL);
-
-
-                x += steoX;
-            }
-        }
-
         private int CalculateLot(decimal currentDepo, decimal percent, decimal go)
         {
             if (percent > 100) { percent = 100; }
@@ -223,18 +194,35 @@ namespace Capital
 
         private decimal GetDecimalFromString(string str)
         {
-            if (decimal.TryParse(str, out decimal result)) return result;
-
+            if (decimal.TryParse(str, out decimal rezult)) return rezult;
             return 0;
         }
 
         private int GetIntFromString(string str)
         {
-            if (int.TryParse(str, out int result)) return result;
-
+            if (int.TryParse(str, out int rezult)) return rezult;
             return 0;
         }
 
-             #endregion
-     }
+
+
+        #endregion
+
+
+        #region Properties===================================================================================
+
+
+
+
+
+
+
+
+        #endregion
+
+
+
+
+    }
+
 }

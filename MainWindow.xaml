@@ -14,7 +14,7 @@
                               MaxWidth="150"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        
+
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
             <RowDefinition Height="30"/>
@@ -37,21 +37,20 @@
         <TextBlock Text="Тейк"
                    Grid.Row="2"/>
         <TextBlock Text="Стоп"
-                    Grid.Row="3"/>
+                   Grid.Row="3"/>
         <TextBlock Text="Комиссия"
-                    Grid.Row="4"/>
-        <TextBlock Text="% Проц прибыли"
-                    Grid.Row="5"/>
+                   Grid.Row="4"/>
+        <TextBlock Text="% Процент прибыли"
+                   Grid.Row="5"/>
         <TextBlock Text="Кол-во сделок"
-                    Grid.Row="6"/>
+                   Grid.Row="6"/>
         <TextBlock Text="Мин. % Депо"
-                    Grid.Row="7"/>
-        <TextBlock Text="Гарант. обесп."
-                    Grid.Row="9"/>
+                   Grid.Row="7"/>
+        <TextBlock Text="Гарантийное обеспеч."
+                   Grid.Row="9"/>
         <ComboBox Name="_comboBox"
-                    Grid.Row="11" Margin="5,0"/>
+                   Grid.Row="11" Margin="5,0"/>
 
-        
         <TextBox x:Name="_depo"
                  Grid.Column="1"/>
         <TextBox x:Name="_startLot"
@@ -62,7 +61,7 @@
                  Grid.Column="1" Grid.Row="3"/>
         <TextBox x:Name="_comiss"
                  Grid.Column="1" Grid.Row="4"/>
-        <TextBox x:Name="_percentProfit"
+        <TextBox x:Name="_persentProfit"
                  Grid.Column="1" Grid.Row="5"/>
         <TextBox x:Name="_countTrades"
                  Grid.Column="1" Grid.Row="6"/>
@@ -78,13 +77,9 @@
                   Grid.Column="2" Grid.RowSpan="12"
                   Margin="10,1">
             <DataGrid x:Name="_dataGrid"
-                         Margin="5"/>
+                      Margin="5"/>
+
         </GroupBox>
 
-        <Canvas x:Name="_canvas"
-                Grid.Row = "13"
-                Grid.ColumnSpan="3"
-                Margin="10" Background="LightGray">
-        </Canvas>
     </Grid>
 </Window>
