@@ -1,5 +1,6 @@
 ﻿using Capital.Entity;
 using Capital.Enums;
+using System;
 using System.ComponentModel;
 using System.Text;
 using System.Windows;
@@ -33,7 +34,12 @@ namespace Capital
             StrategyType.DOWNGRADE
         };
 
+
+
         Random random = new Random();
+
+        //Свойство для хранения датасетов
+        List<Data>? DataSet {  get; set; }
         #endregion
 
 
@@ -49,7 +55,6 @@ namespace Capital
         private void Init() 
         {
             _comboBoxx.ItemsSource = strategies;
-            _comboBoxx.SelectionChanged += ComboBoxx_SelectionChanged;
             _comboBoxx.SelectedIndex = 0;
 
             _deposit.Text = "100000";
@@ -62,23 +67,120 @@ namespace Capital
             _minStartPercent.Text = "20";
             _go.Text = "5000";
 
+            _comboBoxx.SelectionChanged += ComboBoxx_SelectionChanged_Handler; //подписываем нажатие кнопки на событие переключения comboBox
+        }
 
+        private void ComboBoxx_SelectionChanged_Handler(object sender, SelectionChangedEventArgs e)
+        {
+            ComboBox? comboBox = sender as ComboBox;
+            int index = comboBox.SelectedIndex;
+            if (DataSet != null)
+            {
+                List<decimal> list = GetData(DataSet, index);
+                Draw(list);
+            }
         }
 
         private void ComboBoxx_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ComboBox? comboBox = sender as ComboBox;
-            int index = comboBox != null ? comboBox.SelectedIndex:-1;
+            int index = comboBox.SelectedIndex;
+            if (DataSet != null)
+            {
+                List<decimal> list = GetData(DataSet, index);
+                Draw(list);
+            }
+            //comboBox.SelectionChanged += Button_Click;
         }
         #endregion
 
+        private List<decimal> GetData(List<Data> listData, int index)
+        {
+            List<decimal> List = listData[index].GetListOfEquity();
+            return List;
+        }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Calculate();
+            DataSet = Calculate();
+            int index = _comboBoxx.SelectedIndex;
+            List<decimal> list = GetData(DataSet, index);
+            Draw(list);
         }
 
-        private void Calculate() 
+        private void _canvas_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            int index = _comboBoxx.SelectedIndex;
+            if (DataSet != null)
+            {
+                List<decimal> list = GetData(DataSet, index);
+                Draw(list);
+            }
+        }
+
+        private void Draw(List<decimal> list)
+        {
+            _canvas.Children.Clear();
+            
+            int count = list.Count;
+            decimal maxEquity = list.Max();
+            decimal minEquity = list.Min();
+
+            //расчёт шага X
+            double stepX = _canvas.ActualWidth / (count-1);
+            double koef = (double)(maxEquity - minEquity) / _canvas.ActualHeight;
+
+            //current point
+            double x = 0;
+            double y = 0;
+
+            //prev.point
+            double xL = x;
+            double yL = _canvas.ActualHeight;
+
+            for (int i = 0; i < count; i++)
+            {
+                //расчёт координат
+                y = _canvas.ActualHeight - (double)(list[i] - minEquity) / koef;
+
+                Ellipse ellipse = new Ellipse()
+                {
+                    Width = 2,
+                    Height = 2,
+                    Stroke = Brushes.Black
+                };
+
+                Line line = new Line()
+                { 
+                    Stroke = Brushes.Black,
+                    StrokeThickness = 2,
+                };
+                
+                line.X1 = xL; line.Y1 = yL;
+                line.X2 = x; line.Y2 = y;
+
+                xL = x; yL = y;
+
+                //для нулевого и последнего значения
+                if (i == 0) { line.X1 = x; line.Y1 = y; }
+                if (i == count-1) { line.X2 = xL; line.Y2 = yL; }
+
+                Canvas.SetLeft(ellipse, x);
+                Canvas.SetTop(ellipse, y);
+
+                _canvas.Children.Add(ellipse);
+                _canvas.Children.Add(line);
+                x += stepX;
+            }
+
+            
+           
+
+        }
+
+
+
+        private List<Data> Calculate() 
         { 
             decimal deposit = ConvertStringToDecimal(_deposit.Text);
             int initLot = ConvertStringToInt(_initLot.Text);
@@ -139,7 +241,10 @@ namespace Capital
             }
 
             _datagrid.ItemsSource = datas;
+            return datas;
         }
+
+
 
         private int CalculateLot(decimal currentDepo, decimal percent, decimal go)
         {

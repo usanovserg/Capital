@@ -27,6 +27,7 @@
             <RowDefinition Height="30"/>
             <RowDefinition Height="30"/>
             <RowDefinition Height="30"/>
+            <RowDefinition Height="*" MinHeight="30"/>
         </Grid.RowDefinitions>
         
         <TextBlock Text="Депозит" Margin="5"/>
@@ -49,7 +50,8 @@
         <TextBox x:Name="_minStartPercent" Margin="5" Grid.Column="1" Grid.Row="7"/>
         <TextBox x:Name="_go" Margin="5" Grid.Column="1" Grid.Row="9"/>
 
-        <ComboBox Name="_comboBoxx" Grid.Row="11" Margin="5"/>
+        <ComboBox Name="_comboBoxx" Grid.Row="11" Margin="5"
+                  />
         <Button x:Name="_button" Content="Рассчитать" Margin="5" 
                 Grid.Row="11" Grid.Column="1"
                 Click="Button_Click"/>
@@ -58,8 +60,12 @@
                                                Grid.RowSpan="12"
                   Margin="0,0,5,5">
             <DataGrid x:Name="_datagrid" />
-
-
         </GroupBox>
+        <Canvas x:Name="_canvas"
+                Grid.Row="12"
+                Grid.ColumnSpan="3"
+                Margin="5"
+                Background="LightGray"
+                SizeChanged="_canvas_SizeChanged"/>
     </Grid>
 </Window>
