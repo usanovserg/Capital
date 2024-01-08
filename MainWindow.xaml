@@ -33,7 +33,7 @@
             <RowDefinition Height="25"/>
             <RowDefinition Height="25"/>
             <RowDefinition Height="40"/>
-            <RowDefinition Height="*" MinHeight="350"/>
+            <RowDefinition Height="*" MinHeight="50"/>
         </Grid.RowDefinitions>
 
         <TextBlock Text="Депозит"/>
