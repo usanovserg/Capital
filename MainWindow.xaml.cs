@@ -148,7 +148,7 @@ namespace Capital
 
                     datas[2].ResultDepo += (take - comiss) * lotProgress;
 
-                    lotPercent = CalculateLot(depoStart, minStartPercent * multiply, go);
+                    lotProgress = CalculateLot(depoStart, minStartPercent * multiply, go);
 
                     //=========== 4 strategy ================== 
 
