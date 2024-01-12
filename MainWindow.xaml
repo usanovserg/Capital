@@ -5,8 +5,83 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Capital"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="800" Width="1200">
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="150"/>
+            <ColumnDefinition Width="*"
+                              MinWidth="50"
+                              MaxWidth="150"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*" MinHeight="350"/>
+        </Grid.RowDefinitions>
+        <TextBlock Text="Депозит"/>
+        <TextBlock Text="Начальный лот"
+                   Grid.Row="1"/>
+        <TextBlock Text="Тейк"
+           Grid.Row="2"/>
+        <TextBlock Text="Стоп"
+           Grid.Row="3"/>
+        <TextBlock Text="Комиссия"
+           Grid.Row="4"/>
+        <TextBlock Text="% Процент приб."
+           Grid.Row="5"/>
+        <TextBlock Text="Кол-во сделок"
+           Grid.Row="6"/>
+        <TextBlock Text="Мин. % Депо"
+           Grid.Row="7"/>
+        <TextBlock Text="Гарант. обесп."
+           Grid.Row="9"/>
+        <ComboBox Name="_comboBox"
+                  Grid.Row="11" Margin="5,0"/>
+        
+        <TextBox x:Name="_depo"
+                 Grid.Column="1"/>
+        <TextBox x:Name="_startLot"
+                 Grid.Column="1" Grid.Row="1"/>
+        <TextBox x:Name="_take"
+                 Grid.Column="1" Grid.Row="2"/>
+        <TextBox x:Name="_stop"
+                 Grid.Column="1" Grid.Row="3"/>
+        <TextBox x:Name="_comiss"
+                 Grid.Column="1" Grid.Row="4"/>
+        <TextBox x:Name="_percentProfit"
+                 Grid.Column="1" Grid.Row="5"/>
+        <TextBox x:Name="_countTraids"
+                 Grid.Column="1" Grid.Row="6"/>
+        <TextBox x:Name="_minStartPercent"
+                 Grid.Column="1" Grid.Row="7"/>
+        <TextBox x:Name="_go"
+                 Grid.Column="1" Grid.Row="9"/>
+        <Button Content="Расчитать" x:Name="_button"
+                Grid.Column="1"
+                Grid.Row="11"
+                Click="Button_Click"/>
 
+        <GroupBox Header="Таблица результатов"
+                  Grid.Column="2" Grid.RowSpan="12"
+                  Margin="10,1">
+            <DataGrid x:Name="_dataGride"
+                      Margin="5"/>
+        </GroupBox>
+
+        <Canvas x:Name="_canvas"
+                Grid.Row="13"
+                Grid.ColumnSpan="3"
+                Margin="10" Background="LightGray"/>
     </Grid>
 </Window>
