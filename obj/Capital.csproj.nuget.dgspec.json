@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Дмитрий\\source\\repos\\CapitalGit\\Capital.csproj": {}
+    "C:\\Users\\Дмитрий\\Source\\Repos\\CapitalGit\\Capital.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Дмитрий\\source\\repos\\CapitalGit\\Capital.csproj": {
+    "C:\\Users\\Дмитрий\\Source\\Repos\\CapitalGit\\Capital.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Дмитрий\\source\\repos\\CapitalGit\\Capital.csproj",
+        "projectUniqueName": "C:\\Users\\Дмитрий\\Source\\Repos\\CapitalGit\\Capital.csproj",
         "projectName": "Capital",
-        "projectPath": "C:\\Users\\Дмитрий\\source\\repos\\CapitalGit\\Capital.csproj",
+        "projectPath": "C:\\Users\\Дмитрий\\Source\\Repos\\CapitalGit\\Capital.csproj",
         "packagesPath": "C:\\Users\\Дмитрий\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Дмитрий\\source\\repos\\CapitalGit\\obj\\",
+        "outputPath": "C:\\Users\\Дмитрий\\Source\\Repos\\CapitalGit\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Дмитрий\\AppData\\Roaming\\NuGet\\NuGet.Config",
