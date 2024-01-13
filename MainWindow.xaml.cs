@@ -178,34 +178,23 @@ namespace Capital
             double koef = (double)(maxEquity - minEquity) / _canvas.ActualHeight;
 
             double x = 0;
-            
-            double y1= 0;
-            double y2= 0;
+            double y = 0;
 
             for (int i = 0; i < count; i++)
             {
-                y1 = y2;
-                y2 = _canvas.ActualHeight - (double)(listEquity[i] - minEquity) / koef;
-               
+                y = _canvas.ActualHeight - (double)(listEquity[i] - minEquity) / koef;
 
-                Line vertL = new Line();
-                vertL.X1 = x;
-                vertL.X2 = x + steoX;
-                vertL.Y1 = y1;
-                vertL.Y2 = y2;
-                vertL.Stroke = Brushes.Black;
+                Ellipse ellips = new Ellipse()
+                {
+                    Width = 2,
+                    Height = 2,
+                    Stroke = Brushes.Black
+                };
 
-                //Ellipse ellips = new Ellipse()
-                //{
-                //    Width = 2,
-                //    Height = 2,
-                //    Stroke = Brushes.Black
-                //};
+                Canvas.SetLeft(ellips, x);
+                Canvas.SetTop(ellips, y);
 
-                //     Canvas.SetLeft(vertL);
-                //     Canvas.SetTop(vertL);
-
-                _canvas.Children.Add(vertL);
+                _canvas.Children.Add(ellips);
 
 
                 x += steoX;
