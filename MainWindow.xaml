@@ -86,7 +86,7 @@
                 Grid.Row = "12"
                 Grid.ColumnSpan="4"
                 Margin="10,10,10,10" Background="LightGray"
-                SizeChanged="_canvas_SizeChanged">
-        </Canvas>
+                />
+
     </Grid>
 </Window>
