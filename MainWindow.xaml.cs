@@ -1,5 +1,6 @@
 ﻿using Capital.Enams;
 using Capital.Entity;
+using System;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows;
@@ -24,7 +25,7 @@ namespace Capital
             InitializeComponent();
 
             Init();
-        
+
         }
 
 
@@ -40,7 +41,8 @@ namespace Capital
         };
 
         Random _random = new Random();
-
+        
+        List<Data> datas = new List<Data>();
         #endregion
 
 
@@ -50,9 +52,9 @@ namespace Capital
         private void Init()
         {
             _comboBox.ItemsSource = _strategies;
-            
+
             _comboBox.SelectionChanged += _comboBox_SelectionChanged;
-            
+
             _comboBox.SelectedIndex = 0;
 
             _depo.Text = "100000";
@@ -60,7 +62,7 @@ namespace Capital
             _take.Text = "300";
             _stop.Text = "100";
             _comiss.Text = "5";
-            _countTrades.Text = "1000";
+            _countTrades.Text = "500";
             _persentProfit.Text = "30";
             _go.Text = "5000";
             _minStartPercent.Text = "20";
@@ -76,20 +78,32 @@ namespace Capital
 
 
         }
-
-        private void _comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            ComboBox comboBox = (ComboBox)sender;
-
-            int index = comboBox.SelectedIndex;
-        }
-
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Calculate();
+            datas = Calculate();
+
+            Draw(datas);
+        }
+        
+        private void _comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //ComboBox comboBox = (ComboBox)sender;
+
+            int index = _comboBox.SelectedIndex;
+           
+            if (datas.Count != 0) 
+            
+            Draw(datas);
         }
 
-        private void Calculate()
+        private void _canvas_SizeChanged_2(object sender, SizeChangedEventArgs e)
+        {
+            if (datas.Count != 0)
+
+            Draw(datas);
+        }
+
+        private List<Data> Calculate()
         {
             decimal depoStart = GetDecimalFromString(_depo.Text);
             int startLot = GetIntFromString(_startLot.Text);
@@ -102,7 +116,7 @@ namespace Capital
             decimal go = GetDecimalFromString(_go.Text);
 
 
-            List<Data> datas = new List<Data>();
+            //List<Data> datas = new List<Data>();
 
             foreach (StrategyType type in _strategies)
             {
@@ -119,10 +133,10 @@ namespace Capital
 
             for (int i = 0; i < countTrade; i++)
             {
-                int rnd = _random.Next(1,100);
+                int rnd = _random.Next(1, 100);
 
                 if (rnd <= percProfit)
-                
+
                 {
                     // Сделка прибыльная
 
@@ -141,15 +155,15 @@ namespace Capital
                     //===================== 3 strategy ===========================================================
 
                     datas[2].ResultDepo += (take - comiss) * lotProgress;
-                    
-                    lotProgress=CalculateLot(depoStart,minStartPersent*multiply, go);
+
+                    lotProgress = CalculateLot(depoStart, minStartPersent * multiply, go);
 
                     //===================== 4 strategy ===========================================================
 
                     datas[3].ResultDepo += (take - comiss) * lotDown;
 
                     lotDown = startLot;
-                               
+
                 }
                 else
                 {
@@ -182,7 +196,61 @@ namespace Capital
 
             _dataGrid.ItemsSource = datas;
 
+            return datas;
+
         }
+        private void Draw(List<Data> datas)
+        {
+            _canvas.Children.Clear();
+
+            int index = _comboBox.SelectedIndex;
+
+            List<decimal> listEquity = datas[index].GetListEquity();
+
+            int count = listEquity.Count;
+
+            decimal maxEquity = listEquity.Max();
+            decimal minEquity = listEquity.Min();
+
+            double stepX = _canvas.ActualWidth / count;
+            double koef = (double)(maxEquity - minEquity) / _canvas.ActualHeight;
+
+            double x = 0;
+            double y = 0;
+            double nx = 0;
+            double ny = _canvas.ActualHeight - (double) (listEquity[0]-minEquity)/koef;
+
+            for (int i=1; i<count; i++)
+            { 
+                              
+                Ellipse ellipse = new Ellipse()
+                    {
+                        Width = 5,
+                        Height = 5,
+                        Stroke = Brushes.Black,
+                    };
+                    Canvas.SetLeft(ellipse, x);
+                    Canvas.SetTop(ellipse, ny);
+
+                    _canvas.Children.Add(ellipse);
+                    
+                Line line = new Line();
+                
+                line.X1 = nx; line.Y1 = ny;
+                                            
+                x += stepX;
+                y = _canvas.ActualHeight - (double)(listEquity[i] - minEquity) / koef;
+                
+                line.X2 = x; line.Y2 = y;
+                line.Stroke = Brushes.Black;
+                line.StrokeThickness = 2;
+                _canvas.Children.Add(line);
+
+                nx=x; ny=y;
+            }
+
+        }
+ 
         private int CalculateLot(decimal currentDepo, decimal percent, decimal go)
         {
             if (percent > 100) { percent = 100; }
@@ -204,25 +272,8 @@ namespace Capital
             return 0;
         }
 
-
-
         #endregion
-
-
-        #region Properties===================================================================================
-
-
-
-
-
-
-
-
-        #endregion
-
-
-
-
+       
     }
 
 }

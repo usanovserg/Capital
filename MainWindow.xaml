@@ -28,7 +28,7 @@
             <RowDefinition Height="30"/>
             <RowDefinition Height="30"/>
             <RowDefinition Height="30"/>
-            <RowDefinition Height="*" MinHeight="350"/>
+            <RowDefinition Height="*" MinHeight="50"/>
         </Grid.RowDefinitions>
 
         <TextBlock Text="Депозит"/>
@@ -50,7 +50,7 @@
                    Grid.Row="9"/>
         <ComboBox Name="_comboBox"
                    Grid.Row="11" Margin="5,0"/>
-
+        
         <TextBox x:Name="_depo"
                  Grid.Column="1"/>
         <TextBox x:Name="_startLot"
@@ -81,5 +81,12 @@
 
         </GroupBox>
 
+        <Canvas  SizeChanged="_canvas_SizeChanged_2"
+                 x:Name="_canvas"
+                 Grid.Row="13"
+                 Grid.ColumnSpan="3"
+                 Margin="10" Background="LightGray"/>
+         
     </Grid>
+
 </Window>
