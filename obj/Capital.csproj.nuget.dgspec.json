@@ -1,27 +1,28 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Дмитрий\\Source\\Repos\\CapitalGit\\Capital.csproj": {}
+    "C:\\Users\\user\\Downloads\\_C#\\_Usanov\\Work\\Capital\\Capital.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Дмитрий\\Source\\Repos\\CapitalGit\\Capital.csproj": {
+    "C:\\Users\\user\\Downloads\\_C#\\_Usanov\\Work\\Capital\\Capital.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Дмитрий\\Source\\Repos\\CapitalGit\\Capital.csproj",
+        "projectUniqueName": "C:\\Users\\user\\Downloads\\_C#\\_Usanov\\Work\\Capital\\Capital.csproj",
         "projectName": "Capital",
-        "projectPath": "C:\\Users\\Дмитрий\\Source\\Repos\\CapitalGit\\Capital.csproj",
-        "packagesPath": "C:\\Users\\Дмитрий\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Дмитрий\\Source\\Repos\\CapitalGit\\obj\\",
+        "projectPath": "C:\\Users\\user\\Downloads\\_C#\\_Usanov\\Work\\Capital\\Capital.csproj",
+        "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\user\\Downloads\\_C#\\_Usanov\\Work\\Capital\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Дмитрий\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net6.0-windows"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {}
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net6.0-windows7.0": {
@@ -33,6 +34,11 @@
           "warnAsError": [
             "NU1605"
           ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
         }
       },
       "frameworks": {
@@ -49,6 +55,24 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[6.0.30, 6.0.30]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Host.win-x64",
+              "version": "[6.0.30, 6.0.30]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[6.0.30, 6.0.30]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
+              "version": "[6.0.30, 6.0.30]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
@@ -57,7 +81,7 @@
               "privateAssets": "none"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.300\\RuntimeIdentifierGraph.json"
         }
       }
     }
