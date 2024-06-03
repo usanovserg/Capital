@@ -3,6 +3,8 @@ using Capital.Entity;
 using Capital.Enums;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Shapes;
 
 namespace Capital
 {
@@ -56,17 +58,21 @@ namespace Capital
 
         private void _comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+
             ComboBox comboBox = (ComboBox)sender;
 
             int index = comboBox.SelectedIndex;
+
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Calculate();
+            List<Data> datas = Calculate();
+
+            Draw(datas);
         }
 
-        private void Calculate()
+        private List<Data> Calculate()
         {
             decimal depoStart = GetDecimalFromString(_depo.Text);
             int startLot = GetIntFromString(_startLot.Text);
@@ -156,6 +162,55 @@ namespace Capital
 
 
             _dataGrid.ItemsSource = datas;
+
+            return datas;
+        }
+
+        private void Draw(List<Data> datas)
+        {
+            _canvas.Children.Clear();
+
+            int index = _comboBox.SelectedIndex;
+
+            List<decimal> listEquity = datas[index].GetListEquity();
+
+            int count = listEquity.Count;
+            decimal maxEquity = listEquity.Max();
+            decimal minEquity = listEquity.Min();
+
+            double stepX = _canvas.ActualWidth / count;
+            double koef = (double)(maxEquity - minEquity) / _canvas.ActualHeight;
+
+            double x = 0;
+            double y = 0;
+
+            Polyline polyline = new Polyline();
+            polyline.Points = new PointCollection();
+            polyline.Stroke = Brushes.Black;
+
+            for (int i = 0; i < count; i++)
+            {
+                y = _canvas.ActualHeight - (double)(listEquity[i] - minEquity) / koef;
+
+                /*
+                Ellipse ellipse = new Ellipse()
+                {
+                    Width = 2,
+                    Height = 2,
+                    Stroke = Brushes.Black
+                };
+                
+
+                Canvas.SetLeft(line, x);
+                Canvas.SetTop(line, y);
+                */
+
+                polyline.Points.Add(new Point(x,y));
+
+                x += stepX;
+            }
+
+            _canvas.Children.Add(polyline);
         }
 
         private int CalculateLot(decimal currentDepo, decimal percent, decimal go)
@@ -182,5 +237,10 @@ namespace Capital
         }
 
         #endregion
+
+        private void _canvas_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+
+        }
     }
 }
