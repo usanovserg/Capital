@@ -1,6 +1,11 @@
 ﻿using Capital.Entity;
-using Capital.Enams;
+using Capital.Enums;
+using Microsoft.Win32;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -25,9 +30,9 @@ namespace Capital
             Init();
         }
 
-        #region Fields ========================================
+        #region Fields ==============================================
 
-        List<StrategyType> _strategies = new List<StrategyType>()
+        List<StrategyType> _strategies = new List<StrategyType>() 
         {
             StrategyType.FIX,
             StrategyType.CAPITALIZATION,
@@ -39,41 +44,13 @@ namespace Capital
 
         #endregion
 
-        #region Methods ===========================================
-
-       private void Init()
-       {
-            _comboBox.ItemsSource = _strategies;
-            
-            _comboBox.SelectionChanged += _comboBox_SelectionChanged;
-            _comboBox.SelectedIndex = 0;
-
-            _depo.Text = "100000";
-            _startLot.Text = "10";
-            _take.Text = "300";
-            _stop.Text = "100";
-            _comiss.Text = "5";
-            _countTrades.Text = "1000";
-            _percentProfit.Text = "30";
-            _go.Text = "5000";
-            _minStartPercent.Text = "20";
-       }
-
-        private void _comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            ComboBox comboBox = (ComboBox)sender;
-
-            int index = comboBox.SelectedIndex;
-        }
-
+        #region Methods ==============================================
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            List<Data> datas = Calculate();
-
-            Draw(datas);
+            Calculate();
         }
 
-        private List<Data>Calculate()
+        private void Calculate()
         {
             decimal depoStart = GetDecimalFromString(_depo.Text);
             int startLot = GetIntFromString(_startLot.Text);
@@ -87,7 +64,7 @@ namespace Capital
 
             List<Data> datas = new List<Data>();
 
-            foreach (StrategyType type in _strategies)
+            foreach(StrategyType type in _strategies)
             {
                 datas.Add(new Data(depoStart, type));
             }
@@ -104,52 +81,50 @@ namespace Capital
             {
                 int rnd = _random.Next(1, 100);
 
-                if (rnd <= percProfit)
+                if (rnd <= percProfit) 
                 {
-                    // Сделка прибыльная
+                    // Сделка припбыльная
 
-                    //============ 1 strategy =================
+                    //====================== 1 strat ====================
                     datas[0].ResultDepo += (take - comiss) * startLot;
 
-                    //============ 2 strategy ================
+                    //====================== 2 strat ====================
 
                     datas[1].ResultDepo += (take - comiss) * lotPercent;
 
                     int newLot = CalculateLot(datas[1].ResultDepo, percent, go);
 
-                    if (lotPercent< newLot) lotPercent = newLot;
+                    if (lotPercent < newLot) lotPercent = newLot;
 
-                    //============ 3 strategy ================
+                    //====================== 3 strat ====================
 
                     datas[2].ResultDepo += (take - comiss) * lotProgress;
 
-                    lotPercent = CalculateLot(depoStart, minStartPercent * multiply, go);
+                    lotProgress = CalculateLot(depoStart, minStartPercent * multiply, go);
 
-                    //=========== 4 strategy ================== 
+                    //====================== 4 strat ====================
 
                     datas[3].ResultDepo += (take - comiss) * lotDown;
 
                     lotDown = startLot;
                 }
-                else
+                else 
                 {
                     // Сделка убыточная
-                    //============ 1 strategy =================
-                    datas[0].ResultDepo -= (take + comiss) * startLot;
 
-                    //============ 2 strategy ==================
+                    //====================== 1 strat ====================
+                    datas[0].ResultDepo -= (stop + comiss) * startLot;
 
-                    datas[1].ResultDepo -= (take + comiss) * lotPercent;
+                    //====================== 2 strat ====================
+                    datas[1].ResultDepo -= (stop + comiss) * lotPercent;
 
-                    //============ 3 strategy ==================
-
-                    datas[2].ResultDepo -= (take + comiss) * lotProgress;
+                    //====================== 3 strat ====================
+                    datas[2].ResultDepo -= (stop + comiss) * lotProgress;
 
                     lotProgress = CalculateLot(depoStart, minStartPercent, go);
+                    //====================== 4 strat ====================
 
-                    //============ 4 strategy ==================
-
-                    datas[3].ResultDepo -= (take + comiss) * lotDown;
+                    datas[3].ResultDepo -= (stop + comiss) * lotDown;
 
                     lotDown /= 2;
 
@@ -158,53 +133,12 @@ namespace Capital
             }
 
             _dataGrid.ItemsSource = datas;
-
-            return datas;
         }
 
-        private void Draw(List<Data> datas)
+        private int CalculateLot(decimal currentDepo, decimal percent, decimal go) 
         {
-            _canvas.Children.Clear();
 
-            int index = _comboBox.SelectedIndex;
-
-            List<decimal> listEquity = datas[index].GetListEquity();
-
-            int count = listEquity.Count;
-            decimal maxEquity = listEquity.Max();
-            decimal minEquity = listEquity.Min();
-
-            double steoX = _canvas.ActualWidth / count;
-            double koef = (double)(maxEquity - minEquity) / _canvas.ActualHeight;
-
-            double x = 0;
-            double y = 0;
-
-            for (int i = 0; i < count; i++)
-            {
-                y = _canvas.ActualHeight - (double)(listEquity[i] - minEquity) / koef;
-
-                Ellipse ellips = new Ellipse()
-                {
-                    Width = 2,
-                    Height = 2,
-                    Stroke = Brushes.Black
-                };
-
-                Canvas.SetLeft(ellips, x);
-                Canvas.SetTop(ellips, y);
-
-                _canvas.Children.Add(ellips);
-
-
-                x += steoX;
-            }
-        }
-
-        private int CalculateLot(decimal currentDepo, decimal percent, decimal go)
-        {
-            if (percent > 100) { percent = 100; }
-
+            if(percent > 100) percent = 100;
             decimal lot = currentDepo / go / 100 * percent;
 
             return (int)lot;
@@ -213,17 +147,41 @@ namespace Capital
         private decimal GetDecimalFromString(string str)
         {
             if (decimal.TryParse(str, out decimal result)) return result;
-
             return 0;
         }
 
         private int GetIntFromString(string str)
         {
             if (int.TryParse(str, out int result)) return result;
-
             return 0;
         }
 
-             #endregion
-     }
+        private void Init()
+        {
+            _comboBox.ItemsSource = _strategies;
+            _comboBox.SelectionChanged += _comboBox_SelectionChanged;
+            _comboBox.SelectedIndex = 0;
+
+            _depo.Text = "100000";
+            _startLot.Text = "10";
+            _take.Text = "300";
+            _stop.Text = "100";
+            _comiss.Text = "5";
+            _countTrades.Text = "1000";
+            _percentProfit.Text = "30";
+            _go.Text = "5000";
+            _minStartPercent.Text = "20";
+        }
+
+        private void _comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ComboBox comboBox = (ComboBox)sender;
+
+            int index = comboBox.SelectedIndex;
+        }
+
+        #endregion
+
+
+    }
 }

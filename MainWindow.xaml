@@ -9,8 +9,8 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="150"/>
-            <ColumnDefinition Width="*"
-                              MinWidth="50"
+            <ColumnDefinition Width="*" 
+                              MinWidth="50" 
                               MaxWidth="150"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
@@ -28,7 +28,8 @@
             <RowDefinition Height="30"/>
             <RowDefinition Height="30"/>
             <RowDefinition Height="30"/>
-            <RowDefinition Height="*" MinHeight="350"/>
+            <RowDefinition Height="*"
+                           MinHeight="350"/>
         </Grid.RowDefinitions>
 
         <TextBlock Text="Депозит"/>
@@ -37,21 +38,22 @@
         <TextBlock Text="Тейк"
                    Grid.Row="2"/>
         <TextBlock Text="Стоп"
-                    Grid.Row="3"/>
-        <TextBlock Text="Комиссия"
-                    Grid.Row="4"/>
-        <TextBlock Text="% Проц прибыли"
-                    Grid.Row="5"/>
+                   Grid.Row="3"/>
+        <TextBlock Text="Коммисия"
+                   Grid.Row="4"/>
+        <TextBlock Text="% Процент приб."
+                   Grid.Row="5"/>
         <TextBlock Text="Кол-во сделок"
-                    Grid.Row="6"/>
+                   Grid.Row="6"/>
         <TextBlock Text="Мин. % Депо"
-                    Grid.Row="7"/>
+                   Grid.Row="7"/>
         <TextBlock Text="Гарант. обесп."
-                    Grid.Row="9"/>
-        <ComboBox Name="_comboBox"
-                    Grid.Row="11" Margin="5,0"/>
+                   Grid.Row="9"/>
 
-        
+        <ComboBox Name="_comboBox"
+                  Grid.Row="11" Margin="5"/>
+
+
         <TextBox x:Name="_depo"
                  Grid.Column="1"/>
         <TextBox x:Name="_startLot"
@@ -70,21 +72,16 @@
                  Grid.Column="1" Grid.Row="7"/>
         <TextBox x:Name="_go"
                  Grid.Column="1" Grid.Row="9"/>
-        <Button Content="Рассчитать"
+        <Button Content="Расчитать"
                 Click="Button_Click"
                 Grid.Column="1" Grid.Row="11"/>
 
         <GroupBox Header="Таблица результатов"
-                  Grid.Column="2" Grid.RowSpan="12"
-                  Margin="10,1">
+                  Grid.Column="2" Grid.RowSpan="12" 
+                  Margin="10, 1">
             <DataGrid x:Name="_dataGrid"
-                         Margin="5"/>
-        </GroupBox>
+                      Margin="5"/>
 
-        <Canvas x:Name="_canvas"
-                Grid.Row = "13"
-                Grid.ColumnSpan="3"
-                Margin="10" Background="LightGray">
-        </Canvas>
+        </GroupBox>
     </Grid>
 </Window>
