@@ -1,5 +1,5 @@
 ﻿using Capital.Entity;
-using Capital.Enams;
+using Capital.Enums;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -73,7 +73,7 @@ namespace Capital
             Draw(datas);
         }
 
-        private List<Data>Calculate()
+        private List<Data> Calculate()
         {
             decimal depoStart = GetDecimalFromString(_depo.Text);
             int startLot = GetIntFromString(_startLot.Text);
@@ -108,7 +108,7 @@ namespace Capital
                 {
                     // Сделка прибыльная
 
-                    //============ 1 strategy =================
+                    //============ 1 strategy ================
                     datas[0].ResultDepo += (take - comiss) * startLot;
 
                     //============ 2 strategy ================
@@ -117,7 +117,7 @@ namespace Capital
 
                     int newLot = CalculateLot(datas[1].ResultDepo, percent, go);
 
-                    if (lotPercent< newLot) lotPercent = newLot;
+                    if (lotPercent < newLot) lotPercent = newLot;
 
                     //============ 3 strategy ================
 
@@ -125,7 +125,7 @@ namespace Capital
 
                     lotPercent = CalculateLot(depoStart, minStartPercent * multiply, go);
 
-                    //=========== 4 strategy ================== 
+                    //=========== 4 strategy ================= 
 
                     datas[3].ResultDepo += (take - comiss) * lotDown;
 
@@ -174,7 +174,7 @@ namespace Capital
             decimal maxEquity = listEquity.Max();
             decimal minEquity = listEquity.Min();
 
-            double steoX = _canvas.ActualWidth / count;
+            double stepX = _canvas.ActualWidth / count;
             double koef = (double)(maxEquity - minEquity) / _canvas.ActualHeight;
 
             double x = 0;
@@ -184,20 +184,20 @@ namespace Capital
             {
                 y = _canvas.ActualHeight - (double)(listEquity[i] - minEquity) / koef;
 
-                Ellipse ellips = new Ellipse()
+                Ellipse ellipse = new Ellipse()
                 {
                     Width = 2,
                     Height = 2,
                     Stroke = Brushes.Black
                 };
 
-                Canvas.SetLeft(ellips, x);
-                Canvas.SetTop(ellips, y);
+                Canvas.SetLeft(ellipse, x);
+                Canvas.SetTop(ellipse, y);
 
-                _canvas.Children.Add(ellips);
+                _canvas.Children.Add(ellipse);
 
 
-                x += steoX;
+                x += stepX;
             }
         }
 
