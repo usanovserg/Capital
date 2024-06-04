@@ -33,9 +33,7 @@ namespace Capital.Entity
         }
         decimal _depo;
 
-        /// <summary>
-        /// Результат эквити (депо)
-        /// </summary>
+
         public decimal ResultDepo
         {
             get => _resultDepo;
@@ -57,14 +55,10 @@ namespace Capital.Entity
 
         public decimal Profit { get; set; }
 
-        /// <summary>
-        /// Относительный профит в процентах
-        /// </summary>
+
         public decimal PercentProfit { get; set; }
 
-        /// <summary>
-        /// Максимальная абсолютная просадка в деньгах
-        /// </summary>
+
         public decimal MaxDrawDown
         {
             get => _maxDrawDown;
@@ -78,9 +72,7 @@ namespace Capital.Entity
         }
         decimal _maxDrawDown;
 
-        /// <summary>
-        /// Максимальная относительная просадка в процентах
-        /// </summary>
+
         public decimal PercentDrawDown { get; set; }
 
         #endregion
@@ -124,7 +116,6 @@ namespace Capital.Entity
 
         private void CalcPercentDrawDown()
         {
-            //if (ResultDepo == 0) ResultDepo = 1;
             decimal percent = MaxDrawDown * 100 / ResultDepo;
 
             if (percent > PercentDrawDown) PercentDrawDown = Math.Round(percent, 2);

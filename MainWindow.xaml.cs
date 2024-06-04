@@ -108,10 +108,10 @@ namespace Capital
                 {
                     // Сделка прибыльная
 
-                    //============ 1 strategy ================
+                    // 1 strategy 
                     datas[0].ResultDepo += (take - comiss) * startLot;
 
-                    //============ 2 strategy ================
+                    // 2 strategy 
 
                     datas[1].ResultDepo += (take - comiss) * lotPercent;
 
@@ -119,13 +119,13 @@ namespace Capital
 
                     if (lotPercent < newLot) lotPercent = newLot;
 
-                    //============ 3 strategy ================
+                    // 3 strategy 
 
                     datas[2].ResultDepo += (take - comiss) * lotProgress;
 
                     lotPercent = CalculateLot(depoStart, minStartPercent * multiply, go);
 
-                    //=========== 4 strategy ================= 
+                    // 4 strategy  
 
                     datas[3].ResultDepo += (take - comiss) * lotDown;
 
@@ -134,20 +134,20 @@ namespace Capital
                 else
                 {
                     // Сделка убыточная
-                    //============ 1 strategy =================
+                    // 1 strategy 
                     datas[0].ResultDepo -= (take + comiss) * startLot;
 
-                    //============ 2 strategy ==================
+                    // 2 strategy 
 
                     datas[1].ResultDepo -= (take + comiss) * lotPercent;
 
-                    //============ 3 strategy ==================
+                    // 3 strategy 
 
                     datas[2].ResultDepo -= (take + comiss) * lotProgress;
 
                     lotProgress = CalculateLot(depoStart, minStartPercent, go);
 
-                    //============ 4 strategy ==================
+                    // 4 strategy 
 
                     datas[3].ResultDepo -= (take + comiss) * lotDown;
 
