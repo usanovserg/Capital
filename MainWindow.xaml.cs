@@ -3,6 +3,7 @@ using Capital.Entity;
 using Capital.Enums;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
@@ -33,6 +34,8 @@ namespace Capital
 
         Random _random = new Random();
 
+        List<Data> _datas = new List<Data>();
+
         #endregion
 
         #region Methods ===================================================
@@ -59,17 +62,26 @@ namespace Capital
         private void _comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
-            ComboBox comboBox = (ComboBox)sender;
+            //ComboBox comboBox = (ComboBox)sender;
 
-            int index = comboBox.SelectedIndex;
+            //int index = comboBox.SelectedIndex;
 
+            if (_datas.Count != 0)
+                Draw(_datas);
+
+        }
+
+        private void _canvas_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (_datas.Count != 0)
+                Draw(_datas);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            List<Data> datas = Calculate();
+            _datas = Calculate();
 
-            Draw(datas);
+            Draw(_datas);
         }
 
         private List<Data> Calculate()
@@ -238,9 +250,6 @@ namespace Capital
 
         #endregion
 
-        private void _canvas_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-
-        }
+        
     }
 }
