@@ -29,7 +29,6 @@ public partial class MainWindow : Window
 
     Random _random = new Random();
 
-
     private void Init()
     {
         _comboBox.ItemsSource = _strategies;
