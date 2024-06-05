@@ -17,23 +17,23 @@ public partial class MainWindow : Window
         Init();
     }
 
-    private readonly List<StrategyType> _strategies = new List<StrategyType>()
+    List<StrategyType> _strategies = new List<StrategyType>()
     {
-        StrategyType.Fix,
-        StrategyType.Capitalization,
-        StrategyType.Progress,
-        StrategyType.Downgrade
+        StrategyType.FIX,
+        StrategyType.CAPITALIZATION,
+        StrategyType.PROGRESS,
+        StrategyType.DOWNGRADE
     };
 
 
 
-    private readonly Random _random = Random.Shared;
+    Random _random = new Random();
 
 
     private void Init()
     {
         _comboBox.ItemsSource = _strategies;
-        _comboBox.SelectionChanged += ComboBox_SelectionChanged;
+        _comboBox.SelectionChanged += _comboBox_SelectionChanged;
         _comboBox.SelectedIndex = 0;
         _depo.Text = "100000";
         _startLot.Text = "10";
@@ -46,10 +46,10 @@ public partial class MainWindow : Window
         _minStartPercent.Text = "20";
     }
 
-    private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    private void _comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        var comboBox = (ComboBox)sender;
-        var index = comboBox.SelectedIndex;
+        ComboBox comboBox = (ComboBox)sender;
+        int index = comboBox.SelectedIndex;
     }
 
     private void Button_Click(object sender, RoutedEventArgs e)
@@ -59,27 +59,32 @@ public partial class MainWindow : Window
 
     private void Calculate()
     {
-        var depoStart = GetDecimalFromString(_depo.Text);
-        var startLot = GetIntFromString(_startLot.Text);
-        var take = GetDecimalFromString(_take.Text);
-        var stop = GetDecimalFromString(_stop.Text);
-        var comiss = GetDecimalFromString(_comiss.Text);
-        var countTrades = GetIntFromString(_countTrades.Text);
-        var percProfit = GetDecimalFromString(_percentProfit.Text);
-        var minStartPercent = GetDecimalFromString(_minStartPercent.Text);
-        var go = GetDecimalFromString(_go.Text);
+        decimal depoStart = GetDecimalFromString(_depo.Text);
+        int startLot = GetIntFromString(_startLot.Text);
+        decimal take = GetDecimalFromString(_take.Text);
+        decimal stop = GetDecimalFromString(_stop.Text);
+        decimal comiss = GetDecimalFromString(_comiss.Text);
+        int countTrades = GetIntFromString(_countTrades.Text);
+        decimal percProfit = GetDecimalFromString(_percentProfit.Text);
+        decimal minStartPercent = GetDecimalFromString(_minStartPercent.Text);
+        decimal go = GetDecimalFromString(_go.Text);
 
-        var datas = _strategies.Select(type => new Data(depoStart, type)).ToList();
+        List<Data> datas = new List<Data>();
 
-        var lotPercent = startLot;
-        var percent = startLot * go * 100 / depoStart;
-        var multiply = take / stop;
-        var lotProgress = CalculateLot(depoStart, minStartPercent, go);
-        var lotDown = startLot;
-
-        for (var i = 0; i < countTrades; i++)
+        foreach (StrategyType type in _strategies)
         {
-            var rnd = _random.Next(1, 100);
+            datas.Add(new Data(depoStart, type));
+        }
+
+        int lotPercent = startLot;
+        decimal percent = startLot * go * 100 / depoStart;
+        decimal multiply = take / stop;
+        int lotProgress = CalculateLot(depoStart, minStartPercent, go);
+        int lotDown = startLot;
+
+        for (int i = 0; i < countTrades; i++)
+        {
+            int rnd = _random.Next(1, 100);
 
             if (rnd <= percProfit)
             {
@@ -91,7 +96,7 @@ public partial class MainWindow : Window
                 // 2 strategy
                 datas[1].ResultDepo += (take - comiss) * lotPercent;
 
-                var newLot = CalculateLot(datas[1].ResultDepo, percent, go);
+                int newLot = CalculateLot(datas[1].ResultDepo, percent, go);
 
                 if (lotPercent < newLot) lotPercent = newLot;
 
@@ -137,12 +142,23 @@ public partial class MainWindow : Window
         if (percent > 100) percent = 100;
 
 
-        var lot = currentDepo / go / 100 * percent;
+        decimal lot = currentDepo / go / 100 * percent;
 
         return (int)lot;
     }
 
-    private decimal GetDecimalFromString(string str) => decimal.TryParse(str, out var result) ? result : 0;
+    private decimal GetDecimalFromString(string str)
+    {
+        if (decimal.TryParse(str, out decimal result)) return result;
 
-    private int GetIntFromString(string str) => int.TryParse(str, out var result) ? result : 0;
+        return 0;
+    }
+
+
+    private int GetIntFromString(string str)
+    {
+        if (int.TryParse(str, out int result)) return result;
+
+        return 0;
+    }
 }
