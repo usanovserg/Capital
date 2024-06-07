@@ -37,6 +37,7 @@ public partial class MainWindow : Window
         _comboBox.ItemsSource = _strategies;
         _comboBox.SelectionChanged += _comboBox_SelectionChanged;
         _comboBox.SelectedIndex = 0;
+        _canvas.SizeChanged += CanvasSizeChanged;
         _depo.Text = "100000";
         _startLot.Text = "10";
         _take.Text = "300";
@@ -46,18 +47,36 @@ public partial class MainWindow : Window
         _percentProfit.Text = "30";
         _go.Text = "5000";
         _minStartPercent.Text = "20";
+
+        _canvas.SizeChanged += CanvasSizeChanged;
     }
+
+    
+
+    private List<Data>? _datas;
 
     private void _comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         ComboBox comboBox = (ComboBox)sender;
         int index = comboBox.SelectedIndex;
+        if (_datas != null)
+        {
+            Draw(_datas);
+        }
     }
 
     private void Button_Click(object sender, RoutedEventArgs e)
     {
-        List<Data> datas = Calculate();
-        Draw(datas);
+        _datas = Calculate();
+        Draw(_datas);
+    }
+
+    private void CanvasSizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        if (_datas != null)
+        {
+            Draw(_datas);
+        }
     }
 
     private List<Data> Calculate()
