@@ -1,5 +1,8 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+//using System.Windows.Ink;
+using System.Windows.Media;
+using System.Windows.Shapes;
 using Capital.Entity;
 using Capital.Enums;
 
@@ -53,10 +56,11 @@ public partial class MainWindow : Window
 
     private void Button_Click(object sender, RoutedEventArgs e)
     {
-        Calculate();
+        List<Data> datas = Calculate();
+        Draw(datas);
     }
 
-    private void Calculate()
+    private List<Data> Calculate()
     {
         decimal depoStart = GetDecimalFromString(_depo.Text);
         int startLot = GetIntFromString(_startLot.Text);
@@ -134,6 +138,7 @@ public partial class MainWindow : Window
         }
 
         _dataGrid.ItemsSource = datas;
+        return datas;
     }
 
     private int CalculateLot(decimal currentDepo, decimal percent, decimal go)
@@ -159,5 +164,41 @@ public partial class MainWindow : Window
         if (int.TryParse(str, out int result)) return result;
 
         return 0;
+    }
+
+    private void Draw(List<Data> datas)
+    {
+        _canvas.Children.Clear();
+        int index = _comboBox.SelectedIndex;
+        List<decimal> listEquity = datas[index].GetListEquity();
+
+        int count = listEquity.Count;
+        decimal maxEquity = listEquity.Max();
+        decimal minEquity = listEquity.Min();
+
+        double stepX = _canvas.ActualWidth / count;
+        double koef = (double)(maxEquity - minEquity) / _canvas.ActualHeight;
+
+        double x = 0;
+        double y = 0;
+
+        for (int i = 0; i < count; i++)
+        {
+            y = _canvas.ActualHeight - (double)(listEquity[i] - minEquity) / koef;
+
+            Ellipse ellipse = new Ellipse()
+            {
+                Width = 2,
+                Height = 2,
+                Stroke = Brushes.Black
+            };
+
+            Canvas.SetLeft(ellipse, x);
+            Canvas.SetTop(ellipse, y);
+
+            _canvas.Children.Add(ellipse);
+
+            x += stepX;
+        }
     }
 }
