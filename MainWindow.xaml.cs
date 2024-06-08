@@ -200,22 +200,26 @@ public partial class MainWindow : Window
 
         double x = 0;
         double y = 0;
+        double x2 = 0;
+        double y2 = 0;
 
         for (int i = 0; i < count; i++)
         {
             y = _canvas.ActualHeight - (double)(listEquity[i] - minEquity) / koef;
 
-            Ellipse ellipse = new Ellipse()
+            Line line = new Line
             {
-                Width = 2,
-                Height = 2,
+                X1 = x,
+                Y1 = y,
+                X2 = x2,
+                Y2 = y2,
                 Stroke = Brushes.Black
             };
 
-            Canvas.SetLeft(ellipse, x);
-            Canvas.SetTop(ellipse, y);
+            _canvas.Children.Add(line);
 
-            _canvas.Children.Add(ellipse);
+            x2 = x;
+            y2 = y;
 
             x += stepX;
         }
