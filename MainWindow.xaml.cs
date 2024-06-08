@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System;
 
 namespace Capital
 {
@@ -23,6 +24,16 @@ namespace Capital
             InitializeComponent();
 
             Init();
+
+            this.SizeChanged += MainWindow_SizeChanged;
+        }
+
+        private void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (_dataGrid.ItemsSource is List<Data> datas)
+            {
+                Draw(datas);
+            }
         }
 
         #region Fields ========================================
@@ -135,21 +146,21 @@ namespace Capital
                 {
                     // Сделка убыточная
                     //============ 1 strategy =================
-                    datas[0].ResultDepo -= (take + comiss) * startLot;
+                    datas[0].ResultDepo -= (stop + comiss) * startLot;
 
                     //============ 2 strategy ==================
 
-                    datas[1].ResultDepo -= (take + comiss) * lotPercent;
+                    datas[1].ResultDepo -= (stop + comiss) * lotPercent;
 
                     //============ 3 strategy ==================
 
-                    datas[2].ResultDepo -= (take + comiss) * lotProgress;
+                    datas[2].ResultDepo -= (stop + comiss) * lotProgress;
 
                     lotProgress = CalculateLot(depoStart, minStartPercent, go);
 
                     //============ 4 strategy ==================
 
-                    datas[3].ResultDepo -= (take + comiss) * lotDown;
+                    datas[3].ResultDepo -= (stop + comiss) * lotDown;
 
                     lotDown /= 2;
 
@@ -174,32 +185,42 @@ namespace Capital
             decimal maxEquity = listEquity.Max();
             decimal minEquity = listEquity.Min();
 
-            double steoX = _canvas.ActualWidth / count;
-            double koef = (double)(maxEquity - minEquity) / _canvas.ActualHeight;
+            double canvasWidth = _canvas.ActualWidth;
+            double canvasHeight = _canvas.ActualHeight;
 
-            double x = 0;
-            double y = 0;
+            double stepX = _canvas.ActualWidth / count;
+            double koef = (double)(maxEquity - minEquity) / _canvas.ActualHeight;
+            
+
+            PolyLineSegment polylineSegment = new PolyLineSegment();
+
 
             for (int i = 0; i < count; i++)
             {
-                y = _canvas.ActualHeight - (double)(listEquity[i] - minEquity) / koef;
+                double x = i * stepX;
+                double y = canvasHeight - (double)(listEquity[i] - minEquity) / koef;
+                polylineSegment.Points.Add(new Point(x, y));
 
-                Ellipse ellips = new Ellipse()
+                Polyline polyline = new Polyline
                 {
-                    Width = 2,
-                    Height = 2,
-                    Stroke = Brushes.Black
+                    Stroke = Brushes.Black,
+                    StrokeThickness = 2,
+                    Points = polylineSegment.Points
                 };
 
-                Canvas.SetLeft(ellips, x);
-                Canvas.SetTop(ellips, y);
-
-                _canvas.Children.Add(ellips);
 
 
-                x += steoX;
+
+
+                _canvas.Children.Add(polyline);
+                
             }
+            
+            
+            
         }
+
+
 
         private int CalculateLot(decimal currentDepo, decimal percent, decimal go)
         {
