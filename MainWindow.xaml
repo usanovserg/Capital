@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Capital"
         mc:Ignorable="d"
-        Title="MainWindow" Height="800" Width="1200">
+        Title="MainWindow" Height="800" Width="1200"
+        SizeChanged="Window_SizeChanged">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="150"/>
@@ -14,7 +15,7 @@
                               MaxWidth="150"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        
+
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
             <RowDefinition Height="30"/>
@@ -83,5 +84,11 @@
                       Margin="5"/>
 
         </GroupBox>
+
+        <Canvas x:Name="_canvas"
+                Grid.Row="13"
+                Grid.ColumnSpan="3"
+                Margin="10"
+                Background="LightGray"/>
     </Grid>
 </Window>

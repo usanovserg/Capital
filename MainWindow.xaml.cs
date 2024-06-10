@@ -1,38 +1,26 @@
 ﻿using Capital.Entity;
 using Capital.Enums;
-using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace Capital
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         public MainWindow()
         {
             InitializeComponent();
-
             Init();
         }
 
         #region Fields ==============================================
 
-        List<StrategyType> _strategies = new List<StrategyType>() 
+        List<StrategyType> _strategies = new List<StrategyType>()
         {
             StrategyType.FIX,
             StrategyType.CAPITALIZATION,
@@ -41,16 +29,18 @@ namespace Capital
         };
 
         Random _random = new Random();
+        List<Data> _currentDatas = new List<Data>(); // Поле для хранения текущих данных эквити
 
         #endregion
 
         #region Methods ==============================================
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Calculate();
+            _currentDatas = Calculate();
+            Draw(_currentDatas);
         }
 
-        private void Calculate()
+        private List<Data> Calculate()
         {
             decimal depoStart = GetDecimalFromString(_depo.Text);
             int startLot = GetIntFromString(_startLot.Text);
@@ -64,7 +54,7 @@ namespace Capital
 
             List<Data> datas = new List<Data>();
 
-            foreach(StrategyType type in _strategies)
+            foreach (StrategyType type in _strategies)
             {
                 datas.Add(new Data(depoStart, type));
             }
@@ -81,9 +71,9 @@ namespace Capital
             {
                 int rnd = _random.Next(1, 100);
 
-                if (rnd <= percProfit) 
+                if (rnd <= percProfit)
                 {
-                    // Сделка припбыльная
+                    // Сделка прибыльная
 
                     //====================== 1 strat ====================
                     datas[0].ResultDepo += (take - comiss) * startLot;
@@ -108,7 +98,7 @@ namespace Capital
 
                     lotDown = startLot;
                 }
-                else 
+                else
                 {
                     // Сделка убыточная
 
@@ -133,12 +123,46 @@ namespace Capital
             }
 
             _dataGrid.ItemsSource = datas;
+
+            return datas;
         }
 
-        private int CalculateLot(decimal currentDepo, decimal percent, decimal go) 
+        private void Draw(List<Data> datas)
         {
+            _canvas.Children.Clear();
+            int index = _comboBox.SelectedIndex;
 
-            if(percent > 100) percent = 100;
+            List<decimal> listEquity = datas[index].GetListEquity();
+
+            int count = listEquity.Count;
+            decimal maxEquity = listEquity.Max();
+            decimal minEquity = listEquity.Min();
+
+            double stepX = _canvas.ActualWidth / count;
+            double koef = (double)(maxEquity - minEquity) / _canvas.ActualHeight;
+
+            PointCollection points = new PointCollection();
+
+            for (int i = 0; i < count; i++)
+            {
+                double x = i * stepX;
+                double y = _canvas.ActualHeight - (double)(listEquity[i] - minEquity) / koef;
+                points.Add(new Point(x, y));
+            }
+
+            Polyline polyline = new Polyline
+            {
+                Stroke = Brushes.Black,
+                StrokeThickness = 1,
+                Points = points
+            };
+
+            _canvas.Children.Add(polyline);
+        }
+
+        private int CalculateLot(decimal currentDepo, decimal percent, decimal go)
+        {
+            if (percent > 100) percent = 100;
             decimal lot = currentDepo / go / 100 * percent;
 
             return (int)lot;
@@ -175,13 +199,20 @@ namespace Capital
 
         private void _comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ComboBox comboBox = (ComboBox)sender;
+            if (_currentDatas != null && _currentDatas.Count > 0)
+            {
+                Draw(_currentDatas);
+            }
+        }
 
-            int index = comboBox.SelectedIndex;
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (_currentDatas != null && _currentDatas.Count > 0)
+            {
+                Draw(_currentDatas);
+            }
         }
 
         #endregion
-
-
     }
 }
