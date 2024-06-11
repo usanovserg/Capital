@@ -2,7 +2,7 @@
 using System.Data;
 using System.Windows;
 
-namespace Capital
+namespace MyCapital
 {
     /// <summary>
     /// Interaction logic for App.xaml
