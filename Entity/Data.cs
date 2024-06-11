@@ -40,10 +40,11 @@ namespace Capital.Entity
                 _resultDepo = value;
 
                 Profit = ResultDepo - Depo;
+                // Profit = _resultDepo - _depo; // так тоже верно
 
                 PercentProfit = Profit * 100 / Depo;
 
-                LisrEquity.Add(ResultDepo);
+                ListEquity.Add(ResultDepo);
 
                 CalcDrawDown();
             }
@@ -82,12 +83,12 @@ namespace Capital.Entity
 
         #region Fields =========================================
 
-        List<decimal> LisrEquity = new List<decimal>();
-
+        // Результирующее депо после совершения каждой сделки - Кривая доходности
+        List<decimal> ListEquity = new List<decimal>();
+        // Запоминаем максимум на кривой доходности
         private decimal _max = 0;
-
+        // Запоминаем минимум на кривой доходности
         private decimal _min = 0;
-
 
         #endregion
 
@@ -95,7 +96,7 @@ namespace Capital.Entity
 
         public List<decimal> GetListEquity()
         {
-            return LisrEquity;
+            return ListEquity;
         }
 
         private void CalcDrawDown()
