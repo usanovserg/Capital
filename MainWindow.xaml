@@ -1,12 +1,110 @@
 ﻿<Window x:Class="Capital.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Capital"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:local="clr-namespace:Capital"
+		mc:Ignorable="d"
+		Title="MainWindow" Height="800" Width="1250">
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200" />
+            <ColumnDefinition Width="*" MinWidth="50" MaxWidth="150" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="*" MinHeight="350"/>
+        </Grid.RowDefinitions>
 
+        <TextBlock Text="Депозит"
+                   VerticalAlignment="Center"/>
+        <TextBlock Text="Начальный лот"
+                 VerticalAlignment="Center"
+				   Grid.Row="1"/>
+        <TextBlock Text="Тейк"
+                 VerticalAlignment="Center"
+				   Grid.Row="2"/>
+        <TextBlock Text="Стоп"
+                 VerticalAlignment="Center"
+				   Grid.Row="3"/>
+        <TextBlock Text="Комиссия"
+                 VerticalAlignment="Center"
+				   Grid.Row="4"/>
+        <TextBlock Text="% прибыльных сделок"
+                 VerticalAlignment="Center"
+				   Grid.Row="5"/>
+        <TextBlock Text="Кол-во сделок"
+                 VerticalAlignment="Center"
+				   Grid.Row="6"/>
+        <TextBlock Text="Мин. % депо"
+                 VerticalAlignment="Center"
+				   Grid.Row="7"/>
+        <TextBlock Text="Гарантийное обеспечение"
+                 VerticalAlignment="Center"
+				   Grid.Row="9"/>
+        <ComboBox x:Name="_combobox" 
+				   Grid.Row="11" Margin="5, 0"
+				  SelectionChanged="_combobox_SelectionChanged"/>
+        <TextBlock Text="График"
+				   Grid.Row="12"/>
+
+        <TextBox x:Name="_depot"
+                 HorizontalContentAlignment="Right"
+                 VerticalAlignment="Center"
+				 Grid.Column="1" />
+        <TextBox x:Name="_startLot"
+                 HorizontalContentAlignment="Right"
+                 VerticalAlignment="Center"
+				 Grid.Column="1" Grid.Row="1" />
+        <TextBox x:Name="_take"
+                 HorizontalContentAlignment="Right"
+                 VerticalAlignment="Center"
+				 Grid.Column="1" Grid.Row="2"/>
+        <TextBox x:Name="_stop"
+                 HorizontalContentAlignment="Right"
+                 VerticalAlignment="Center"
+				 Grid.Column="1" Grid.Row="3"/>
+        <TextBox x:Name="_comiss"
+                 HorizontalContentAlignment="Right"
+                 VerticalAlignment="Center"
+				 Grid.Column="1" Grid.Row="4"/>
+        <TextBox x:Name="_percentGoodDeals"
+                 HorizontalContentAlignment="Right"
+                 VerticalAlignment="Center"
+				 Grid.Column="1" Grid.Row="5"/>
+        <TextBox x:Name="_countTrades"
+                 HorizontalContentAlignment="Right"
+                 VerticalAlignment="Center"
+				 Grid.Column="1" Grid.Row="6"/>
+        <TextBox x:Name="_minStartPercent"
+                 HorizontalContentAlignment="Right"
+                 VerticalAlignment="Center"
+				 Grid.Column="1" Grid.Row="7"/>
+        <TextBox x:Name="_go"
+                 HorizontalContentAlignment="Right"
+                 VerticalAlignment="Center"
+				 Grid.Column="1" Grid.Row="9"/>
+        <Button Content="Рассчитать" Name="_button"
+				Grid.Column="1" Grid.Row="11" Margin="5, 0"
+				Click="_button_Click" IsDefault="True" />
+
+        <GroupBox Header="Таблица результатов"
+				  Grid.Column="2" Grid.RowSpan="12"
+				  Margin="10, 1">
+            <DataGrid x:Name="_dataGrid"
+					  Margin="5"/>
+        </GroupBox>
     </Grid>
 </Window>
