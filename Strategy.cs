@@ -14,7 +14,8 @@ namespace Capital
         #region Properties ===================================
         public StrategyType StrategyType { get; set; }
         public decimal Depot { get; set; }
-        public decimal ResultDepot { get; set; }
+        public decimal ResultDepot { get => _resultDepot; set { SetResultDepot(value); } }
+        private decimal _resultDepot;
         /// <summary>
         /// Профит, в деньгах
         /// </summary>
@@ -39,14 +40,25 @@ namespace Capital
 
         #region Fields ===================================
         protected Params _p;
+
+        private decimal _localMaximum;
+        private decimal _localMinimum;
+
+        List<decimal> _results;
+
         #endregion
 
         public Strategy(Params p)
         {
             _p = p;
 
+            _results = new List<decimal>(_p.CountTrades);
+
             Depot = _p.Depot;
-            ResultDepot = _p.Depot;
+            ResultDepot = Depot;
+
+            _localMaximum = Depot;
+            _localMinimum = Depot;
         }
 
         /// <summary>
@@ -75,15 +87,36 @@ namespace Capital
                     throw new NotImplementedException();
             }
         }
-
-        /// <summary>
-        /// Calculate result for current strategy (to be implemented in derived classes)
-        /// </summary>
-        public void Calculate(List<bool> deals)
+        void SetResultDepot(decimal resultDepot)
         {
-            if (deals.Count != 0)
-                GoodDealPercent = Math.Round(100M * deals.Count(bGoodDeal => { Deal(bGoodDeal); return bGoodDeal; }) / deals.Count, 2);
+            _resultDepot = resultDepot;
+
+            Profit = resultDepot - Depot;
+            PercentProfit = Math.Round(Profit / Depot * 100M, 2);
+
+            if (resultDepot > _localMaximum)
+            {
+                _localMaximum = resultDepot;
+                _localMinimum = resultDepot;
+            }
+
+            if (resultDepot < _localMinimum)
+            {
+                _localMinimum = resultDepot;
+
+                decimal drawDown = _localMaximum - _localMinimum;
+                if (drawDown > MaxDrawDown)
+                    MaxDrawDown = drawDown;
+
+                decimal percentDrawDown = Math.Round(drawDown / _localMaximum * 100M, 2);
+                if (percentDrawDown > PercentDrawDown)
+                    PercentDrawDown = percentDrawDown;
+            }
+
+            _results.Add(resultDepot);
         }
+
+        public List<decimal> GetResults() => _results;
 
         public int CalculateWorkingLot(decimal depot, decimal go, decimal percent)
         {
@@ -91,6 +124,20 @@ namespace Capital
             return (int)WorkingLot;
         }
 
+        /// <summary>
+        /// Calculate result for current strategy
+        /// </summary>
+        public void Calculate(List<bool> deals)
+        {
+            if (deals.Count != 0)
+            {
+                GoodDealPercent = Math.Round(100M * deals.Count(bGoodDeal => { Deal(bGoodDeal); return bGoodDeal; }) / deals.Count, 2);
+            }
+        }
+        /// <summary>
+        /// Add a deal to strategy (to be implemented in derived classes)
+        /// </summary>
+        /// <param name="bGoodDeal">bool GoodDeal: true | BadDeal: false</param>
         public abstract void Deal(bool bGoodDeal);
     }
     //========================================================================
@@ -129,9 +176,9 @@ namespace Capital
             {
                 ResultDepot += (_p.Take - _p.Comiss) * _workingLot;
 
-                int proposedWorkingLot = (int)(ResultDepot / Depot) * _p.StartLot;
+                decimal proposedWorkingLot = (ResultDepot / Depot) * _p.StartLot;
                 if (proposedWorkingLot > _workingLot)
-                    _workingLot = proposedWorkingLot;
+                    _workingLot = (int)proposedWorkingLot;
             }
             else
             {
