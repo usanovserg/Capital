@@ -72,7 +72,7 @@ namespace Capital
 
             Draw(datas);
         }
-
+        
         private List<Data>Calculate()
         {
             decimal depoStart = GetDecimalFromString(_depo.Text);
@@ -117,7 +117,7 @@ namespace Capital
 
                     int newLot = CalculateLot(datas[1].ResultDepo, percent, go);
 
-                    if (lotPercent< newLot) lotPercent = newLot;
+                    if (lotPercent < newLot) lotPercent = newLot;
 
                     //============ 3 strategy ================
 
@@ -135,21 +135,21 @@ namespace Capital
                 {
                     // Сделка убыточная
                     //============ 1 strategy =================
-                    datas[0].ResultDepo -= (take + comiss) * startLot;
+                    datas[0].ResultDepo -= (stop + comiss) * startLot;
 
                     //============ 2 strategy ==================
 
-                    datas[1].ResultDepo -= (take + comiss) * lotPercent;
+                    datas[1].ResultDepo -= (stop + comiss) * lotPercent;
 
                     //============ 3 strategy ==================
 
-                    datas[2].ResultDepo -= (take + comiss) * lotProgress;
+                    datas[2].ResultDepo -= (stop + comiss) * lotProgress;
 
                     lotProgress = CalculateLot(depoStart, minStartPercent, go);
 
                     //============ 4 strategy ==================
 
-                    datas[3].ResultDepo -= (take + comiss) * lotDown;
+                    datas[3].ResultDepo -= (stop + comiss) * lotDown;
 
                     lotDown /= 2;
 
@@ -160,6 +160,29 @@ namespace Capital
             _dataGrid.ItemsSource = datas;
 
             return datas;
+        }
+
+        private int CalculateLot(decimal currentDepo, decimal percent, decimal go)
+        {
+            if (percent > 100) { percent = 100; }
+
+            decimal lot = currentDepo / go / 100 * percent;
+
+            return (int)lot;
+        }
+
+        private decimal GetDecimalFromString(string str)
+        {
+            if (decimal.TryParse(str, out decimal result)) return result;
+
+            return 0;
+        }
+
+        private int GetIntFromString(string str)
+        {
+            if (int.TryParse(str, out int result)) return result;
+
+            return 0;
         }
 
         private void Draw(List<Data> datas)
@@ -196,34 +219,10 @@ namespace Capital
 
                 _canvas.Children.Add(ellips);
 
-
                 x += steoX;
             }
         }
 
-        private int CalculateLot(decimal currentDepo, decimal percent, decimal go)
-        {
-            if (percent > 100) { percent = 100; }
-
-            decimal lot = currentDepo / go / 100 * percent;
-
-            return (int)lot;
-        }
-
-        private decimal GetDecimalFromString(string str)
-        {
-            if (decimal.TryParse(str, out decimal result)) return result;
-
-            return 0;
-        }
-
-        private int GetIntFromString(string str)
-        {
-            if (int.TryParse(str, out int result)) return result;
-
-            return 0;
-        }
-
-             #endregion
-     }
+        #endregion
+    }
 }
