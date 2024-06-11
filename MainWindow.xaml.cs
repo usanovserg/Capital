@@ -21,7 +21,8 @@ namespace Capital
 
         #region Fields ========================================
 
-        List<StrategyType> _strategies = new List<StrategyType>()
+        //упрощение
+        List<StrategyType> _strategies = new()
         {
             StrategyType.FIX,
             StrategyType.CAPITALIZATION,
@@ -29,7 +30,8 @@ namespace Capital
             StrategyType.DOWNGRADE
         };
 
-        Random _random = new Random();
+        //Random _random = new Random();
+        Random _random = new();
 
         #endregion
 
@@ -129,6 +131,7 @@ namespace Capital
                 {
                     // Сделка убыточная
                     //============ 1 strategy =================
+
                     datas[0].ResultDepo -= (stop + comiss) * startLot;
 
                     //============ 2 strategy ==================
@@ -156,7 +159,8 @@ namespace Capital
             return datas;
         }
 
-        private int CalculateLot(decimal currentDepo, decimal percent, decimal go)
+        //добавлен static
+        private static int CalculateLot(decimal currentDepo, decimal percent, decimal go)
         {
             if (percent > 100) { percent = 100; }
 
@@ -165,14 +169,14 @@ namespace Capital
             return (int)lot;
         }
 
-        private decimal GetDecimalFromString(string str)
+        private static decimal GetDecimalFromString(string str)
         {
             if (decimal.TryParse(str, out decimal result)) return result;
 
             return 0;
         }
 
-        private int GetIntFromString(string str)
+        private static int GetIntFromString(string str)
         {
             if (int.TryParse(str, out int result)) return result;
 
