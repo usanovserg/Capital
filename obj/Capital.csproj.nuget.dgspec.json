@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\evgen\\Source\\Repos\\Capital\\Capital.csproj": {}
+    "C:\\Users\\evgen\\source\\repos\\Capital\\Capital.csproj": {}
   },
   "projects": {
-    "C:\\Users\\evgen\\Source\\Repos\\Capital\\Capital.csproj": {
+    "C:\\Users\\evgen\\source\\repos\\Capital\\Capital.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\evgen\\Source\\Repos\\Capital\\Capital.csproj",
+        "projectUniqueName": "C:\\Users\\evgen\\source\\repos\\Capital\\Capital.csproj",
         "projectName": "Capital",
-        "projectPath": "C:\\Users\\evgen\\Source\\Repos\\Capital\\Capital.csproj",
+        "projectPath": "C:\\Users\\evgen\\source\\repos\\Capital\\Capital.csproj",
         "packagesPath": "C:\\Users\\evgen\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\evgen\\Source\\Repos\\Capital\\obj\\",
+        "outputPath": "C:\\Users\\evgen\\source\\repos\\Capital\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\evgen\\AppData\\Roaming\\NuGet\\NuGet.Config",

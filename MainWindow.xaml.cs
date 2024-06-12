@@ -192,26 +192,22 @@ namespace Capital
             double koef = (double)(maxEquity - minEquity) / _canvas.ActualHeight;
             
 
-            PolyLineSegment polylineSegment = new PolyLineSegment();
+            PointCollection points = new PointCollection();
 
 
             for (int i = 0; i < count; i++)
             {
                 double x = i * stepX;
                 double y = canvasHeight - (double)(listEquity[i] - minEquity) / koef;
-                polylineSegment.Points.Add(new Point(x, y));
+                points.Add(new Point(x, y));
 
                 Polyline polyline = new Polyline
                 {
                     Stroke = Brushes.Black,
                     StrokeThickness = 2,
-                    Points = polylineSegment.Points
+                    Points = points
                 };
-
-
-
-
-
+                _canvas.Children.Clear();
                 _canvas.Children.Add(polyline);
                 
             }
