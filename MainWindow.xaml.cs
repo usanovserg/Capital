@@ -37,8 +37,8 @@ namespace Capital
 
         #region Methods ===========================================
 
-       private void Init()
-       {
+        private void Init()
+        {
             _comboBox.ItemsSource = _strategies;
             
             _comboBox.SelectionChanged += _comboBox_SelectionChanged;
@@ -53,22 +53,29 @@ namespace Capital
             _percentProfit.Text = "30";
             _go.Text = "5000";
             _minStartPercent.Text = "20";
-       }
+        }
 
+        // Выпадающий список - Выбор стратегии. При смене стратегии производится перерасчёт.
         private void _comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ComboBox comboBox = (ComboBox)sender;
 
             int index = comboBox.SelectedIndex;
+
+            List<Data> datas = Calculate();
+
+            Draw(datas);
         }
 
+        // Кнопка Рассчитать - Расчёт данных по выбранной стратегии
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             List<Data> datas = Calculate();
 
             Draw(datas);
         }
-        
+
+        // Расчёты эквити для разных стратегий
         private List<Data>Calculate()
         {
             decimal depoStart = GetDecimalFromString(_depo.Text);
@@ -89,9 +96,21 @@ namespace Capital
             }
 
             int lotPercent = startLot;
-            decimal percent = startLot * go * 100 / depoStart;
 
-            decimal multiply = take / stop;
+            decimal percent = 1;
+
+            if (depoStart == 0) { depoStart = 25000; }
+
+            try { percent = startLot * go * 100 / depoStart; }
+            catch (Exception) { }
+
+            decimal multiply = 1;
+
+            if (stop == 0) { stop = 1; }
+
+            try { multiply = take / stop; }
+            catch (Exception) { }
+
             int lotProgress = CalculateLot(depoStart, minStartPercent, go);
 
             int lotDown = startLot;
@@ -159,43 +178,55 @@ namespace Capital
             return datas;
         }
 
-        //добавлен static
-        private static int CalculateLot(decimal currentDepo, decimal percent, decimal go)
+        //
+        private int CalculateLot(decimal currentDepo, decimal percent, decimal go)
         {
             if (percent > 100) { percent = 100; }
 
-            decimal lot = currentDepo / go / 100 * percent;
+            if (percent == 0) { percent = 1; }
+
+            decimal lot = 1;
+
+            try { lot = currentDepo / go / 100 * percent; }
+            catch (Exception) { }
 
             return (int)lot;
         }
 
-        private static decimal GetDecimalFromString(string str)
+        private decimal GetDecimalFromString(string str)
         {
             if (decimal.TryParse(str, out decimal result)) return result;
 
             return 0;
         }
 
-        private static int GetIntFromString(string str)
+        private int GetIntFromString(string str)
         {
             if (int.TryParse(str, out int result)) return result;
 
             return 0;
         }
 
+        // Отрисовка графика
         private void Draw(List<Data> datas)
         {
+            // Удаление старого графика перед расчётом нового
             _canvas.Children.Clear();
 
             int index = _comboBox.SelectedIndex;
 
             List<decimal> listEquity = datas[index].GetListEquity();
 
+            // Кол-во значений по оси x
             int count = listEquity.Count;
+
+            // Максимальное значение в списке
             decimal maxEquity = listEquity.Max();
             decimal minEquity = listEquity.Min();
 
-            double steoX = _canvas.ActualWidth / count;
+            // ActualWidth - текущая ширина окна с графиком
+            double stepX = _canvas.ActualWidth / count;
+            // ActualHeight - текущая высота окна
             double koef = (double)(maxEquity - minEquity) / _canvas.ActualHeight;
 
             double x = 0;
@@ -215,9 +246,10 @@ namespace Capital
                 Canvas.SetLeft(ellips, x);
                 Canvas.SetTop(ellips, y);
 
+                // Размещение точки на Canvas
                 _canvas.Children.Add(ellips);
 
-                x += steoX;
+                x += stepX;
             }
         }
 

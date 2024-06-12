@@ -42,7 +42,8 @@ namespace Capital.Entity
                 Profit = ResultDepo - Depo;
                 // Profit = _resultDepo - _depo; // так тоже верно
 
-                PercentProfit = Profit * 100 / Depo;
+                try { PercentProfit = Profit * 100 / Depo; }
+                catch(Exception) { }
 
                 ListEquity.Add(ResultDepo);
 
@@ -118,9 +119,11 @@ namespace Capital.Entity
             }
         }
 
+        // Расчёт просадок в процентах
         private void CalcPercentDown()
         {
-            if (ResultDepo == 0) ResultDepo = 1;
+            if (ResultDepo == 0) { ResultDepo = 1; }
+
             decimal percent = MaxDrawDoun * 100 / ResultDepo;
 
             if (percent > PercentDrawDown) PercentDrawDown = Math.Round(percent, 2);
