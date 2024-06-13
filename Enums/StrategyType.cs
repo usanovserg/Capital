@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Capital.Enams
+namespace MyCapital.Enums
 {
     public enum StrategyType
     {
         FIX,
         CAPITALIZATION,
-        PROGRESS,
+        PROGRESSIVE,
         DOWNGRADE
     }
 }
