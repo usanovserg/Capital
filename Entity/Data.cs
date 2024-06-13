@@ -1,4 +1,9 @@
 ﻿using Capital.Enams;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Capital.Entity
 {
@@ -14,7 +19,6 @@ namespace Capital.Entity
         #region Propertirs =================================
 
         public StrategyType StrategyType { get; set; }
-
 
         public decimal Depo
         {
@@ -40,10 +44,10 @@ namespace Capital.Entity
                 _resultDepo = value;
 
                 Profit = ResultDepo - Depo;
-                // Profit = _resultDepo - _depo; // так тоже верно
+                //Profit = _resultDepo - _depo; // так тоже верно
+                //Profit = _resultDepo - value; // так тоже верно
 
-                try { PercentProfit = Profit * 100 / Depo; }
-                catch(Exception) { }
+                PercentProfit = Profit * 100 / Depo;
 
                 ListEquity.Add(ResultDepo);
 
@@ -85,7 +89,7 @@ namespace Capital.Entity
         #region Fields =========================================
 
         // Результирующее депо после совершения каждой сделки - Кривая доходности
-        List<decimal> ListEquity = new List<decimal>();
+        List<decimal> ListEquity = new();
         // Запоминаем максимум на кривой доходности
         private decimal _max = 0;
         // Запоминаем минимум на кривой доходности
@@ -102,17 +106,19 @@ namespace Capital.Entity
 
         private void CalcDrawDown()
         {
+            // Обновился максимум
             if (_max < ResultDepo)
             {
                 _max = ResultDepo;
                 _min = ResultDepo;
             }
 
+            // Обновился минимум
             if (_min > ResultDepo)
             {
                 _min = ResultDepo;
 
-                if(MaxDrawDoun < _max - _min)
+                if (MaxDrawDoun < _max - _min)
                 {
                     MaxDrawDoun = _max - _min;
                 }
@@ -122,7 +128,7 @@ namespace Capital.Entity
         // Расчёт просадок в процентах
         private void CalcPercentDown()
         {
-            if (ResultDepo == 0) { ResultDepo = 1; }
+            if (ResultDepo == 0) ResultDepo = 1;
 
             decimal percent = MaxDrawDoun * 100 / ResultDepo;
 

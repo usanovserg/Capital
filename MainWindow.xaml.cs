@@ -1,9 +1,24 @@
 ﻿using Capital.Entity;
 using Capital.Enams;
+
+using System;
+using System.Linq;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using Point = System.Windows.Point;
+
+using System.Text;
+using System.Globalization;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Threading;
+using System.Reflection;
 
 namespace Capital
 {
@@ -12,35 +27,41 @@ namespace Capital
     /// </summary>
     public partial class MainWindow : Window
     {
+        #region Fields ========================================
+
+        List<StrategyType> _strategies =
+        [
+            StrategyType.FIX,
+            StrategyType.CAPITALIZATION,
+            StrategyType.PROGRESS,
+            StrategyType.DOWNGRADE
+        ];
+
+        Random _random = new();
+
+        List<Data> currentDatas = [];
+
+        #endregion
+
         public MainWindow()
         {
             InitializeComponent();
 
             Init();
+
+            //currentDatas = Calculate();
+
+            //Draw(currentDatas);
         }
 
-        #region Fields ========================================
 
-        //упрощение
-        List<StrategyType> _strategies = new()
-        {
-            StrategyType.FIX,
-            StrategyType.CAPITALIZATION,
-            StrategyType.PROGRESS,
-            StrategyType.DOWNGRADE
-        };
-
-        //Random _random = new Random();
-        Random _random = new();
-
-        #endregion
 
         #region Methods ===========================================
 
         private void Init()
         {
             _comboBox.ItemsSource = _strategies;
-            
+
             _comboBox.SelectionChanged += _comboBox_SelectionChanged;
             _comboBox.SelectedIndex = 0;
 
@@ -55,28 +76,8 @@ namespace Capital
             _minStartPercent.Text = "20";
         }
 
-        // Выпадающий список - Выбор стратегии. При смене стратегии производится перерасчёт.
-        private void _comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            ComboBox comboBox = (ComboBox)sender;
-
-            int index = comboBox.SelectedIndex;
-
-            List<Data> datas = Calculate();
-
-            Draw(datas);
-        }
-
-        // Кнопка Рассчитать - Расчёт данных по выбранной стратегии
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            List<Data> datas = Calculate();
-
-            Draw(datas);
-        }
-
         // Расчёты эквити для разных стратегий
-        private List<Data>Calculate()
+        private List<Data> Calculate()
         {
             decimal depoStart = GetDecimalFromString(_depo.Text);
             int startLot = GetIntFromString(_startLot.Text);
@@ -88,8 +89,9 @@ namespace Capital
             decimal minStartPercent = GetDecimalFromString(_minStartPercent.Text);
             decimal go = GetDecimalFromString(_go.Text);
 
-            List<Data> datas = new List<Data>();
+            List<Data> datas = [];
 
+            // Запись начальных значений депо
             foreach (StrategyType type in _strategies)
             {
                 datas.Add(new Data(depoStart, type));
@@ -97,19 +99,9 @@ namespace Capital
 
             int lotPercent = startLot;
 
-            decimal percent = 1;
+            decimal percent = startLot * go * 100 / depoStart;
 
-            if (depoStart == 0) { depoStart = 25000; }
-
-            try { percent = startLot * go * 100 / depoStart; }
-            catch (Exception) { }
-
-            decimal multiply = 1;
-
-            if (stop == 0) { stop = 1; }
-
-            try { multiply = take / stop; }
-            catch (Exception) { }
+            decimal multiply = take / stop;
 
             int lotProgress = CalculateLot(depoStart, minStartPercent, go);
 
@@ -178,17 +170,127 @@ namespace Capital
             return datas;
         }
 
-        //
+        // Отрисовка графика
+        private void Draw(List<Data> datas)
+        {
+            // Удаление старого графика перед расчётом нового
+            _canvas.Children.Clear();
+
+            // Индекс выбранной стратегии
+            int index = _comboBox.SelectedIndex;
+
+            // Список значений по выбранной стратегии
+            List<decimal> listEquity = datas[index].GetListEquity();
+
+            // Кол-во значений по оси x
+            int count = listEquity.Count;
+
+            // Максимальное значение в списке
+            decimal maxEquity = listEquity.Max();
+            decimal minEquity = listEquity.Min();
+
+            // ActualWidth - текущая ширина окна с графиком
+            double stepX = _canvas.ActualWidth / count;
+
+            // ActualHeight - текущая высота окна
+            double koefY = (double)(maxEquity - minEquity) / _canvas.ActualHeight;
+
+            //double x1 = 0;
+            //double y1 = 0;
+            //double x2 = 0;
+            //double y2 = 0;
+
+            PointCollection points = new PointCollection();
+
+            // Перебираем все значения эквити
+            for (int i = 0; i < count; i++)
+            {
+                double x = i * stepX;
+
+                double y = _canvas.ActualHeight - (double)(listEquity[i] - minEquity) / koefY;
+
+                points.Add(new Point(x, y));
+
+                Polyline polyline = new Polyline
+                {
+                    Stroke = Brushes.Black,
+                    StrokeThickness = 2,
+                    Points = points
+                };
+
+                //if (i >= 1)
+                //{
+                //    // Создать линию
+                //    Line lineEquity = new()
+                //    {
+                //        X1 = x1,
+                //        Y1 = y1,
+                //        X2 = x2,
+                //        Y2 = y2
+                //    };
+
+                //    // Создать кисть
+                //    SolidColorBrush brush = new()
+                //    {
+                //        Color = Colors.Black
+                //    };
+
+                //    // Ширина и цвет линии
+                //    lineEquity.StrokeThickness = 2;
+                //    lineEquity.Stroke = brush;
+
+                //    // Размещение линии на Canvas
+                //    _canvas.Children.Add(lineEquity);
+                //}
+
+                //x1 = x2;
+                //y1 = y2;
+
+                //x2 += stepX;
+
+                _canvas.Children.Clear();
+                _canvas.Children.Add(polyline);
+            }
+        }
+
+        // Выпадающий список - Выбор стратегии 
+        private void _comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ComboBox comboBox = (ComboBox)sender;
+
+            //int index = comboBox.SelectedIndex;
+
+            if (currentDatas != null && currentDatas.Count > 0)
+            {
+                Draw(currentDatas);
+            }
+
+            // Програмная имитация клика по кнопке
+            //Button_Click(comboBox.SelectedIndex, ev);
+        }
+
+        // Кнопка Рассчитать - Расчёт данных по выбранной стратегии
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            currentDatas = Calculate();
+
+            Draw(currentDatas);
+        }
+
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (currentDatas != null && currentDatas.Count > 0)
+            {
+                Draw(currentDatas);
+            }
+        }
+
         private int CalculateLot(decimal currentDepo, decimal percent, decimal go)
         {
+
             if (percent > 100) { percent = 100; }
 
-            if (percent == 0) { percent = 1; }
-
-            decimal lot = 1;
-
-            try { lot = currentDepo / go / 100 * percent; }
-            catch (Exception) { }
+            decimal lot = currentDepo / go / 100 * percent;
 
             return (int)lot;
         }
@@ -205,52 +307,6 @@ namespace Capital
             if (int.TryParse(str, out int result)) return result;
 
             return 0;
-        }
-
-        // Отрисовка графика
-        private void Draw(List<Data> datas)
-        {
-            // Удаление старого графика перед расчётом нового
-            _canvas.Children.Clear();
-
-            int index = _comboBox.SelectedIndex;
-
-            List<decimal> listEquity = datas[index].GetListEquity();
-
-            // Кол-во значений по оси x
-            int count = listEquity.Count;
-
-            // Максимальное значение в списке
-            decimal maxEquity = listEquity.Max();
-            decimal minEquity = listEquity.Min();
-
-            // ActualWidth - текущая ширина окна с графиком
-            double stepX = _canvas.ActualWidth / count;
-            // ActualHeight - текущая высота окна
-            double koef = (double)(maxEquity - minEquity) / _canvas.ActualHeight;
-
-            double x = 0;
-            double y = 0;
-
-            for (int i = 0; i < count; i++)
-            {
-                y = _canvas.ActualHeight - (double)(listEquity[i] - minEquity) / koef;
-
-                Ellipse ellips = new Ellipse()
-                {
-                    Width = 2,
-                    Height = 2,
-                    Stroke = Brushes.Black
-                };
-
-                Canvas.SetLeft(ellips, x);
-                Canvas.SetTop(ellips, y);
-
-                // Размещение точки на Canvas
-                _canvas.Children.Add(ellips);
-
-                x += stepX;
-            }
         }
 
         #endregion

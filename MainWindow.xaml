@@ -5,16 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Capital"
         mc:Ignorable="d"
-        Title="MainWindow" Height="800" Width="1200">
+        Title="MainWindow" Height="1000" Width="1500">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="150"/>
+            <ColumnDefinition Width="180"/>
             <ColumnDefinition Width="*"
-                              MinWidth="50"
-                              MaxWidth="150"/>
+                              MinWidth="80"
+                              MaxWidth="180"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        
+
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
             <RowDefinition Height="30"/>
@@ -49,9 +49,10 @@
         <TextBlock Text="Гарант. обесп."
                     Grid.Row="9"/>
         <ComboBox Name="_comboBox"
-                    Grid.Row="11" Margin="5,0"/>
+                    Grid.Row="11" Margin="5,0"
+                    SelectionChanged="_comboBox_SelectionChanged"/>
 
-        
+
         <TextBox x:Name="_depo"
                  Grid.Column="1"/>
         <TextBox x:Name="_startLot"
@@ -84,7 +85,9 @@
         <Canvas x:Name="_canvas"
                 Grid.Row = "13"
                 Grid.ColumnSpan="3"
-                Margin="10" Background="LightGray">
+                Margin="10" 
+                Background="#ededed">
         </Canvas>
     </Grid>
 </Window>
+
