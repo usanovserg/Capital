@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
@@ -18,11 +19,16 @@ namespace Capital
     /// </summary>
     public partial class MainWindow : Window
     {
+        private List<Data> _datasStore;
+
         public MainWindow()
         {
             InitializeComponent();
 
             Init();
+
+            SizeChanged += MainWindow_SizeChanged;
+
         }
 
         #region Fields ========================================
@@ -66,11 +72,23 @@ namespace Capital
             int index = comboBox.SelectedIndex;
         }
 
+
+        private void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+           if (_datasStore != null)
+            {
+                Draw(_datasStore);
+            }
+        }
+
+
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            List<Data> datas = Calculate();
 
-            Draw(datas);
+            _datasStore = Calculate();
+            _dataGrid.ItemsSource = _datasStore;
+
+            Draw(_datasStore);
         }
 
         private List<Data> Calculate()
@@ -135,21 +153,21 @@ namespace Capital
                 {
                     // Сделка убыточная
                     // 1 strategy 
-                    datas[0].ResultDepo -= (take + comiss) * startLot;
+                    datas[0].ResultDepo -= (stop + comiss) * startLot;
 
                     // 2 strategy 
 
-                    datas[1].ResultDepo -= (take + comiss) * lotPercent;
+                    datas[1].ResultDepo -= (stop + comiss) * lotPercent;
 
                     // 3 strategy 
 
-                    datas[2].ResultDepo -= (take + comiss) * lotProgress;
+                    datas[2].ResultDepo -= (stop + comiss) * lotProgress;
 
                     lotProgress = CalculateLot(depoStart, minStartPercent, go);
 
                     // 4 strategy 
 
-                    datas[3].ResultDepo -= (take + comiss) * lotDown;
+                    datas[3].ResultDepo -= (stop + comiss) * lotDown;
 
                     lotDown /= 2;
 
@@ -177,28 +195,22 @@ namespace Capital
             double stepX = _canvas.ActualWidth / count;
             double koef = (double)(maxEquity - minEquity) / _canvas.ActualHeight;
 
-            double x = 0;
-            double y = 0;
+            Polyline polyline = new Polyline()
+            {
+                StrokeThickness = 1,
+                Stroke = Brushes.Black
+            };
 
             for (int i = 0; i < count; i++)
             {
-                y = _canvas.ActualHeight - (double)(listEquity[i] - minEquity) / koef;
+                double x = stepX * i;
+                double y = _canvas.ActualHeight - (double)(listEquity[i] - minEquity) / koef;
 
-                Ellipse ellipse = new Ellipse()
-                {
-                    Width = 2,
-                    Height = 2,
-                    Stroke = Brushes.Black
-                };
-
-                Canvas.SetLeft(ellipse, x);
-                Canvas.SetTop(ellipse, y);
-
-                _canvas.Children.Add(ellipse);
-
-
-                x += stepX;
+                polyline.Points.Add(new Point(x, y));
+                
             }
+
+            _canvas.Children.Add(polyline);
         }
 
         private int CalculateLot(decimal currentDepo, decimal percent, decimal go)
