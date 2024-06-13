@@ -70,11 +70,11 @@ namespace MyCapital
         {
             ComboBox comboBox = (ComboBox)sender;
 
-            int index = _comboBox.SelectedIndex;
+            //int index = _comboBox.SelectedIndex;
 
             if (_datas != null)
             {
-                Draw(_datas, index);
+                Draw(_datas);
             }
         }
 
@@ -84,7 +84,7 @@ namespace MyCapital
 
             int index = _comboBox.SelectedIndex;
 
-            Draw(_datas, index);
+            Draw(_datas);
         }
 
         private List<Data> Calculate()
@@ -108,6 +108,7 @@ namespace MyCapital
                 datas.Add(data);   
             }
 
+            // lots related variables
             int lotPercent = startLot;
             decimal percent = startLot * go * 100 / depoStart;
             decimal multiply = take / stop;
@@ -144,7 +145,6 @@ namespace MyCapital
 
                     lotDown = startLot; 
 
-
                     
                 }
                 else //Убыточная сделка
@@ -179,10 +179,10 @@ namespace MyCapital
 
             return datas;
         }
-        private void Draw(List<Data> datas, int index)
+        private void Draw(List<Data> datas)
         {
-            
-
+            //if (datas = null) return;
+            int index = _comboBox.SelectedIndex;
             List<decimal> listEquity = datas[index].GetListEquity();
 
             int count = listEquity.Count;
@@ -241,8 +241,15 @@ namespace MyCapital
             return 0;
 
         }
+
         #endregion
 
-
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (_datas != null)
+            {
+                Draw(_datas);
+            }
+        }
     }
 }

@@ -5,7 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MyCapital"
         mc:Ignorable="d"
-        Title="MyCapital" Height="800" Width="1200">
+        Title="MyCapital" Height="800" Width="1200"
+        MinHeight="800"
+        MinWidth="1000"
+        SizeChanged="Window_SizeChanged">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="150"/>
@@ -68,7 +71,8 @@
                 Grid.Row="13"
                 Grid.ColumnSpan="3"
                 Margin="10" 
-                Background="LightGray"/>
+                Background="LightGray"
+                MinHeight="200"/>
 
     </Grid>
 </Window>
