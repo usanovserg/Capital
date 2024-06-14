@@ -9,19 +9,6 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
-using System.Threading;
-using System.Threading.Tasks;
-using Point = System.Windows.Point;
-using System.Text;
-using System.Globalization;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Threading;
-using System.Reflection;
-
 namespace Capital
 {
     /// <summary>
@@ -51,14 +38,20 @@ namespace Capital
 
             Init();
 
-            //currentDatas = Calculate();
-
-            //Draw(currentDatas);
+            // Изменение размера окна - перерисовка графика
+            this.SizeChanged += MainWindow_SizeChanged;
         }
 
-
-
         #region Methods ===========================================
+
+        // Изменение размера окна - перерисовка графика
+        private void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (_dataGrid.ItemsSource is List<Data> datas)
+            {
+                Draw(datas);
+            }
+        }
 
         private void Init()
         {
@@ -116,6 +109,7 @@ namespace Capital
                     // Сделка прибыльная
 
                     //============ 1 strategy =================
+
                     datas[0].ResultDepo += (take - comiss) * startLot;
 
                     //============ 2 strategy ================
@@ -141,6 +135,7 @@ namespace Capital
                 else
                 {
                     // Сделка убыточная
+
                     //============ 1 strategy =================
 
                     datas[0].ResultDepo -= (stop + comiss) * startLot;
@@ -184,16 +179,16 @@ namespace Capital
 
             // Совет Михаила К. - добавить шум к первым трём стратегиям для наглядности изменений
             // Выбрать один из двух вариантов
-            if (index <= 2)
-            {
-                Random rnd = new Random();
+            //if (index <= 2)
+            //{
+            //    Random rnd = new Random();
 
-                // Первый вариант шума 
-                listEquity = listEquity.Select(item => item + rnd.Next(1, 10000)).ToList();
+            //    // Первый вариант шума 
+            //    listEquity = listEquity.Select(item => item + rnd.Next(1, 10000)).ToList();
 
-                // Второй вариант шума
-                //listEquity = Enumerable.Range(0, listEquity.Count).Select(i => listEquity[i] + 10000 * (i & 1)).ToList();
-            }
+            //    // Второй вариант шума
+            //    //listEquity = Enumerable.Range(0, listEquity.Count).Select(i => listEquity[i] + 10000 * (i & 1)).ToList();
+            //}
 
             // Кол-во значений по оси x
             int count = listEquity.Count;
@@ -213,7 +208,6 @@ namespace Capital
             double x2 = 0;
             double y2 = 0;
 
-            //PointCollection points = new PointCollection();
             _canvas.Children.Clear();
 
             // Создать кисть
