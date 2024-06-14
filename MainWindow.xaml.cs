@@ -1,5 +1,5 @@
 ﻿using Capital.Entity;
-using Capital.Enams;
+using Capital.Enums;
 
 using System;
 using System.Linq;
@@ -8,8 +8,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using Point = System.Windows.Point;
 
+using System.Threading;
+using System.Threading.Tasks;
+using Point = System.Windows.Point;
 using System.Text;
 using System.Globalization;
 using System.Windows.Data;
@@ -61,8 +63,6 @@ namespace Capital
         private void Init()
         {
             _comboBox.ItemsSource = _strategies;
-
-            _comboBox.SelectionChanged += _comboBox_SelectionChanged;
             _comboBox.SelectedIndex = 0;
 
             _depo.Text = "100000";
@@ -130,7 +130,7 @@ namespace Capital
 
                     datas[2].ResultDepo += (take - comiss) * lotProgress;
 
-                    lotPercent = CalculateLot(depoStart, minStartPercent * multiply, go);
+                    lotProgress = CalculateLot(depoStart, minStartPercent * multiply, go);
 
                     //=========== 4 strategy ================== 
 
@@ -182,6 +182,19 @@ namespace Capital
             // Список значений по выбранной стратегии
             List<decimal> listEquity = datas[index].GetListEquity();
 
+            // Совет Михаила К. - добавить шум к первым трём стратегиям для наглядности изменений
+            // Выбрать один из двух вариантов
+            if (index <= 2)
+            {
+                Random rnd = new Random();
+
+                // Первый вариант шума 
+                listEquity = listEquity.Select(item => item + rnd.Next(1, 10000)).ToList();
+
+                // Второй вариант шума
+                //listEquity = Enumerable.Range(0, listEquity.Count).Select(i => listEquity[i] + 10000 * (i & 1)).ToList();
+            }
+
             // Кол-во значений по оси x
             int count = listEquity.Count;
 
@@ -195,61 +208,48 @@ namespace Capital
             // ActualHeight - текущая высота окна
             double koefY = (double)(maxEquity - minEquity) / _canvas.ActualHeight;
 
-            //double x1 = 0;
-            //double y1 = 0;
-            //double x2 = 0;
-            //double y2 = 0;
+            double x1 = 0;
+            double y1 = 0;
+            double x2 = 0;
+            double y2 = 0;
 
-            PointCollection points = new PointCollection();
+            //PointCollection points = new PointCollection();
+            _canvas.Children.Clear();
+
+            // Создать кисть
+            SolidColorBrush brush = new()
+            {
+                Color = Colors.Black
+            };
 
             // Перебираем все значения эквити
             for (int i = 0; i < count; i++)
             {
-                double x = i * stepX;
+                x2 = i * stepX;
 
-                double y = _canvas.ActualHeight - (double)(listEquity[i] - minEquity) / koefY;
+                y2 = _canvas.ActualHeight - (double)(listEquity[i] - minEquity) / koefY;
 
-                points.Add(new Point(x, y));
-
-                Polyline polyline = new Polyline
+                if (i >= 1)
                 {
-                    Stroke = Brushes.Black,
-                    StrokeThickness = 2,
-                    Points = points
-                };
+                    // Создать линию
+                    Line lineEquity = new()
+                    {
+                        X1 = x1,
+                        Y1 = y1,
+                        X2 = x2,
+                        Y2 = y2
+                    };
 
-                //if (i >= 1)
-                //{
-                //    // Создать линию
-                //    Line lineEquity = new()
-                //    {
-                //        X1 = x1,
-                //        Y1 = y1,
-                //        X2 = x2,
-                //        Y2 = y2
-                //    };
+                    // Ширина и цвет линии
+                    lineEquity.StrokeThickness = 2;
+                    lineEquity.Stroke = brush;
 
-                //    // Создать кисть
-                //    SolidColorBrush brush = new()
-                //    {
-                //        Color = Colors.Black
-                //    };
+                    // Размещение линии на Canvas
+                    _canvas.Children.Add(lineEquity);
+                }
 
-                //    // Ширина и цвет линии
-                //    lineEquity.StrokeThickness = 2;
-                //    lineEquity.Stroke = brush;
-
-                //    // Размещение линии на Canvas
-                //    _canvas.Children.Add(lineEquity);
-                //}
-
-                //x1 = x2;
-                //y1 = y2;
-
-                //x2 += stepX;
-
-                _canvas.Children.Clear();
-                _canvas.Children.Add(polyline);
+                x1 = x2;
+                y1 = y2;
             }
         }
 
@@ -265,16 +265,22 @@ namespace Capital
                 Draw(currentDatas);
             }
 
+            //click();
             // Програмная имитация клика по кнопке
             //Button_Click(comboBox.SelectedIndex, ev);
+        }
+
+        private void click()
+        {
+            currentDatas = Calculate();
+
+            Draw(currentDatas);
         }
 
         // Кнопка Рассчитать - Расчёт данных по выбранной стратегии
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            currentDatas = Calculate();
-
-            Draw(currentDatas);
+            click();
         }
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
