@@ -6,113 +6,113 @@
 		xmlns:local="clr-namespace:Capital"
 		mc:Ignorable="d"
 		Title="MainWindow" Height="800" Width="1300">
-    <Grid Margin="10, 0">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="200" />
-            <ColumnDefinition Width="*" MinWidth="50" MaxWidth="150" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="30" />
-            <RowDefinition Height="30" />
-            <RowDefinition Height="30" />
-            <RowDefinition Height="30" />
-            <RowDefinition Height="30" />
-            <RowDefinition Height="30" />
-            <RowDefinition Height="30" />
-            <RowDefinition Height="30" />
-            <RowDefinition Height="30" />
-            <RowDefinition Height="30" />
-            <RowDefinition Height="30" />
-            <RowDefinition Height="30" />
-            <RowDefinition Height="*" MinHeight="350"/>
-        </Grid.RowDefinitions>
+	<Grid Margin="10, 0">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="200" />
+			<ColumnDefinition Width="*" MinWidth="50" MaxWidth="150" />
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="30" />
+			<RowDefinition Height="30" />
+			<RowDefinition Height="30" />
+			<RowDefinition Height="30" />
+			<RowDefinition Height="30" />
+			<RowDefinition Height="30" />
+			<RowDefinition Height="30" />
+			<RowDefinition Height="30" />
+			<RowDefinition Height="30" />
+			<RowDefinition Height="30" />
+			<RowDefinition Height="30" />
+			<RowDefinition Height="30" />
+			<RowDefinition Height="*" MinHeight="350"/>
+		</Grid.RowDefinitions>
 
-        <TextBlock Text="Депозит"
-                   VerticalAlignment="Center"/>
-        <TextBlock Text="Начальный лот"
-                 VerticalAlignment="Center"
+		<TextBlock Text="Депозит"
+				   VerticalAlignment="Center"/>
+		<TextBlock Text="Начальный лот"
+				 VerticalAlignment="Center"
 				   Grid.Row="1"/>
-        <TextBlock Text="Тейк"
-                 VerticalAlignment="Center"
+		<TextBlock Text="Тейк"
+				 VerticalAlignment="Center"
 				   Grid.Row="2"/>
-        <TextBlock Text="Стоп"
-                 VerticalAlignment="Center"
+		<TextBlock Text="Стоп"
+				 VerticalAlignment="Center"
 				   Grid.Row="3"/>
-        <TextBlock Text="Комиссия"
-                 VerticalAlignment="Center"
+		<TextBlock Text="Комиссия"
+				 VerticalAlignment="Center"
 				   Grid.Row="4"/>
-        <TextBlock Text="% прибыльных сделок"
-                 VerticalAlignment="Center"
+		<TextBlock Text="% прибыльных сделок"
+				 VerticalAlignment="Center"
 				   Grid.Row="5"/>
-        <TextBlock Text="Кол-во сделок"
-                 VerticalAlignment="Center"
+		<TextBlock Text="Кол-во сделок"
+				 VerticalAlignment="Center"
 				   Grid.Row="6"/>
-        <TextBlock Text="Мин. % депо"
-                 VerticalAlignment="Center"
+		<TextBlock Text="Мин. % депо"
+				 VerticalAlignment="Center"
 				   Grid.Row="7"/>
-        <TextBlock Text="Гарантийное обеспечение"
-                 VerticalAlignment="Center"
+		<TextBlock Text="Гарантийное обеспечение"
+				 VerticalAlignment="Center"
 				   Grid.Row="9"/>
-        <ComboBox x:Name="_combobox" 
+		<ComboBox x:Name="_combobox" 
 				   Grid.Row="11" Margin="0, 0, 10, 0"
 				  SelectionChanged="_combobox_SelectionChanged"/>
 
-        <TextBox x:Name="_depot"
-                 HorizontalContentAlignment="Right"
-                 VerticalAlignment="Center"
+		<TextBox x:Name="_depot"
+				 HorizontalContentAlignment="Right"
+				 VerticalAlignment="Center"
 				 Grid.Column="1" />
-        <TextBox x:Name="_startLot"
-                 HorizontalContentAlignment="Right"
-                 VerticalAlignment="Center"
+		<TextBox x:Name="_startLot"
+				 HorizontalContentAlignment="Right"
+				 VerticalAlignment="Center"
 				 Grid.Column="1" Grid.Row="1" />
-        <TextBox x:Name="_take"
-                 HorizontalContentAlignment="Right"
-                 VerticalAlignment="Center"
+		<TextBox x:Name="_take"
+				 HorizontalContentAlignment="Right"
+				 VerticalAlignment="Center"
 				 Grid.Column="1" Grid.Row="2"/>
-        <TextBox x:Name="_stop"
-                 HorizontalContentAlignment="Right"
-                 VerticalAlignment="Center"
+		<TextBox x:Name="_stop"
+				 HorizontalContentAlignment="Right"
+				 VerticalAlignment="Center"
 				 Grid.Column="1" Grid.Row="3"/>
-        <TextBox x:Name="_comiss"
-                 HorizontalContentAlignment="Right"
-                 VerticalAlignment="Center"
+		<TextBox x:Name="_comiss"
+				 HorizontalContentAlignment="Right"
+				 VerticalAlignment="Center"
 				 Grid.Column="1" Grid.Row="4"/>
-        <TextBox x:Name="_percentGoodDeals"
-                 HorizontalContentAlignment="Right"
-                 VerticalAlignment="Center"
+		<TextBox x:Name="_percentGoodDeals"
+				 HorizontalContentAlignment="Right"
+				 VerticalAlignment="Center"
 				 Grid.Column="1" Grid.Row="5"/>
-        <TextBox x:Name="_countTrades"
-                 HorizontalContentAlignment="Right"
-                 VerticalAlignment="Center"
+		<TextBox x:Name="_countTrades"
+				 HorizontalContentAlignment="Right"
+				 VerticalAlignment="Center"
 				 Grid.Column="1" Grid.Row="6"/>
-        <TextBox x:Name="_minStartPercent"
-                 HorizontalContentAlignment="Right"
-                 VerticalAlignment="Center"
+		<TextBox x:Name="_minStartPercent"
+				 HorizontalContentAlignment="Right"
+				 VerticalAlignment="Center"
 				 Grid.Column="1" Grid.Row="7"/>
-        <TextBox x:Name="_go"
-                 HorizontalContentAlignment="Right"
-                 VerticalAlignment="Center"
+		<TextBox x:Name="_go"
+				 HorizontalContentAlignment="Right"
+				 VerticalAlignment="Center"
 				 Grid.Column="1" Grid.Row="9"/>
-        <Button Content="Рассчитать" Name="_button"
+		<Button Content="Рассчитать" Name="_button"
 				Grid.Column="1" Grid.Row="11" Margin="0, 0"
 				Click="_button_Click" IsDefault="True" />
 
-        <GroupBox Header="Таблица результатов"
+		<GroupBox Header="Таблица результатов"
 				  Grid.Column="2" Grid.RowSpan="12"
 				  Margin="10, 0, 0, 0">
-            <DataGrid x:Name="_dataGrid"
+			<DataGrid x:Name="_dataGrid"
 					  Margin="5">
-                <DataGrid.ColumnHeaderStyle>
-                    <Style TargetType="{x:Type DataGridColumnHeader}">
-                        <Setter Property="FontWeight" Value="Bold" />
-                    </Style>
-                </DataGrid.ColumnHeaderStyle>
-            </DataGrid>
-        </GroupBox>
+				<DataGrid.ColumnHeaderStyle>
+					<Style TargetType="{x:Type DataGridColumnHeader}">
+						<Setter Property="FontWeight" Value="Bold" />
+					</Style>
+				</DataGrid.ColumnHeaderStyle>
+			</DataGrid>
+		</GroupBox>
 
-        <Canvas x:Name="_canvas"
-                Grid.Row="13" Grid.ColumnSpan="3"
-                Margin="0, 10" Background="LightGray" />
-    </Grid>
+		<Canvas x:Name="_canvas"
+				Grid.Row="13" Grid.ColumnSpan="3"
+				Margin="0, 10" Background="LightGray" />
+	</Grid>
 </Window>
