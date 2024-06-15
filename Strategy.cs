@@ -1,15 +1,12 @@
-﻿using Capital.Enums;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Capital.Strategy_FIX;
+using Capital.Enums;
 
 namespace Capital
 {
-    //========================================================================
-    public abstract class Strategy
+	//========================================================================
+	public abstract class Strategy
     {
         #region Properties ===================================
         public StrategyType StrategyType { get; set; }

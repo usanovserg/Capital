@@ -1,25 +1,20 @@
-﻿using Capital.Enums;
-using System.ComponentModel;
-using System.Drawing;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
-using System.Text;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using Capital.Enums;
 
 namespace Capital
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    public partial class MainWindow : Window
+	/// <summary>
+	/// Interaction logic for MainWindow.xaml
+	/// </summary>
+	public partial class MainWindow : Window
     {
         public MainWindow()
         {
@@ -28,10 +23,10 @@ namespace Capital
         }
 
         #region Fields ==============================================
-        private DispatcherTimer _timer = new DispatcherTimer
-        {
+        private readonly DispatcherTimer _timer = new()
+		{
             Interval = new TimeSpan(0, 0, 0, 0, 500), // Adjust the interval as needed
-            IsEnabled = false
+			IsEnabled = false
         };
         #endregion
 

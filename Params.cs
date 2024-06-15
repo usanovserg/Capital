@@ -1,13 +1,6 @@
-﻿using Capital.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Capital
+﻿namespace Capital
 {
-    public struct Params
+	public struct Params
     {
         public decimal Depot;
         public int StartLot;
