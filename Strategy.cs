@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Capital.Enums;
 
@@ -9,43 +10,55 @@ namespace Capital
 	public abstract class Strategy
 	{
 		#region Properties ===================================
+
 		public StrategyType StrategyType { get; set; }
 		public decimal Depot { get; set; }
-		public decimal ResultDepot { get => _resultDepot; set => SetResultDepot(value);
+
+		public decimal ResultDepot
+		{
+			get => _resultDepot;
+			set => SetResultDepot(value);
 		}
+
 		private decimal _resultDepot;
 
 		/// <summary>
 		/// Профит, в деньгах
 		/// </summary>
 		public decimal Profit { get; set; }
+
 		/// <summary>
 		/// Профит, %
 		/// </summary>
 		public decimal PercentProfit { get; set; }
+
 		/// <summary>
 		/// Максимальная просадка, в деньгах
 		/// </summary>
 		public decimal MaxDrawDown { get; set; }
+
 		/// <summary>
 		/// Максимальная просадка, %
 		/// </summary>
 		public decimal PercentDrawDown { get; set; }
+
 		/// <summary>
 		/// Процент прибыльных сделок
 		/// </summary>
 		public decimal GoodDealPercent { get; set; }
+
 		#endregion
 
 		#region Fields ===================================
-		protected Params P;
 
+		protected Params P;
 		private decimal _localMaximum;
 		private decimal _localMinimum;
-
 		private readonly List<decimal> _results;
 
 		#endregion
+
+		#region Methods ===================================
 
 		protected Strategy(Params p)
 		{
@@ -123,16 +136,24 @@ namespace Capital
 		{
 			if (deals.Count != 0)
 			{
-				GoodDealPercent = Math.Round(100M * deals.Count(bGoodDeal => { Deal(bGoodDeal); return bGoodDeal; }) / deals.Count, 2);
+				GoodDealPercent = Math.Round(100M * deals.Count(bGoodDeal =>
+				{
+					Deal(bGoodDeal);
+					return bGoodDeal;
+				}) / deals.Count, 2);
 			}
 		}
+
 		/// <summary>
 		/// Add a deal to strategy (to be implemented in derived classes)
 		/// </summary>
 		/// <param name="bGoodDeal">bool GoodDeal: true | BadDeal: false</param>
 		protected abstract void Deal(bool bGoodDeal);
+
+		#endregion
 	}
-	//========================================================================
+
+//========================================================================
 	public class StrategyFix : Strategy
 	{
 		public StrategyFix(Params p) : base(p)
@@ -152,10 +173,12 @@ namespace Capital
 			}
 		}
 	}
+
 	//========================================================================
 	public class StrategyCapitalization : Strategy
 	{
 		private int _workingLot;
+
 		public StrategyCapitalization(Params p) : base(p)
 		{
 			StrategyType = StrategyType.Capitalization;
@@ -182,6 +205,7 @@ namespace Capital
 			}
 		}
 	}
+
 	//========================================================================
 	public class StrategyProgress : Strategy
 	{
@@ -207,6 +231,7 @@ namespace Capital
 			}
 		}
 	}
+
 	//========================================================================
 	public class StrategyDowngrade : Strategy
 	{
