@@ -12,7 +12,7 @@ namespace Capital
 	[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 	public abstract class Strategy
 	{
-		#region Properties ===================================
+		#region _properties ===================================
 
 		public StrategyType StrategyType { get; set; }
 		public decimal Depot { get; set; }
@@ -52,7 +52,7 @@ namespace Capital
 
 		#endregion
 
-		#region Fields ===================================
+		#region _fields ===================================
 
 		protected Params P;
 		private decimal _localMaximum;
@@ -61,7 +61,7 @@ namespace Capital
 
 		#endregion
 
-		#region Methods ===================================
+		#region methods ===================================
 
 		protected Strategy(Params p)
 		{
