@@ -11,8 +11,10 @@ namespace Capital
 		#region Properties ===================================
 		public StrategyType StrategyType { get; set; }
 		public decimal Depot { get; set; }
-		public decimal ResultDepot { get => _resultDepot; set { SetResultDepot(value); } }
+		public decimal ResultDepot { get => _resultDepot; set => SetResultDepot(value);
+		}
 		private decimal _resultDepot;
+
 		/// <summary>
 		/// Профит, в деньгах
 		/// </summary>
@@ -36,22 +38,22 @@ namespace Capital
 		#endregion
 
 		#region Fields ===================================
-		protected Params _p;
+		protected Params P;
 
 		private decimal _localMaximum;
 		private decimal _localMinimum;
 
-		List<decimal> _results;
+		private readonly List<decimal> _results;
 
 		#endregion
 
-		public Strategy(Params p)
+		protected Strategy(Params p)
 		{
-			_p = p;
+			P = p;
 
-			_results = new List<decimal>(_p.CountTrades);
+			_results = new List<decimal>(P.CountTrades);
 
-			Depot = _p.Depot;
+			Depot = P.Depot;
 			ResultDepot = Depot;
 
 			_localMaximum = Depot;
@@ -66,25 +68,18 @@ namespace Capital
 		/// <returns></returns>
 		public static Strategy CreateStrategy(Params p, StrategyType type)
 		{
-			switch (type)
+			return type switch
 			{
-				case StrategyType.FIX:
-					return new Strategy_FIX(p);
-
-				case StrategyType.CAPITALIZATION:
-					return new Strategy_CAPITALIZATION(p);
-
-				case StrategyType.PROGRESS:
-					return new Strategy_PROGRESS(p);
-
-				case StrategyType.DOWNGRADE:
-					return new Strategy_DOWNGRADE(p);
-
-				default:
-					throw new NotImplementedException();
-			}
+				StrategyType.Fix => new StrategyFix(p),
+				StrategyType.Capitalization => new StrategyCapitalization(p),
+				StrategyType.Progress => new StrategyProgress(p),
+				StrategyType.Downgrade => new StrategyDowngrade(p),
+				StrategyType.Count => throw new NotImplementedException(),
+				_ => throw new NotImplementedException()
+			};
 		}
-		void SetResultDepot(decimal resultDepot)
+
+		private void SetResultDepot(decimal resultDepot)
 		{
 			_resultDepot = resultDepot;
 
@@ -115,10 +110,10 @@ namespace Capital
 
 		public List<decimal> GetResults() => _results;
 
-		public int CalculateWorkingLot(decimal depot, decimal go, decimal percent)
+		protected static int CalculateWorkingLot(decimal depot, decimal go, decimal percent)
 		{
-			decimal WorkingLot = depot / go * (percent > 100 ? 1 : percent / 100);
-			return (int)WorkingLot;
+			decimal workingLot = depot / go * (percent > 100 ? 1 : percent / 100);
+			return (int)workingLot;
 		}
 
 		/// <summary>
@@ -135,104 +130,104 @@ namespace Capital
 		/// Add a deal to strategy (to be implemented in derived classes)
 		/// </summary>
 		/// <param name="bGoodDeal">bool GoodDeal: true | BadDeal: false</param>
-		public abstract void Deal(bool bGoodDeal);
+		protected abstract void Deal(bool bGoodDeal);
 	}
 	//========================================================================
-	public class Strategy_FIX : Strategy
+	public class StrategyFix : Strategy
 	{
-		public Strategy_FIX(Params p) : base(p)
+		public StrategyFix(Params p) : base(p)
 		{
-			StrategyType = StrategyType.FIX;
+			StrategyType = StrategyType.Fix;
 		}
 
-		public override void Deal(bool bGoodDeal)
+		protected override void Deal(bool bGoodDeal)
 		{
 			if (bGoodDeal)
 			{
-				ResultDepot += (_p.Take - _p.Comiss) * _p.StartLot;
+				ResultDepot += (P.Take - P.Commission) * P.StartLot;
 			}
 			else
 			{
-				ResultDepot -= (_p.Stop + _p.Comiss) * _p.StartLot;
+				ResultDepot -= (P.Stop + P.Commission) * P.StartLot;
 			}
 		}
 	}
 	//========================================================================
-	public class Strategy_CAPITALIZATION : Strategy
+	public class StrategyCapitalization : Strategy
 	{
 		private int _workingLot;
-		public Strategy_CAPITALIZATION(Params p) : base(p)
+		public StrategyCapitalization(Params p) : base(p)
 		{
-			StrategyType = StrategyType.CAPITALIZATION;
-			_workingLot = _p.StartLot;
+			StrategyType = StrategyType.Capitalization;
+			_workingLot = P.StartLot;
 		}
 
-		public override void Deal(bool bGoodDeal)
+		protected override void Deal(bool bGoodDeal)
 		{
 			if (bGoodDeal)
 			{
-				ResultDepot += (_p.Take - _p.Comiss) * _workingLot;
+				ResultDepot += (P.Take - P.Commission) * _workingLot;
 
-				decimal proposedWorkingLot = (ResultDepot / Depot) * _p.StartLot;
+				decimal proposedWorkingLot = (ResultDepot / Depot) * P.StartLot;
 				if (proposedWorkingLot > _workingLot)
 					_workingLot = (int)proposedWorkingLot;
 			}
 			else
 			{
-				ResultDepot -= (_p.Stop + _p.Comiss) * _workingLot;
+				ResultDepot -= (P.Stop + P.Commission) * _workingLot;
 
-				int maxLot = (int)(ResultDepot / _p.Go);
+				int maxLot = (int)(ResultDepot / P.Go);
 				if (maxLot < _workingLot)
 					_workingLot = maxLot;
 			}
 		}
 	}
 	//========================================================================
-	public class Strategy_PROGRESS : Strategy
+	public class StrategyProgress : Strategy
 	{
 		private int _workingLot;
 
-		public Strategy_PROGRESS(Params p) : base(p)
+		public StrategyProgress(Params p) : base(p)
 		{
-			StrategyType = StrategyType.PROGRESS;
-			_workingLot = CalculateWorkingLot(Depot, _p.Go, _p.MinStartPercent);
+			StrategyType = StrategyType.Progress;
+			_workingLot = CalculateWorkingLot(Depot, P.Go, P.MinStartPercent);
 		}
 
-		public override void Deal(bool bGoodDeal)
+		protected override void Deal(bool bGoodDeal)
 		{
 			if (bGoodDeal)
 			{
-				ResultDepot += (_p.Take - _p.Comiss) * _workingLot;
-				_workingLot = CalculateWorkingLot(ResultDepot, _p.Go, _p.MinStartPercent * _p.Take / _p.Stop);
+				ResultDepot += (P.Take - P.Commission) * _workingLot;
+				_workingLot = CalculateWorkingLot(ResultDepot, P.Go, P.MinStartPercent * P.Take / P.Stop);
 			}
 			else
 			{
-				ResultDepot -= (_p.Stop + _p.Comiss) * _workingLot;
-				_workingLot = CalculateWorkingLot(ResultDepot, _p.Go, _p.MinStartPercent);
+				ResultDepot -= (P.Stop + P.Commission) * _workingLot;
+				_workingLot = CalculateWorkingLot(ResultDepot, P.Go, P.MinStartPercent);
 			}
 		}
 	}
 	//========================================================================
-	public class Strategy_DOWNGRADE : Strategy
+	public class StrategyDowngrade : Strategy
 	{
 		private int _workingLot;
 
-		public Strategy_DOWNGRADE(Params p) : base(p)
+		public StrategyDowngrade(Params p) : base(p)
 		{
-			StrategyType = StrategyType.DOWNGRADE;
-			_workingLot = _p.StartLot;
+			StrategyType = StrategyType.Downgrade;
+			_workingLot = P.StartLot;
 		}
 
-		public override void Deal(bool bGoodDeal)
+		protected override void Deal(bool bGoodDeal)
 		{
 			if (bGoodDeal)
 			{
-				ResultDepot += (_p.Take - _p.Comiss) * _workingLot;
-				_workingLot = _p.StartLot;
+				ResultDepot += (P.Take - P.Commission) * _workingLot;
+				_workingLot = P.StartLot;
 			}
 			else
 			{
-				ResultDepot -= (_p.Stop + _p.Comiss) * _workingLot;
+				ResultDepot -= (P.Stop + P.Commission) * _workingLot;
 				_workingLot = Math.Max(_workingLot / 2, 1);
 			}
 		}

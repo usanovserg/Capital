@@ -2,11 +2,11 @@
 {
 	public enum StrategyType
     {
-        FIX,
-        CAPITALIZATION,
-        PROGRESS,
-        DOWNGRADE,
+        Fix,
+        Capitalization,
+        Progress,
+        Downgrade,
 
-        _COUNT
+        Count
     }
 }
