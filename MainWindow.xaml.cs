@@ -35,7 +35,8 @@ namespace Capital
             StrategyType.DOWNGRADE
         };
 
-        Random _random = new Random();
+        private Random _random = new Random();
+        private List<Data> datas;
 
         #endregion
 
@@ -48,6 +49,8 @@ namespace Capital
             _comboBox.SelectionChanged += _comboBox_SelectionChanged;
             _comboBox.SelectedIndex = 0;
 
+            SizeChanged += MainWindow_SizeChanged;
+
             _depo.Text = "100000";
             _startLot.Text = "10";
             _take.Text = "300";
@@ -59,18 +62,23 @@ namespace Capital
             _minStartPercent.Text = "20";
        }
 
+        private void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            Draw(_comboBox.SelectedIndex);
+        }
+
         private void _comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ComboBox comboBox = (ComboBox)sender;
 
-            int index = comboBox.SelectedIndex;
+            Draw(comboBox.SelectedIndex);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            List<Data> datas = Calculate();
+            datas = Calculate();
 
-            Draw(datas);
+            Draw(_comboBox.SelectedIndex);
         }
 
         private List<Data>Calculate()
@@ -85,7 +93,7 @@ namespace Capital
             decimal minStartPercent = GetDecimalFromString(_minStartPercent.Text);
             decimal go = GetDecimalFromString(_go.Text);
 
-            List<Data> datas = new List<Data>();
+            datas = new List<Data>();
 
             foreach (StrategyType type in _strategies)
             {
@@ -162,11 +170,14 @@ namespace Capital
             return datas;
         }
 
-        private void Draw(List<Data> datas)
+        private void Draw(int index)
         {
             _canvas.Children.Clear();
 
-            int index = _comboBox.SelectedIndex;
+            if (datas == null)
+            {
+                return;
+            }
 
             List<decimal> listEquity = datas[index].GetListEquity();
 
@@ -174,30 +185,35 @@ namespace Capital
             decimal maxEquity = listEquity.Max();
             decimal minEquity = listEquity.Min();
 
-            double steoX = _canvas.ActualWidth / count;
+            double stepX = _canvas.ActualWidth / count;
             double koef = (double)(maxEquity - minEquity) / _canvas.ActualHeight;
 
             double x = 0;
             double y = 0;
 
+            double newX = 0;
+            double newY = 0;
+
             for (int i = 0; i < count; i++)
             {
-                y = _canvas.ActualHeight - (double)(listEquity[i] - minEquity) / koef;
+                newY = _canvas.ActualHeight - (double)(listEquity[i] - minEquity) / koef;
+                newX = x + stepX;
 
-                Ellipse ellips = new Ellipse()
+                Line line = new Line()
                 {
-                    Width = 2,
-                    Height = 2,
-                    Stroke = Brushes.Black
+                    X1 = x,
+                    Y1 = y,
+                    X2 = newX,
+                    Y2 = newY,
+                    Stroke = Brushes.Black,
+                    StrokeThickness = 1
                 };
 
-                Canvas.SetLeft(ellips, x);
-                Canvas.SetTop(ellips, y);
+                _canvas.Children.Add(line);
 
-                _canvas.Children.Add(ellips);
-
-
-                x += steoX;
+                x = newX;
+                y = newY;
+                
             }
         }
 
