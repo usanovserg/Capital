@@ -1,0 +1,100 @@
+﻿<Window x:Class="Capital.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Capital"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="800" Width="1200"
+        Loaded="Window_Loaded"
+        SizeChanged="Window_SizeChanged">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="150"/>
+            <ColumnDefinition Width="*"
+                              MinWidth="50"
+                              MaxWidth="150"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"
+                           MinHeight="350"/>
+
+        </Grid.RowDefinitions>
+        <TextBlock Text="Депозит"
+                   Grid.Row="0"/>
+        <TextBlock Text="Начальный лот"
+                   Grid.Row="1"/>
+        <TextBlock Text="Тейк"
+                   Grid.Row="2"/>
+        <TextBlock Text="Стоп"
+                   Grid.Row="3"/>
+        <TextBlock Text="Комиссия"
+                   Grid.Row="4"/>
+        <TextBlock Text="Процент приб."
+                   Grid.Row="5"/>
+        <TextBlock Text="Кол-во сделок"
+                   Grid.Row="6"/>
+        <TextBlock Text="Мин. % депо"
+                   Grid.Row="7"/>
+        <TextBlock Text="Гарант. обесп."
+                   Grid.Row="9"/>
+
+        <TextBlock x:Name="_depo"
+                   Grid.Row="0" Grid.Column="1"/>
+        <TextBlock x:Name="_startLot"
+                   Grid.Row="1" Grid.Column="1"/>
+        <TextBlock x:Name="_take"
+                   Grid.Row="2" Grid.Column="1"/>
+        <TextBlock x:Name="_stop"
+                   Grid.Row="3" Grid.Column="1"/>
+        <TextBlock x:Name="_comiss"
+                   Grid.Row="4" Grid.Column="1"/>
+        <TextBlock x:Name="_percentProfit"
+                   Grid.Row="5" Grid.Column="1"/>
+        <TextBlock x:Name="_countTrades"
+                   Grid.Row="6" Grid.Column="1"/>
+        <TextBlock x:Name="_minStartPercent"
+                   Grid.Row="7" Grid.Column="1"/>
+        <TextBlock x:Name="_go"
+                   Grid.Row="9" Grid.Column="1"/>
+        <Button Content="Рассчитать" x:Name="_button"
+                Click="Button_Click"
+                Grid.Column="1"
+                Grid.Row="11"/>
+
+
+
+        <ComboBox Name="_comboBox"
+                  Grid.Row="11" Margin="5, 0"/>
+
+        <GroupBox Header="Таблица результатов"
+                  Margin="10, 1"
+                  Grid.Column="2" Grid.RowSpan="12">
+            <DataGrid x:Name="_dataGrid"
+                      Margin= "5"/>
+
+        </GroupBox>
+
+        <Canvas x:Name="_canvas" Background="AntiqueWhite"
+                Grid.Row="13" Grid.ColumnSpan="3"  
+                Margin="10">
+            <Line x:Name="OperationAxis" Stroke="Black" StrokeThickness="2" />
+            <Line x:Name="DepoAxis" Stroke="Black" StrokeThickness="2" />
+
+        </Canvas>            
+    </Grid>
+</Window>

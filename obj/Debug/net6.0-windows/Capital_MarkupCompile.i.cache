@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-C:\Users\Дмитрий\Source\Repos\CapitalGit\obj\Debug\net6.0-windows\
+C:\Users\SDA\Source\Repos\Capital\obj\Debug\net6.0-windows\
 Capital
 none
 false
 TRACE;DEBUG;NET;NET6_0;NETCOREAPP
-C:\Users\Дмитрий\Source\Repos\CapitalGit\App.xaml
-11407045341
+C:\Users\SDA\Source\Repos\Capital\App.xaml
+3-306104466
 
-81678189961
-194-1977528901
-MainWindow.xaml;
+21-1978205132
+194178300874
+Capital\App.xaml;Capital\MainWindow.xaml;MainWindow.xaml;
 
 False
 
