@@ -24,7 +24,7 @@ namespace Capital
 
             Init();
         }
-
+        //**************111
         #region Fields ========================================
 
         List<StrategyType> _strategies = new List<StrategyType>()
