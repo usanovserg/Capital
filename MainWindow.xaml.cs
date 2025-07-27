@@ -1,5 +1,7 @@
 ﻿using Capital.Enams;
 using Capital.Entity;
+using System;
+using System.ComponentModel;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -27,17 +29,11 @@ namespace Capital
 
         #region Fields ======================================================================
 
-        List<StrategyType> _strategies = new List<StrategyType>()
-        {
-                StrategyType.FIX,
-                StrategyType.CAPITALIZATION,
-                StrategyType.PROGRESS,
-                StrategyType.DOWNGRADE,
-        };       
+        private readonly List<StrategyType> _strategies = [.. Enum.GetValues<StrategyType>()];
 
-        Random _random = new Random();
+        Random _random = new();
 
-        private List<Data> _datas = new List<Data>();
+        private List<Data> _dataList = [];
 
         #endregion
 
@@ -70,29 +66,22 @@ namespace Capital
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {           
-            _datas = Calculate();
+            _dataList = Calculate();
 
-            Draw(_datas);
+            Draw(_dataList);
         }
 
         private List<Data> Calculate()
         {
-            decimal depoStart = GetDecimalFromString(_depo.Text);
-            int startLot = GetIntFromString(_startLot.Text);
-            decimal take = GetDecimalFromString(_take.Text);
-            decimal stop = GetDecimalFromString(_stop.Text);
-            decimal comiss = GetDecimalFromString(_comiss.Text);
-            int countTrades = GetIntFromString(_countTrades.Text);
-            decimal percentProfit = GetDecimalFromString(_percentProfit.Text);
-            decimal minStartPercent = GetDecimalFromString(_minStartPercent.Text);
-            decimal go = GetDecimalFromString(_go.Text);
-
-            List<Data> datas = new List<Data>();           
-
-            foreach (StrategyType type in _strategies)
-            {               
-                datas.Add(new Data(depoStart, type));
-            }
+            decimal depoStart = GetNumberFromString<decimal>(_depo.Text);
+            int startLot = GetNumberFromString<int>(_startLot.Text);
+            decimal take = GetNumberFromString<decimal>(_take.Text);
+            decimal stop = GetNumberFromString<decimal>(_stop.Text);
+            decimal comiss = GetNumberFromString<decimal>(_comiss.Text);
+            int countTrades = GetNumberFromString<int>(_countTrades.Text);
+            decimal percentProfit = GetNumberFromString<decimal>(_percentProfit.Text);
+            decimal minStartPercent = GetNumberFromString<decimal>(_minStartPercent.Text);
+            decimal go = GetNumberFromString<decimal>(_go.Text);
 
             int lotPercent = startLot;
             decimal percent = startLot * go * 100 / depoStart;
@@ -101,6 +90,8 @@ namespace Capital
             int lotProgress = CalculateLot(depoStart, minStartPercent, go);
 
             int lotDown = startLot;
+
+            List<Data> dataList = [.. _strategies.Select(x => new Data(depoStart, x))];
 
 
             for (int i=0; i<countTrades; i++)
@@ -112,25 +103,25 @@ namespace Capital
                     // Сделка прибыльная
                     // ================ 1 strategy ==================================
 
-                    datas[0].ResultDepo += (take - comiss) * startLot;
+                    dataList[0].ResultDepo += (take - comiss) * startLot;
 
                     // ================ 2 strategy ==================================
 
-                    datas[1].ResultDepo += (take - comiss) * lotPercent;
+                    dataList[1].ResultDepo += (take - comiss) * lotPercent;
 
-                    int newLot = CalculateLot(datas[1].ResultDepo, percent, go);
+                    int newLot = CalculateLot(dataList[1].ResultDepo, percent, go);
 
                     if (lotPercent < newLot) lotPercent = newLot;
 
                     // ================ 3 strategy ==================================
 
-                    datas[2].ResultDepo += (take - comiss) * lotProgress;
+                    dataList[2].ResultDepo += (take - comiss) * lotProgress;
 
                     lotProgress = CalculateLot(depoStart, minStartPercent * multiply, go);
 
                     // ================ 4 strategy ==================================
 
-                    datas[3].ResultDepo += (take - comiss) * lotDown;
+                    dataList[3].ResultDepo += (take - comiss) * lotDown;
 
                     lotDown = startLot;
                 }
@@ -139,21 +130,21 @@ namespace Capital
                     // Сделака убыточная
                     // ================ 1 strategy ==================================
 
-                    datas[0].ResultDepo -= (stop + comiss) * startLot;
+                    dataList[0].ResultDepo -= (stop + comiss) * startLot;
 
                     // ================ 2 strategy ==================================
 
-                    datas[1].ResultDepo -= (stop + comiss) * lotPercent;
+                    dataList[1].ResultDepo -= (stop + comiss) * lotPercent;
 
                     // ================ 3 strategy ==================================
 
-                    datas[2].ResultDepo -= (stop + comiss) * lotProgress;
+                    dataList[2].ResultDepo -= (stop + comiss) * lotProgress;
 
                     lotProgress = CalculateLot(depoStart, minStartPercent, go);
 
                     // ================ 4 strategy ==================================
 
-                    datas[3].ResultDepo -= (stop + comiss) * lotDown;
+                    dataList[3].ResultDepo -= (stop + comiss) * lotDown;
 
                     lotDown /= 2;
 
@@ -161,18 +152,18 @@ namespace Capital
                 }
             }          
 
-            _dataGrid.ItemsSource = datas;
+            _dataGrid.ItemsSource = dataList;
 
-            return datas; 
+            return dataList; 
         }
 
-        private void Draw(List<Data> datas)
+        private void Draw(List<Data> dataList)
         {
             _canvas.Children.Clear();
 
             int index = _comboBox.SelectedIndex;
 
-            List<decimal> ListEquity = datas[index].GetListEquity();
+            List<decimal> ListEquity = dataList[index].GetListEquity();
 
             int count = ListEquity.Count;
             decimal maxEquity = ListEquity.Max();
@@ -184,7 +175,7 @@ namespace Capital
             double x = 0;
             double y = 0;
 
-            List<Point> points = new List<Point>();
+            List<Point> points = new();
 
             for (int i = 0; i < count; i++)
             {
@@ -198,7 +189,7 @@ namespace Capital
 
             for (int i = 0; i < points.Count - 1; i++)
             {
-                Line line = new Line
+                Line line = new()
                 {
                     X1 = points[i].X,
                     Y1 = points[i].Y,
@@ -210,28 +201,9 @@ namespace Capital
 
                 _canvas.Children.Add(line);
             }
-
-            //for (int i = 0; i < count; i++)
-            //{
-            //    y = _canvas.ActualHeight - (double)(ListEquity[i] - minEquity) / koef;
-
-            //    Ellipse ellipse = new Ellipse()
-            //    {
-            //        Width = 2,
-            //        Height = 2,
-            //        Stroke = Brushes.Black
-            //    };
-
-            //    Canvas.SetLeft(ellipse, x);
-            //    Canvas.SetTop(ellipse, y);
-
-            //    _canvas.Children.Add(ellipse);
-
-            //    x += stepX;
-            //}
         }
 
-        private int CalculateLot(decimal currentDepo, decimal percent, decimal go)
+        private static int CalculateLot(decimal currentDepo, decimal percent, decimal go)
         {
             if (percent > 100) { percent = 100; }
 
@@ -240,42 +212,60 @@ namespace Capital
             return (int)lot;
         }
 
-        private decimal GetDecimalFromString(string str)
+        public static T GetNumberFromString<T>(string input) where T : struct
         {
-            if (decimal.TryParse(str, out decimal result)) return result;
+            if (typeof(T) == typeof(int))
+            {
+                if (int.TryParse(input, out int intResult))
+                {
+                    return (T)(object)intResult;
+                }
+            }
+            else if (typeof(T) == typeof(decimal))
+            {
+                if (decimal.TryParse(input, out decimal decimalResult))
+                {
+                    return (T)(object)decimalResult;
+                }
+            }
 
-            return 0; 
-        }
-
-        private int GetIntFromString(string str)
-        {
-            if (int.TryParse(str, out int result)) return result;
-
-            return 0;
+            throw new InvalidOperationException($"Cannot convert '{input}' to {typeof(T).Name}");
         }
 
         #endregion
 
-        private void _canvas_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void Canvas_SizeChanged(object sender, SizeChangedEventArgs e)
         {   
-            if (_datas.Count != 0)
+            if (_dataList.Count != 0)
             {
-                Draw(_datas);
+                Draw(_dataList);
             }            
         }
 
-        private void _comboBox_DropDownClosed(object sender, EventArgs e)
+        private void ComboBox_DropDownClosed(object sender, EventArgs e)
         {
-            if (_datas.Count != 0)
+            if (_dataList.Count != 0)
             {
-                Draw(_datas);
+                Draw(_dataList);
             }
             else
             {
-                _datas = Calculate();
+                _dataList = Calculate();
 
-                Draw(_datas);
+                Draw(_dataList);
             }            
+        }
+
+        private void _dataGrid_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
+        {
+            if (e.PropertyDescriptor is PropertyDescriptor descriptor)
+            {
+                var displayName = descriptor.Attributes[typeof(DisplayNameAttribute)] as DisplayNameAttribute;
+                if (displayName != null && !string.IsNullOrEmpty(displayName.DisplayName))
+                {
+                    e.Column.Header = displayName.DisplayName;
+                }
+            }
         }
     }
 }

@@ -2,8 +2,8 @@
 
 public enum StrategyType
 {
-    FIX,
-    CAPITALIZATION,
-    PROGRESS,
-    DOWNGRADE
+    Fix,
+    Capitalization,
+    Progress,
+    Downgrade,
 }

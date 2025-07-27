@@ -1,6 +1,7 @@
 ﻿using Capital.Enams;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,30 +14,22 @@ namespace Capital.Entity
         {
             StrategyType = strategyType;
 
-            Depo = depoStart;
+            _depo = depoStart;
+
+            ResultDepo = depoStart;
         }
 
         #region Properties ============================================================================================
 
+        [DisplayName("Стратегия")]
         public StrategyType StrategyType { get; set; }
 
-
-        public decimal Depo
-        {
-            get => _depo;
-
-            set
-            {
-                _depo = value;
-
-                ResultDepo = value;
-            }
-        }
-        decimal _depo;
+        private readonly decimal _depo;
 
         /// <summary>
         /// Результат эквити (депо)
         /// </summary>
+        [DisplayName("Результат")]
         public decimal ResultDepo
         {
             get => _resultDepo;
@@ -45,10 +38,6 @@ namespace Capital.Entity
             {
                 _resultDepo = value;
 
-                Profit = ResultDepo - Depo;
-
-                PercentProfit = Profit * 100 / Depo;
-
                 ListEquity.Add(ResultDepo);
 
                 CalcDrawDown();                  
@@ -56,16 +45,20 @@ namespace Capital.Entity
         }
         decimal _resultDepo;
 
-        public decimal Profit { get; set; }
+        [DisplayName("Профит")]
+        public decimal Profit { get => ResultDepo - _depo; }
+
 
         /// <summary>
         /// Относительный профит в процентах
         /// </summary>
-        public decimal PercentProfit { get; set; }        
+        [DisplayName("Профит в процентах")]
+        public decimal PercentProfit { get => Profit * 100 / _depo; }
 
         /// <summary>
         /// Максимальная абсолютная просадка в деньгах
         /// </summary>
+        [DisplayName("Просадка в деньгах")]
         public decimal MaxDrawDown
         {
             get => _maxDrawDown;
@@ -82,13 +75,14 @@ namespace Capital.Entity
         /// <summary>
         /// Максимальная относительная просадка в процентах
         /// </summary>
+        [DisplayName("Просадка в процентах")]
         public decimal PercentDrawDown { get; set; }
 
         #endregion
 
         #region Fields ================================================================================================
-        
-        List<decimal> ListEquity = new List<decimal>();
+
+        private readonly List<decimal> ListEquity = [];
 
         private decimal _max = 0;
 
@@ -124,8 +118,7 @@ namespace Capital.Entity
 
         private void CalcPercentDrawDown()
         {
-			if (ResultDepo == 0) ResultDepo = 1;
-            //decimal percent = MaxDrawDown * 100 / _max;
+            if (ResultDepo == 0) ResultDepo = 1;
             decimal percent = MaxDrawDown * 100 / ResultDepo;
 
             if (percent > PercentDrawDown) PercentDrawDown = Math.Round(percent, 2);
