@@ -1,25 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "D:\\repos\\Capital\\Capital.csproj": {}
+    "D:\\Projects\\CSharp\\Capital\\Capital.csproj": {}
   },
   "projects": {
-    "D:\\repos\\Capital\\Capital.csproj": {
+    "D:\\Projects\\CSharp\\Capital\\Capital.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\repos\\Capital\\Capital.csproj",
+        "projectUniqueName": "D:\\Projects\\CSharp\\Capital\\Capital.csproj",
         "projectName": "Capital",
-        "projectPath": "D:\\repos\\Capital\\Capital.csproj",
-        "packagesPath": "C:\\Users\\serg-\\.nuget\\packages\\",
-        "outputPath": "D:\\repos\\Capital\\obj\\",
+        "projectPath": "D:\\Projects\\CSharp\\Capital\\Capital.csproj",
+        "packagesPath": "C:\\Users\\Alex\\.nuget\\packages\\",
+        "outputPath": "D:\\Projects\\CSharp\\Capital\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Program Files\\DevExpress 23.2\\Components\\Offline Packages",
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\serg-\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\DevExpress 23.2.config",
+          "C:\\Users\\Alex\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -28,8 +26,6 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\DevExpress 23.2\\Components\\System\\Components\\Packages": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
