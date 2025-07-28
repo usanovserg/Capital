@@ -75,8 +75,7 @@
                    FontSize="14"
                    FontWeight="Bold"/>
         <ComboBox x:Name="_comboBox"
-                  Grid.Row="11" Margin="5,0 "
-                  DropDownClosed="ComboBox_DropDownClosed" FontSize="14"/>
+                  Grid.Row="11" Margin="5,0 " FontSize="14"/>
 
         <TextBox x:Name="_depo" 
                  Grid.Column="1" FontSize="14"/>

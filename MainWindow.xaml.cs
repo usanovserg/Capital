@@ -62,6 +62,11 @@ namespace Capital
             ComboBox comboBox = (ComboBox)sender;
 
             int index = comboBox.SelectedIndex;
+
+            if (_dataList.Count != 0)
+            {
+                Draw(_dataList);
+            }
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -238,20 +243,6 @@ namespace Capital
         {   
             if (_dataList.Count != 0)
             {
-                Draw(_dataList);
-            }            
-        }
-
-        private void ComboBox_DropDownClosed(object sender, EventArgs e)
-        {
-            if (_dataList.Count != 0)
-            {
-                Draw(_dataList);
-            }
-            else
-            {
-                _dataList = Calculate();
-
                 Draw(_dataList);
             }            
         }
