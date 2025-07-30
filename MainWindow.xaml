@@ -25,7 +25,8 @@
             <RowDefinition Height="30"/>
             <RowDefinition Height="30"/>
             <RowDefinition Height="150"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="510"/>
+            <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
 
         <TextBlock Text="Депозит:" Margin="3,0"/>
@@ -50,19 +51,19 @@
         <TextBox x:Name="_minStartPercent" Grid.Column="7" Grid.Row="1" Margin="5,0"/>
         <TextBox x:Name="_go" Grid.Column="8" Grid.Row="1" Margin="5,0"/>
         <ComboBox Name="_comboBox" Grid.Column="9" Grid.Row="1" Margin="5,0" Visibility="Hidden"/>
-        <Button Content="Рассчитать" Click="Button_Click" Grid.Column="10" Grid.Row="1" Margin="5,0"/>
+        <Button Content="Рассчитать" Click="Button_Click" Grid.Column="10" Grid.Row="1" Margin="10,0"/>
 
-        <GroupBox Header="Сравнение результатов стратегий"
-                  Grid.Row="2" Grid.ColumnSpan="11"
-                  Margin="10,1">
-            <DataGrid x:Name="_dataGrid"
-                         Margin="5"/>
+        <GroupBox Header="Сравнение результатов стратегий" Grid.Row="2" Grid.ColumnSpan="11" Margin="10,1">
+            <DataGrid x:Name="_dataGrid" Margin="5" AlternatingRowBackground="LightGray">
+            </DataGrid>
         </GroupBox>
-
+        
         <Canvas x:Name="_canvas"
-                Grid.Row = "4"
+                Grid.Row = "3"
                 Grid.ColumnSpan="11"
-                Margin="10" Background="Black">
+                Margin="10,0" Background="Black">
         </Canvas>
+
+        <TextBlock x:Name="_legend" Grid.Row="4" Grid.ColumnSpan="11" Margin="10,0" Background="Black" Text="Легенда"/>
     </Grid>
 </Window>

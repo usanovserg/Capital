@@ -168,6 +168,7 @@ namespace Capital
         private void Draw(List<Data> datas)
         {
             _canvas.Children.Clear();
+            _legend.Text="Легенда: ";
 
             // int index = _comboBox.SelectedIndex;
             decimal maxEquity = 0;
@@ -210,19 +211,19 @@ namespace Capital
 
                     x += steoX;
                 }
-               
-                //MessageBox.Show("Color index:"+index);
+                _legend.Inlines.Add(new Run(datas[index].StrategyType.ToString() + "  ") { Foreground = GetColor(index) });
+                
             }
         }
         Brush GetColor(int index)
         {
             switch (index)
             {
-                case 0: return Brushes.White;
+                case 0: return Brushes.Yellow;
                 case 1: return Brushes.Red;
                 case 2: return Brushes.Green;
                 case 3: return Brushes.Blue;
-                default: return Brushes.Yellow;
+                default: return Brushes.White;
             }
         }
         private int CalculateLot(decimal currentDepo, decimal percent, decimal go)
