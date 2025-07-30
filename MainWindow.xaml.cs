@@ -56,6 +56,8 @@ namespace Capital
             _fourthCheckBox.Content = _strategies[3];
             _fourthCheckBox.Click += CheckBox_Click;
 
+            _canvas.SizeChanged += _canvas_SizeChanged;
+
             _depo.Text = "100000";
             _startLot.Text = "10";
             _take.Text = "300";
@@ -66,6 +68,12 @@ namespace Capital
             _go.Text = "5000";
             _minStartPercent.Text = "20";
        }
+
+        private void _canvas_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (datas is null) return;
+            Draw();
+        }
 
         private void CheckBox_Click(object sender, RoutedEventArgs e)
         {
@@ -214,12 +222,13 @@ namespace Capital
                 double steoX = _canvas.ActualWidth / listEquity.Count;
                 
                 x = 0;
+                y = _canvas.ActualHeight - (double)(listEquity[0] - minEquity) / koef;
 
                 for (int i = 0; i < listEquity.Count; i++)
                 {
-                    y = _canvas.ActualHeight - (double)(listEquity[i] - minEquity) / koef;
 
-                    Ellipse ellips = new Ellipse()
+
+                    /*Ellipse ellips = new Ellipse()
                     {
                         Width = 2,
                         Height = 2,
@@ -229,10 +238,20 @@ namespace Capital
                     Canvas.SetLeft(ellips, x);
                     Canvas.SetTop(ellips, y);
 
-                    _canvas.Children.Add(ellips);
-
-
+                    _canvas.Children.Add(ellips);*/
+                    Line myLine = new Line()
+                    {
+                        Stroke = GetColor(index),
+                        StrokeThickness = 2
+                    };
+                    myLine.X1 = x;
+                    myLine.Y1 = y;
+                    y = _canvas.ActualHeight - (double)(listEquity[i] - minEquity) / koef;
                     x += steoX;
+                    myLine.X2 = x;
+                    myLine.Y2 = y;
+
+                    _canvas.Children.Add(myLine);
                 }
                 _legend.Inlines.Add(new Run(datas[index].StrategyType.ToString() + "  ") { Foreground = GetColor(index) });
                 
