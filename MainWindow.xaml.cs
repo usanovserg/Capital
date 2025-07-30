@@ -46,10 +46,13 @@ namespace Capital
             
             _firstCheckBox.Content = _strategies[0];
             _firstCheckBox.Click += CheckBox_Click;
+            
             _secondCheckBox.Content = _strategies[1];
             _secondCheckBox.Click += CheckBox_Click;
+ 
             _thirdCheckBox.Content = _strategies[2];
             _thirdCheckBox.Click += CheckBox_Click;
+
             _fourthCheckBox.Content = _strategies[3];
             _fourthCheckBox.Click += CheckBox_Click;
 
@@ -70,7 +73,7 @@ namespace Capital
             if (_secondCheckBox.IsChecked != null) datas[1]._isShown = (bool)_secondCheckBox.IsChecked;
             if (_thirdCheckBox.IsChecked != null) datas[2]._isShown = (bool)_thirdCheckBox.IsChecked;
             if (_fourthCheckBox.IsChecked != null) datas[3]._isShown = (bool)_fourthCheckBox.IsChecked;
-            Draw(datas);
+            Draw();
         }
 
         private void comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -78,15 +81,14 @@ namespace Capital
             ComboBox comboBox = (ComboBox)sender;
 
             int index = comboBox.SelectedIndex;
-            if (datas != null ) Draw(datas);
+            if (datas != null ) Draw();
         }
         
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             datas = Calculate();
-
-            Draw(datas);
+            if (datas != null) CheckBox_Click(sender, e);//Draw()
         }
 
         private List<Data> Calculate()
@@ -104,6 +106,9 @@ namespace Capital
             List<Data> datas = new List<Data>();
 
             foreach (StrategyType type in _strategies) datas.Add(new Data(depoStart, type));
+
+           
+
 
             int lotPercent = startLot;
             decimal percent = startLot * go * 100 / depoStart;
@@ -177,25 +182,28 @@ namespace Capital
             return datas;
         }
 
-        private void Draw(List<Data> datas)
+        private void Draw()
         {
+            
+            
             _canvas.Children.Clear();
+            
             _legend.Foreground = Brushes.White;
-            _legend.Text="   Legend: ";
+            _legend.Text="Legend: ";
 
             
             decimal maxEquity = 0;
             decimal minEquity = 0;
 
             foreach (Data data in datas) {
+                if (!data._isShown) continue; 
                 if (maxEquity < data.MaxDepo) maxEquity = data.MaxDepo;
                 if (minEquity > data.MinDepo) minEquity = data.MinDepo;
             }
+            double koef = (double)(maxEquity - minEquity) / _canvas.ActualHeight;
 
             double x = 0;
             double y = 0;
-
-            double koef = (double)(maxEquity - minEquity) / _canvas.ActualHeight;
 
             for (int index = 0; index < datas.Count; index++) {
 
