@@ -27,13 +27,7 @@ namespace Capital
 
         #region Fields ========================================
 
-        List<StrategyType> _strategies = new List<StrategyType>()
-        {
-            StrategyType.FIX,
-            StrategyType.CAPITALIZATION,
-            StrategyType.PROGRESS,
-            StrategyType.DOWNGRADE
-        };
+        List<StrategyType> _strategies = new() { (StrategyType)0, (StrategyType)1, (StrategyType)2, (StrategyType)3 };
 
         Random _random = new Random();
 
@@ -88,10 +82,7 @@ namespace Capital
 
             List<Data> datas = new List<Data>();
 
-            foreach (StrategyType type in _strategies)
-            {
-                datas.Add(new Data(depoStart, type));
-            }
+            foreach (StrategyType type in _strategies) datas.Add(new Data(depoStart, type));
 
             int lotPercent = startLot;
             decimal percent = startLot * go * 100 / depoStart;
@@ -168,7 +159,8 @@ namespace Capital
         private void Draw(List<Data> datas)
         {
             _canvas.Children.Clear();
-            _legend.Text="Легенда: ";
+            _legend.Foreground = Brushes.White;
+            _legend.Text="     ";
 
             // int index = _comboBox.SelectedIndex;
             decimal maxEquity = 0;

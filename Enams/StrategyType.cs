@@ -8,8 +8,8 @@ namespace Capital.Enams
 {
     public enum StrategyType
     {
-        FIX,
-        CAPITALIZATION,
+        FIXED,
+        CAPITALIZE,
         PROGRESS,
         DOWNGRADE
     }
