@@ -28,7 +28,9 @@ namespace Capital
         #region Fields ========================================
 
         List<StrategyType> _strategies = new() { (StrategyType)0, (StrategyType)1, (StrategyType)2, (StrategyType)3 };
+        
 
+        List<Data> datas;
         Random _random = new Random();
 
         #endregion
@@ -39,8 +41,17 @@ namespace Capital
        {
             _comboBox.ItemsSource = _strategies;
             
-            _comboBox.SelectionChanged += _comboBox_SelectionChanged;
+            _comboBox.SelectionChanged += comboBox_SelectionChanged;
             _comboBox.SelectedIndex = 0;
+            
+            _firstCheckBox.Content = _strategies[0];
+            _firstCheckBox.Click += CheckBox_Click;
+            _secondCheckBox.Content = _strategies[1];
+            _secondCheckBox.Click += CheckBox_Click;
+            _thirdCheckBox.Content = _strategies[2];
+            _thirdCheckBox.Click += CheckBox_Click;
+            _fourthCheckBox.Content = _strategies[3];
+            _fourthCheckBox.Click += CheckBox_Click;
 
             _depo.Text = "100000";
             _startLot.Text = "10";
@@ -53,17 +64,27 @@ namespace Capital
             _minStartPercent.Text = "20";
        }
 
-        private void _comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void CheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            if (_firstCheckBox.IsChecked != null) datas[0]._isShown = (bool)_firstCheckBox.IsChecked;
+            if (_secondCheckBox.IsChecked != null) datas[1]._isShown = (bool)_secondCheckBox.IsChecked;
+            if (_thirdCheckBox.IsChecked != null) datas[2]._isShown = (bool)_thirdCheckBox.IsChecked;
+            if (_fourthCheckBox.IsChecked != null) datas[3]._isShown = (bool)_fourthCheckBox.IsChecked;
+            Draw(datas);
+        }
+
+        private void comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ComboBox comboBox = (ComboBox)sender;
 
             int index = comboBox.SelectedIndex;
+            if (datas != null ) Draw(datas);
         }
         
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            List<Data> datas = Calculate();
+            datas = Calculate();
 
             Draw(datas);
         }
@@ -160,9 +181,9 @@ namespace Capital
         {
             _canvas.Children.Clear();
             _legend.Foreground = Brushes.White;
-            _legend.Text="     ";
+            _legend.Text="   Legend: ";
 
-            // int index = _comboBox.SelectedIndex;
+            
             decimal maxEquity = 0;
             decimal minEquity = 0;
 
@@ -177,6 +198,8 @@ namespace Capital
             double koef = (double)(maxEquity - minEquity) / _canvas.ActualHeight;
 
             for (int index = 0; index < datas.Count; index++) {
+
+                if( !datas[index]._isShown) continue;
 
                 List<decimal> listEquity = datas[index].GetListEquity();
                 

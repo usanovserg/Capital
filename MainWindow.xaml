@@ -50,7 +50,7 @@
         <TextBox x:Name="_countTrades" Grid.Column="6" Grid.Row="1" Margin="5,0"/>
         <TextBox x:Name="_minStartPercent" Grid.Column="7" Grid.Row="1" Margin="5,0"/>
         <TextBox x:Name="_go" Grid.Column="8" Grid.Row="1" Margin="5,0"/>
-        <ComboBox Name="_comboBox" Grid.Column="9" Grid.Row="1" Margin="5,0" Visibility="Hidden"/>
+        <ComboBox Name="_comboBox" Grid.Column="9" Grid.Row="1" Margin="5,0" Visibility="Hidden"/> <!-- Visibility="Hidden" -->
         <Button Content="Рассчитать" Click="Button_Click" Grid.Column="10" Grid.Row="1" Margin="10,0"/>
 
         <GroupBox Header="Сравнение результатов стратегий" Grid.Row="2" Grid.ColumnSpan="11" Margin="10,1">
@@ -64,6 +64,13 @@
                 Margin="10,0" Background="Black">
         </Canvas>
 
-        <TextBlock x:Name="_legend" Grid.Row="4" Grid.ColumnSpan="11" Margin="10,0" Background="Black" Text="Легенда"/>
+        <TextBlock x:Name="_legend" Grid.Row="3" Grid.ColumnSpan="11" Margin="10,0" Background="Black" VerticalAlignment="Bottom" HorizontalAlignment="Right"  Text="Легенда"/>
+
+        <CheckBox x:Name="_firstCheckBox" Grid.Row="4" Margin="10,0" Content="One" IsChecked="True"/>
+        <CheckBox x:Name="_secondCheckBox" Grid.Row="4" Margin="5,0" Grid.Column="1" Content="Two" IsChecked="True"/>
+        <CheckBox x:Name="_thirdCheckBox" Grid.Row="4" Margin="5,0" Grid.Column="2" Content="Three" IsChecked="True"/>
+        <CheckBox x:Name="_fourthCheckBox" Grid.Row="4" Margin="5,0" Grid.Column="3" Content="Four" IsChecked="True"/>
+        
+
     </Grid>
 </Window>

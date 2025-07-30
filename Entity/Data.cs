@@ -117,7 +117,8 @@ namespace Capital.Entity
         private decimal _max = 0;
 
         private decimal _min = 0;
-
+        
+        public bool _isShown = true;
 
         #endregion
 
