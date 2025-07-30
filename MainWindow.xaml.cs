@@ -65,6 +65,7 @@ namespace Capital
 
             int index = comboBox.SelectedIndex;
         }
+        
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
@@ -73,7 +74,7 @@ namespace Capital
             Draw(datas);
         }
 
-        private List<Data>Calculate()
+        private List<Data> Calculate()
         {
             decimal depoStart = GetDecimalFromString(_depo.Text);
             int startLot = GetIntFromString(_startLot.Text);
@@ -100,9 +101,11 @@ namespace Capital
 
             int lotDown = startLot;
 
+            int rnd;
+
             for (int i = 0; i < countTrades; i++)
             {
-                int rnd = _random.Next(1, 100);
+                rnd = _random.Next(1, 100);
 
                 if (rnd <= percProfit)
                 {
@@ -166,41 +169,62 @@ namespace Capital
         {
             _canvas.Children.Clear();
 
-            int index = _comboBox.SelectedIndex;
+            // int index = _comboBox.SelectedIndex;
+            decimal maxEquity = 0;
+            decimal minEquity = 0;
 
-            List<decimal> listEquity = datas[index].GetListEquity();
-
-            int count = listEquity.Count;
-            decimal maxEquity = listEquity.Max();
-            decimal minEquity = listEquity.Min();
-
-            double steoX = _canvas.ActualWidth / count;
-            double koef = (double)(maxEquity - minEquity) / _canvas.ActualHeight;
+            foreach (Data data in datas) {
+                if (maxEquity < data.MaxDepo) maxEquity = data.MaxDepo;
+                if (minEquity > data.MinDepo) minEquity = data.MinDepo;
+            }
 
             double x = 0;
             double y = 0;
 
-            for (int i = 0; i < count; i++)
-            {
-                y = _canvas.ActualHeight - (double)(listEquity[i] - minEquity) / koef;
+            double koef = (double)(maxEquity - minEquity) / _canvas.ActualHeight;
 
-                Ellipse ellips = new Ellipse()
+            for (int index = 0; index < datas.Count; index++) {
+
+                List<decimal> listEquity = datas[index].GetListEquity();
+                
+                double steoX = _canvas.ActualWidth / listEquity.Count;
+                
+                x = 0;
+
+                for (int i = 0; i < listEquity.Count; i++)
                 {
-                    Width = 2,
-                    Height = 2,
-                    Stroke = Brushes.Black
-                };
+                    y = _canvas.ActualHeight - (double)(listEquity[i] - minEquity) / koef;
 
-                Canvas.SetLeft(ellips, x);
-                Canvas.SetTop(ellips, y);
+                    Ellipse ellips = new Ellipse()
+                    {
+                        Width = 2,
+                        Height = 2,
+                        Stroke = GetColor(index)
+                    };
 
-                _canvas.Children.Add(ellips);
+                    Canvas.SetLeft(ellips, x);
+                    Canvas.SetTop(ellips, y);
+
+                    _canvas.Children.Add(ellips);
 
 
-                x += steoX;
+                    x += steoX;
+                }
+               
+                //MessageBox.Show("Color index:"+index);
             }
         }
-
+        Brush GetColor(int index)
+        {
+            switch (index)
+            {
+                case 0: return Brushes.White;
+                case 1: return Brushes.Red;
+                case 2: return Brushes.Green;
+                case 3: return Brushes.Blue;
+                default: return Brushes.Yellow;
+            }
+        }
         private int CalculateLot(decimal currentDepo, decimal percent, decimal go)
         {
             if (percent > 100) { percent = 100; }

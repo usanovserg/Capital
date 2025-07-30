@@ -14,9 +14,11 @@ namespace Capital.Entity
             StrategyType = strategyType;
 
             Depo = depoStart;
+            _minDepo = depoStart;
+            _maxDepo = depoStart;    
         }
 
-        #region Propertirs =================================
+        #region Properties =================================
 
         public StrategyType StrategyType { get; set; }
 
@@ -32,6 +34,26 @@ namespace Capital.Entity
             }
         }
         decimal _depo;
+        public decimal MaxDepo
+        {
+            get => _maxDepo;
+
+            set
+            {
+                _maxDepo = (_maxDepo >= value) ? _maxDepo : value;
+            }
+        }
+        decimal _maxDepo;
+        public decimal MinDepo
+        {
+            get => _minDepo;
+
+            set
+            {
+                _minDepo = (_minDepo <= value) ? _minDepo : value;
+            }
+        }
+        decimal _minDepo;
 
         /// <summary>
         /// Результат эквити (депо)
@@ -48,7 +70,10 @@ namespace Capital.Entity
 
                 PercentProfit = Profit * 100 / Depo;
 
-                LisrEquity.Add(ResultDepo);
+                MaxDepo = value;
+                MinDepo = value;
+
+                ListEquity.Add(ResultDepo);
 
                 CalcDrawDown();
             }
@@ -87,7 +112,7 @@ namespace Capital.Entity
 
         #region Fields =========================================
 
-        List<decimal> LisrEquity = new List<decimal>();
+        List<decimal> ListEquity = new List<decimal>();
 
         private decimal _max = 0;
 
@@ -100,7 +125,7 @@ namespace Capital.Entity
 
         public List<decimal> GetListEquity()
         {
-            return LisrEquity;
+            return ListEquity;
         }
 
         private void CalcDrawDown()
