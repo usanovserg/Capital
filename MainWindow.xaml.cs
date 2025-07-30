@@ -77,6 +77,7 @@ namespace Capital
 
         private void CheckBox_Click(object sender, RoutedEventArgs e)
         {
+            if(datas is null) { return; };
             if (_firstCheckBox.IsChecked != null) datas[0]._isShown = (bool)_firstCheckBox.IsChecked;
             if (_secondCheckBox.IsChecked != null) datas[1]._isShown = (bool)_secondCheckBox.IsChecked;
             if (_thirdCheckBox.IsChecked != null) datas[2]._isShown = (bool)_thirdCheckBox.IsChecked;
