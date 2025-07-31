@@ -227,7 +227,7 @@ namespace Capital
                 double steoX = _canvas.ActualWidth / listEquity.Count;
                 
                 x = 0;
-                y = _canvas.ActualHeight - (double)(listEquity[0] - minEquity) / koef;
+                y = 0;//_canvas.ActualHeight - (double)(listEquity[0] - minEquity) / koef;
 
                 for (int i = 0; i < listEquity.Count; i++)
                 {
