@@ -45,15 +45,19 @@ namespace Capital
             _comboBox.SelectedIndex = 0;
             
             _firstCheckBox.Content = _strategies[0];
+            _firstCheckBox.Foreground = GetColor(0);
             _firstCheckBox.Click += CheckBox_Click;
             
             _secondCheckBox.Content = _strategies[1];
+            _secondCheckBox.Foreground = GetColor(1);
             _secondCheckBox.Click += CheckBox_Click;
  
             _thirdCheckBox.Content = _strategies[2];
+            _thirdCheckBox.Foreground = GetColor(2);
             _thirdCheckBox.Click += CheckBox_Click;
 
             _fourthCheckBox.Content = _strategies[3];
+            _fourthCheckBox.Foreground = GetColor(3);
             _fourthCheckBox.Click += CheckBox_Click;
 
             _canvas.SizeChanged += _canvas_SizeChanged;
@@ -262,11 +266,11 @@ namespace Capital
         {
             switch (index)
             {
-                case 0: return Brushes.Yellow;
+                case 0: return Brushes.Orange;
                 case 1: return Brushes.Red;
                 case 2: return Brushes.Green;
                 case 3: return Brushes.Blue;
-                default: return Brushes.White;
+                default: return Brushes.Yellow;
             }
         }
         private int CalculateLot(decimal currentDepo, decimal percent, decimal go)
