@@ -29,7 +29,8 @@ namespace Capital
 
         List<StrategyType> _strategies = new() { (StrategyType)0, (StrategyType)1, (StrategyType)2, (StrategyType)3 };
         
-
+        CheckBox[] _checkBoxes = new CheckBox[4];
+          
         List<Data> datas;
         Random _random = new Random();
 
@@ -39,6 +40,7 @@ namespace Capital
 
        private void Init()
        {
+            /*
             _comboBox.ItemsSource = _strategies;
             
             _comboBox.SelectionChanged += comboBox_SelectionChanged;
@@ -59,6 +61,19 @@ namespace Capital
             _fourthCheckBox.Content = _strategies[3];
             _fourthCheckBox.Foreground = GetColor(3);
             _fourthCheckBox.Click += CheckBox_Click;
+            */
+            for (int i = 0; i < _strategies.Count; i++)
+            {
+                _checkBoxes[i] = new CheckBox();
+                //_checkBoxes[i].Location = new Point(X,Y);
+                _checkBoxes[i].Foreground = GetColor(i);
+                _checkBoxes[i].IsChecked = true;
+                _checkBoxes[i].Click += CheckBox_Click;
+                _checkBoxes[i].Content = _strategies[i];
+            }
+            
+            _comboBox.ItemsSource = _checkBoxes;
+            _comboBox.SelectedIndex = 0;
 
             _canvas.SizeChanged += _canvas_SizeChanged;
 
@@ -82,10 +97,18 @@ namespace Capital
         private void CheckBox_Click(object sender, RoutedEventArgs e)
         {
             if(datas is null) { return; };
+
+            for (int i = 0; i < _checkBoxes.Length; i++)
+            {
+                if (_checkBoxes[i].IsChecked != null) datas[i]._isShown = (bool)_checkBoxes[i].IsChecked;
+            }
+            /*
             if (_firstCheckBox.IsChecked != null) datas[0]._isShown = (bool)_firstCheckBox.IsChecked;
             if (_secondCheckBox.IsChecked != null) datas[1]._isShown = (bool)_secondCheckBox.IsChecked;
             if (_thirdCheckBox.IsChecked != null) datas[2]._isShown = (bool)_thirdCheckBox.IsChecked;
             if (_fourthCheckBox.IsChecked != null) datas[3]._isShown = (bool)_fourthCheckBox.IsChecked;
+            */
+
             Draw();
         }
 
@@ -119,9 +142,6 @@ namespace Capital
             List<Data> datas = new List<Data>();
 
             foreach (StrategyType type in _strategies) datas.Add(new Data(depoStart, type));
-
-           
-
 
             int lotPercent = startLot;
             decimal percent = startLot * go * 100 / depoStart;
@@ -227,7 +247,7 @@ namespace Capital
                 double steoX = _canvas.ActualWidth / listEquity.Count;
                 
                 x = 0;
-                y = 0;//_canvas.ActualHeight - (double)(listEquity[0] - minEquity) / koef;
+                y = _canvas.ActualHeight - (double)(listEquity[0] - minEquity) / koef;
 
                 for (int i = 0; i < listEquity.Count; i++)
                 {

@@ -40,7 +40,7 @@ namespace Capital.Entity
 
             set
             {
-                _maxDepo = (_maxDepo >= value) ? _maxDepo : value;
+                if(_maxDepo <= value) _maxDepo = value;
             }
         }
         decimal _maxDepo;
@@ -50,7 +50,7 @@ namespace Capital.Entity
 
             set
             {
-                _minDepo = (_minDepo <= value) ? _minDepo : value;
+                if(_minDepo >= value) _minDepo = value;
             }
         }
         decimal _minDepo;
