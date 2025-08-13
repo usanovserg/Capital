@@ -9,20 +9,38 @@ namespace Capital.Entity
 {
     public class Data
     {
+    
         public Data(decimal depoStart, StrategyType strategyType)
         {
-            StrategyType = strategyType;
-
             Depo = depoStart;
+
+            StrategyType = strategyType;
         }
 
-        #region Propertirs =================================
+
+        #region Properties ======================
 
         public StrategyType StrategyType { get; set; }
 
 
+
+
+        public decimal Profit { get; set; }
+
+        public decimal PercentProfit { get; set; }
+
+        public decimal PercentDrawDown { get; set; }
+
+        public static bool CountButtonClicks = false;
+
+
         public decimal Depo
         {
+            //get
+            //{
+            //    return _depo;
+            //}
+
             get => _depo;
 
             set
@@ -33,75 +51,80 @@ namespace Capital.Entity
         }
         decimal _depo;
 
-        /// <summary>
-        /// Результат эквити (депо)
-        /// </summary>
+
+
         public decimal ResultDepo
         {
             get => _resultDepo;
 
             set
             {
+
                 _resultDepo = value;
 
                 Profit = ResultDepo - Depo;
 
                 PercentProfit = Profit * 100 / Depo;
 
-                LisrEquity.Add(ResultDepo);
+                listEquity.Add(ResultDepo);
 
                 CalcDrawDown();
+
+                CountButtonClicks = true;
+
+
+
             }
         }
         decimal _resultDepo;
 
-        public decimal Profit { get; set; }
 
-        /// <summary>
-        /// Относительный профит в процентах
-        /// </summary>
-        public decimal PercentProfit { get; set; }
+        //public decimal Profit
+        //{
+        //    get => _profit;
 
-        /// <summary>
-        /// Максимальная абсолбтная просадка в деньгах
-        /// </summary>
-        public decimal MaxDrawDoun
+        //    set
+        //    {
+        //        _profit = value;
+        //    }
+        //}
+        //decimal _profit;
+
+        public decimal MaxDrawDown
         {
-            get => _maxDrawDoun;
+            get => _maxDrawDown;
 
             set
             {
-                _maxDrawDoun = value;
+                _maxDrawDown = value;
 
-                CalcPercentDown();
+                CalcPercentDrawDown();
+
             }
         }
-        decimal _maxDrawDoun;
+        decimal _maxDrawDown;
 
-        /// <summary>
-        /// Максимальная относительная просадка в процентах
-        /// </summary>
-        public decimal PercentDrawDown { get; set; }
+
+
+
 
         #endregion
 
-        #region Fields =========================================
 
-        List<decimal> LisrEquity = new List<decimal>();
+        #region Fields =======================
+
+        List<decimal> listEquity = new List<decimal>();
 
         private decimal _max = 0;
 
         private decimal _min = 0;
 
 
+
         #endregion
 
-        #region Methods ==========================================
 
-        public List<decimal> GetListEquity()
-        {
-            return LisrEquity;
-        }
+        #region Methods ======================
 
         private void CalcDrawDown()
         {
@@ -115,21 +138,26 @@ namespace Capital.Entity
             {
                 _min = ResultDepo;
 
-                if(MaxDrawDoun < _max - _min)
+                if (MaxDrawDown < _max - _min)
                 {
-                    MaxDrawDoun = _max - _min;
+                    MaxDrawDown = _max - _min;
                 }
             }
         }
 
-        private void CalcPercentDown()
+        private void CalcPercentDrawDown()
         {
-            if (ResultDepo == 0) ResultDepo = 1;
-            decimal percent = MaxDrawDoun * 100 / ResultDepo;
 
+            decimal percent = MaxDrawDown * 100 / ResultDepo;
             if (percent > PercentDrawDown) PercentDrawDown = Math.Round(percent, 2);
+
         }
 
+
+        public List<decimal> GetListEquity()
+        {
+            return listEquity;
+        }
         #endregion
     }
 }

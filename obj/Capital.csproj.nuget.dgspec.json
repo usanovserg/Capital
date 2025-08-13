@@ -1,15 +1,15 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Виталий\\Source\\Repos\\Capital\\Capital.csproj": {}
+    "C:\\Users\\Виталий\\source\\repos\\Capital\\Capital.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Виталий\\Source\\Repos\\Capital\\Capital.csproj": {
+    "C:\\Users\\Виталий\\source\\repos\\Capital\\Capital.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Виталий\\Source\\Repos\\Capital\\Capital.csproj",
+        "projectUniqueName": "C:\\Users\\Виталий\\source\\repos\\Capital\\Capital.csproj",
         "projectName": "Capital",
-        "projectPath": "C:\\Users\\Виталий\\Source\\Repos\\Capital\\Capital.csproj",
+        "projectPath": "C:\\Users\\Виталий\\source\\repos\\Capital\\Capital.csproj",
         "packagesPath": "C:\\Users\\Виталий\\.nuget\\packages\\",
         "outputPath": "C:\\Users\\Виталий\\Source\\Repos\\Capital\\obj\\",
         "projectStyle": "PackageReference",
