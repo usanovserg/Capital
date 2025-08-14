@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Виталий\\source\\repos\\Capital\\Capital.csproj": {}
+    "C:\\Users\\Виталий\\Source\\Repos\\Capital\\Capital.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Виталий\\source\\repos\\Capital\\Capital.csproj": {
+    "C:\\Users\\Виталий\\Source\\Repos\\Capital\\Capital.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Виталий\\source\\repos\\Capital\\Capital.csproj",
+        "projectUniqueName": "C:\\Users\\Виталий\\Source\\Repos\\Capital\\Capital.csproj",
         "projectName": "Capital",
-        "projectPath": "C:\\Users\\Виталий\\source\\repos\\Capital\\Capital.csproj",
+        "projectPath": "C:\\Users\\Виталий\\Source\\Repos\\Capital\\Capital.csproj",
         "packagesPath": "C:\\Users\\Виталий\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Виталий\\Source\\Repos\\Capital\\obj\\",
+        "outputPath": "C:\\Users\\Виталий\\source\\repos\\Capital\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
