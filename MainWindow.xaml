@@ -6,6 +6,16 @@
         xmlns:local="clr-namespace:Capital"
         mc:Ignorable="d"
         Title="Capital" Height="800" Width="1200">
+    <Window.Resources>
+        <Style x:Key="TextBlock">
+            <Setter Property="TextBlock.Margin" Value="10,0,0,0"/>
+            <Setter Property="TextBlock.VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="TextBox">
+            <Setter Property="TextBox.Margin" Value="1,0,1,0"/>
+            <Setter Property="TextBox.VerticalAlignment" Value="Center"/>
+        </Style>
+    </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="150"/>
@@ -29,43 +39,43 @@
             <RowDefinition Height="30"/>
             <RowDefinition Height="*" MinHeight="350"/>
         </Grid.RowDefinitions>
-        <TextBlock Text="Депозит" Margin="10,0,0,0" VerticalAlignment="Center"/>
-        <TextBlock Text="Начальный лот" Margin="10,0,0,0" VerticalAlignment="Center"
+        <TextBlock Text="Депозит" Style="{StaticResource TextBlock}"/>
+        <TextBlock Text="Начальный лот" Style="{StaticResource TextBlock}"
                    Grid.Row="1" />
-        <TextBlock Text="Тейк" Margin="10,0,0,0" VerticalAlignment="Center"
+        <TextBlock Text="Тейк" Style="{StaticResource TextBlock}"
                    Grid.Row="2" />
-        <TextBlock Text="Стоп" Margin="10,0,0,0" VerticalAlignment="Center"
+        <TextBlock Text="Стоп" Style="{StaticResource TextBlock}"
                    Grid.Row="3" />
-        <TextBlock Text="Комиссия" Margin="10,0,0,0" VerticalAlignment="Center"
+        <TextBlock Text="Комиссия" Style="{StaticResource TextBlock}"
                    Grid.Row="4" />
-        <TextBlock Text="% Процент приб." Margin="10,0,0,0" VerticalAlignment="Center"
+        <TextBlock Text="% Процент приб." Style="{StaticResource TextBlock}"
                    Grid.Row="5" />
-        <TextBlock Text="Кол-во сделок" Margin="10,0,0,0" VerticalAlignment="Center"
+        <TextBlock Text="Кол-во сделок" Style="{StaticResource TextBlock}"
                    Grid.Row="6" />
-        <TextBlock Text="Мин. % Депо" Margin="10,0,0,0" VerticalAlignment="Center"
+        <TextBlock Text="Мин. % Депо" Style="{StaticResource TextBlock}"
                    Grid.Row="7" />
-        <TextBlock Text="Гарант. обесп." Margin="10,0,0,0" VerticalAlignment="Center"
+        <TextBlock Text="Гарант. обесп." Style="{StaticResource TextBlock}"
                    Grid.Row="9" />
         <ComboBox Name="_comboBox" Margin="5,1" VerticalAlignment="Center"
-                  Grid.Row="11"/> 
+                  Grid.Row="11"/>
 
-        <TextBox x:Name="_depo" VerticalAlignment="Center" Margin="1,0,1,0"
+        <TextBox x:Name="_depo" Style="{StaticResource TextBox}"
                  Grid.Column="1"/>
-        <TextBox x:Name="_startLot" VerticalAlignment="Center" Margin="1,0,1,0"
+        <TextBox x:Name="_startLot" Style="{StaticResource TextBox}"
                  Grid.Column="1" Grid.Row="1"/>
-        <TextBox x:Name="_take" VerticalAlignment="Center" Margin="1,0,1,0"
+        <TextBox x:Name="_take" Style="{StaticResource TextBox}"
                  Grid.Column="1" Grid.Row="2"/>
-        <TextBox x:Name="_stop" VerticalAlignment="Center" Margin="1,0,1,0"
+        <TextBox x:Name="_stop" Style="{StaticResource TextBox}"
                  Grid.Column="1" Grid.Row="3"/>
-        <TextBox x:Name="_comiss" VerticalAlignment="Center" Margin="1,0,1,0"
+        <TextBox x:Name="_comiss" Style="{StaticResource TextBox}"
                  Grid.Column="1" Grid.Row="4"/>
-        <TextBox x:Name="_percetnProfit" VerticalAlignment="Center" Margin="1,0,1,0"
+        <TextBox x:Name="_percetnProfit" Style="{StaticResource TextBox}"
                  Grid.Column="1" Grid.Row="5"/>
-        <TextBox x:Name="_countTrades" VerticalAlignment="Center" Margin="1,0,1,0"
+        <TextBox x:Name="_countTrades" Style="{StaticResource TextBox}"
                  Grid.Column="1" Grid.Row="6"/>
-        <TextBox x:Name="_minStartPercent" VerticalAlignment="Center" Margin="1,0,1,0"
+        <TextBox x:Name="_minStartPercent" Style="{StaticResource TextBox}"
                  Grid.Column="1" Grid.Row="7"/>
-        <TextBox x:Name="_go" VerticalAlignment="Center" Margin="1,0,1,0"
+        <TextBox x:Name="_go" Style="{StaticResource TextBox}"
                  Grid.Column="1" Grid.Row="9"/>
         <Button Content="Рассчитать" Margin="1,0,1,0"
                 Click="Button_Click"
