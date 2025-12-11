@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:oxy="http://oxyplot.org/wpf"
         xmlns:local="clr-namespace:Capital"
         mc:Ignorable="d"
         Title="Capital" Height="800" Width="1200">
@@ -57,7 +58,7 @@
         <TextBlock Text="Гарант. обесп." Style="{StaticResource TextBlock}"
                    Grid.Row="9" />
         <ComboBox Name="_comboBox" Margin="5,1" VerticalAlignment="Center"
-                  Grid.Row="11"/>
+                  Grid.Row="11" />
 
         <TextBox x:Name="_depo" Style="{StaticResource TextBox}"
                  Grid.Column="1"/>
@@ -85,10 +86,13 @@
                   Margin="10,1"
                   Grid.Column="2">
             <DataGrid x:Name="_dataGrid"
-                      Margin="5"/>
+                      Margin="5"
+                      AutoGeneratingColumn="DataGrid_AutoGeneratingColumn"/>
         </GroupBox>
-            
-
-
+        <oxy:PlotView x:Name="plotView"
+                      Grid.ColumnSpan="3"
+                      Grid.Column="0"
+                      Grid.Row="13"
+                      Margin="5"/>
     </Grid>
 </Window>

@@ -1,5 +1,12 @@
-﻿using Capital.Enums;
-using Capital.Entity;
+﻿using Capital.Entity;
+using Capital.Enums;
+using OxyPlot;
+using OxyPlot.Series;
+using OxyPlot.Wpf;
+using System;
+using System.Diagnostics;
+using System.Globalization;
+using System.Reflection;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -10,6 +17,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+
 
 namespace Capital
 {
@@ -33,12 +41,20 @@ namespace Capital
         };
 
         Random _random = new Random();
+        PlotModel model;
+       
 
         #endregion ======================================================================
         #region    Methods ==============================================================
         private void Init()
         {
-            _comboBox.ItemsSource = _strategies;
+          //  _comboBox.ItemsSource = _strategies;
+            foreach (StrategyType type in _strategies)
+            {
+                _comboBox.Items.Add(type.ToString());
+            }
+            _comboBox.Items.Add("Все стратегии");
+
             _comboBox.SelectionChanged += _comboBox_SelectionChanged;
             _comboBox.SelectedIndex = 0;
 
@@ -56,11 +72,13 @@ namespace Capital
         {
             ComboBox comboBox = (ComboBox)sender;
             int index = comboBox.SelectedIndex;
+            ShowPlot(index);
         }
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             Calculate();
         }
+
         private void Calculate()
         {
             decimal depoStart = GetDecimalFromString(_depo.Text);
@@ -72,6 +90,16 @@ namespace Capital
             decimal percetnProfit = GetDecimalFromString(_percetnProfit.Text);
             decimal minStartPercent = GetDecimalFromString(_minStartPercent.Text);
             decimal go = GetDecimalFromString(_go.Text);
+
+            
+            var series1 = new LineSeries();
+            var series2 = new LineSeries();
+            var series3 = new LineSeries();
+            var series4 = new LineSeries();
+            series1.Points.Add(new DataPoint(0, (double)depoStart));
+            series2.Points.Add(new DataPoint(0, (double)depoStart));
+            series3.Points.Add(new DataPoint(0, (double)depoStart));
+            series4.Points.Add(new DataPoint(0, (double)depoStart));
 
             List<Data> datas  = new List<Data>();
             foreach (StrategyType type in _strategies)
@@ -127,10 +155,53 @@ namespace Capital
                     if (lotDown == 0) lotDown = 1;
 
                 }
+
+                series1.Points.Add(new DataPoint(i+1, (double)datas[0].ResultDepo));
+                series2.Points.Add(new DataPoint(i+1, (double)datas[1].ResultDepo));
+                series3.Points.Add(new DataPoint(i+1, (double)datas[2].ResultDepo));
+                series4.Points.Add(new DataPoint(i+1, (double)datas[3].ResultDepo));
             }
             _dataGrid.ItemsSource = datas;
-        }
+ 
 
+            model = new PlotModel { Title = "График изменения капитала" };
+            model.Series.Add(series1);
+            model.Series.Add(series2);
+            model.Series.Add(series3);
+            model.Series.Add(series4);
+
+            plotView?.Model = model;
+            ShowPlot(_comboBox.SelectedIndex);
+        }
+        private void ShowPlot(int index)
+        {
+            plotView?.Model?.Series[0]?.IsVisible = false;
+            plotView?.Model?.Series[1]?.IsVisible = false;
+            plotView?.Model?.Series[2]?.IsVisible = false;
+            plotView?.Model?.Series[3]?.IsVisible = false;
+            switch (index)
+            {
+                case 0:
+                    plotView?.Model?.Series[0]?.IsVisible = true;
+                    break;
+                case 1:
+                    plotView?.Model?.Series[1]?.IsVisible = true;
+                    break;
+                case 2:
+                    plotView?.Model?.Series[2]?.IsVisible = true;
+                    break;
+                case 3:
+                    plotView?.Model?.Series[3]?.IsVisible = true;
+                    break;
+                case 4:
+                    plotView?.Model?.Series[0]?.IsVisible = true;
+                    plotView?.Model?.Series[1]?.IsVisible = true;
+                    plotView?.Model?.Series[2]?.IsVisible = true;
+                    plotView?.Model?.Series[3]?.IsVisible = true;
+                    break;
+            }
+            plotView?.InvalidatePlot(true);
+        }
         private int CalculateLot(decimal currentDepo, decimal percent, decimal go)
         {
             if (percent > 100) { percent = 100; }
@@ -146,7 +217,26 @@ namespace Capital
             if (int.TryParse(str, out int result)) return result;
             return 0;
         }
+        private void DataGrid_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
+        {
+            if (e.Column is DataGridTextColumn col)
+            {
+                // Форматирование числа с разделителем тысяч
+                col.Binding = new Binding(e.PropertyName)
+                {
+                    StringFormat = "{0:N0}",
+                    ConverterCulture = new CultureInfo("ru-RU")
+                };
+                // Стиль для отображения
+                var displayStyle = new Style(typeof(TextBlock));
+                displayStyle.Setters.Add(new Setter(TextBlock.TextAlignmentProperty, TextAlignment.Right));
+                col.ElementStyle = displayStyle;
+            }
+        }
+
 
         #endregion ======================================================================
+
+
     }
 }
