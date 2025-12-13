@@ -62,7 +62,7 @@
              Grid.Column="1" Grid.Row="3"/>
         <TextBox x:Name="_comiss"
              Grid.Column="1" Grid.Row="4"/>
-        <TextBox x:Name="_percentProffit"
+        <TextBox x:Name="_percentProfit"
              Grid.Column="1" Grid.Row="5"/>
         <TextBox x:Name="_countTrades" 
              Grid.Column="1" Grid.Row="6"/>

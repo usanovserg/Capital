@@ -56,7 +56,7 @@ namespace Capital
             _stop.Text = "100";
             _comiss.Text = "5";
             _countTrades.Text = "1000";
-            _percentProffit.Text = "30";
+            _percentProfit.Text = "30";
             _go.Text = "5000";
             _minStartPercent.Text = "20";
 
@@ -78,9 +78,111 @@ namespace Capital
 
         private void Calculate()
         {
+            decimal depoStart = GetDecimalFromString( _depo.Text );
+            int startLot = GetIntFromString( _startLot.Text );
+            decimal take = GetDecimalFromString( _take.Text );
+            decimal stop = GetDecimalFromString( _stop.Text );
+            decimal comiss = GetDecimalFromString( _comiss.Text );
+            int countTrades = GetIntFromString(_countTrades.Text );
+            decimal percProfit = GetDecimalFromString(_percentProfit.Text );
+            decimal minStartPercent = GetDecimalFromString(_minStartPercent.Text);
+            decimal go = GetDecimalFromString( _go.Text );
+
+            List<Data> datas = new List<Data>();
+
+           
+            foreach (StrategyType type in _strategies)
+            {
+                datas.Add(new Data(depoStart, type));
+            }
+
+            int lotPercent = startLot;
+            decimal percent = startLot * go * 100 / depoStart;
+
+            decimal multiplay = take / stop;
+            int lotProgress = CalculateLot(depoStart, minStartPercent, go);
+
+            int lotDown = startLot;
+
+            
+            for (int i = 0; i < countTrades; i++)
+            {
+                int rnd = _random.Next(1, 100);
+
+                if (rnd < percProfit)
+                {
+                    //Сделка прибыльная
+
+                    //========================= 1 Strategy =========================== 
+                    datas[0].ResultDepo += (take - comiss) * startLot;
+
+                    //========================= 2 Strategy ===========================
+                    datas[1].ResultDepo += (take - comiss) * lotPercent;
+                    
+                    int newLot = CalculateLot(datas[1].ResultDepo, percent, go);
+
+                    if(lotPercent < newLot) lotPercent = newLot;
+
+                    //========================= 3 Strategy =========================== 
+                    datas[2].ResultDepo += (take - comiss) * lotProgress;
+
+                    lotProgress = CalculateLot(depoStart, minStartPercent * multiplay, go);
+
+                    //========================= 4 Strategy =========================== 
+                    datas[3].ResultDepo += (take - comiss) * lotDown;
+
+                    lotDown = startLot;
+                }
+                else
+                {
+                    //Сделка убыточная
+                    //========================= 1 Strategy =========================== 
+                    datas[0].ResultDepo -= (stop + comiss) * startLot;
+
+                    //========================= 2 Strategy =========================== 
+                    datas[1].ResultDepo -= (stop + comiss) * lotPercent;
+
+                    //========================= 3 Strategy =========================== 
+                    datas[2].ResultDepo -= (stop + comiss) * lotProgress;
+                    
+                    lotProgress = CalculateLot(depoStart, minStartPercent, go);                      
+                    //========================= 4 Strategy =========================== 
+                    datas[3].ResultDepo -= (stop + comiss) * lotDown;
+
+                    lotDown /= 2;
+
+                    if(lotDown == 0) lotDown = 1;
+                }
+
+            }
+
+            _dataGrid.ItemsSource = datas;
 
         }
 
+
+        private int CalculateLot(decimal currentDepo, decimal percent, decimal go)
+        {
+            if (percent > 100) { percent = 100; }
+
+            decimal lot = currentDepo / go / 100 * percent;
+
+            return (int)lot;
+        }
+
+        private decimal GetDecimalFromString(string str)
+        {
+            if (decimal.TryParse(str, out decimal result)) return result;
+            
+            return 0;
+        }
+
+        private int GetIntFromString(string str)
+        {
+            if(int.TryParse(str, out int result)) return result;
+
+            return 0;
+        }
         #endregion
 
     }
