@@ -60,7 +60,7 @@
              Grid.Column="1" Grid.Row="2"/>
         <TextBox x:Name="_stop"
              Grid.Column="1" Grid.Row="3"/>
-        <TextBox x:Name="_coniss"
+        <TextBox x:Name="_comiss"
              Grid.Column="1" Grid.Row="4"/>
         <TextBox x:Name="_percentProffit"
              Grid.Column="1" Grid.Row="5"/>
@@ -72,7 +72,7 @@
              Grid.Column="1" Grid.Row="9"/>
 
         <Button Content="Рассчитать"
-            Click="ButtonClick"
+            Click="Button_Click"
             Grid.Column="1" Grid.Row="11" />
 
         <GroupBox Header="Таблица результатов"
