@@ -51,12 +51,13 @@ namespace Capital.Entity
         /// <summary>
         /// Относительный профит в процентах
         /// </summary>
-        public decimal PercentProfit { get; set; }
-
-
         
-
-        public decimal MyProperty
+        public decimal PercentProfit { get; set; }
+                
+        /// <summary>
+        /// Максимальная абсолютная просадка в деньгах
+        /// </summary>
+        public decimal MaxDrawDown
         {
             get => _maxDrawDown; 
 
@@ -67,8 +68,12 @@ namespace Capital.Entity
         }
         private decimal _maxDrawDown;
 
-                      
-        #endregion
+        /// <summary>
+        /// Максимальная просадка в процентах
+        /// </summary>
+       public decimal PercentDrawDown { get; set; }
+
+        #endregion ######################################################
 
 
     }
