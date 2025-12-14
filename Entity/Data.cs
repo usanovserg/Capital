@@ -46,6 +46,24 @@ namespace Capital.Entity
 
         public decimal Profit { get; set;  }    
 
+        /// <summary>
+        /// Относительный профит в процентах
+        /// </summary>
+        public decimal PercentProfit { get; set; }
+
+        /// <summary>
+        /// Максимальная просадка в деньгах
+        /// </summary>
+        public decimal MaxDrawDown
+        {
+            get => _maxDrawDown;
+
+            set { _maxDrawDown = value; }
+        }
+
+        decimal _maxDrawDown;
+
+        public decimal PercentDrawDown { get; set;  }
         #endregion
     };
 
