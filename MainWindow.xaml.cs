@@ -1,5 +1,5 @@
 ﻿using Capital.Entity;
-using Capital.Enams;
+using Capital.Enums;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
