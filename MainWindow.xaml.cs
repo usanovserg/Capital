@@ -17,6 +17,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using static System.Reflection.Metadata.BlobBuilder;
 
 
 namespace Capital
@@ -114,11 +115,13 @@ namespace Capital
 
             int lotDown = startLot;
 
+            Boolean floss = false;
             for (int i=0; i<countTrades; i++)
             {
                 int rnd = _random.Next(1,100);
                 if (rnd <= percetnProfit)
                 {
+                    floss = false;
                     // сделка прибыльная
                     // ======== 1 strategy========================
                     datas[0].ResultDepo += (take - comiss) * startLot;
@@ -153,14 +156,60 @@ namespace Capital
                     datas[3].ResultDepo -= (stop + comiss) * lotDown;
                     lotDown /= 2;
                     if (lotDown == 0) lotDown = 1;
-
                 }
 
+                // вычисление MaxDrawDown PercentDrawDown
+                foreach (Data dt in datas) 
+                {
+                    if (dt.Direction) // если двигались на повышение
+                    {
+                        if (dt.ResultDepo >= dt.Top)  // продолжение повышения
+                        {
+                            dt.Top = dt.ResultDepo;
+                        }
+                        else  // начались убытки
+                        {
+                            dt.Direction = false;
+                            dt.Bottom=dt.ResultDepo;
+                        }
+                    }
+                    else
+                    {
+                        if (dt.ResultDepo < dt.Bottom)// продолжение понижения
+                        {
+                            dt.Bottom = dt.ResultDepo;
+                        }
+                        else if (dt.ResultDepo > dt.Top)// новый максимум
+                        {
+                            dt.Direction = true;
+                            decimal tmp = dt.Top - dt.Bottom;
+                            if (dt.MaxDrawDown < tmp) dt.MaxDrawDown = tmp; // новый MaxDrawDown
+                            if (dt.PercentDrawDown < tmp/ dt.Top*100 ) dt.PercentDrawDown = tmp / dt.Top * 100;// новый PercentDrawDown
+                        }
+                        // в диапозоне двигаемся
+                    }
+                }
                 series1.Points.Add(new DataPoint(i+1, (double)datas[0].ResultDepo));
                 series2.Points.Add(new DataPoint(i+1, (double)datas[1].ResultDepo));
                 series3.Points.Add(new DataPoint(i+1, (double)datas[2].ResultDepo));
                 series4.Points.Add(new DataPoint(i+1, (double)datas[3].ResultDepo));
             }
+            // вычисление показателей
+            foreach(Data dt in datas)
+            {
+                dt.Profit = dt.ResultDepo - dt.Depo;
+                dt.PerecentProfit = dt.Profit / dt.Depo*100;
+                if (!dt.Direction)
+                {
+                    decimal tmp = dt.Top - dt.Bottom;
+                    if (dt.MaxDrawDown < tmp) dt.MaxDrawDown = tmp; // новый MaxDrawDown
+                    if (dt.PercentDrawDown < tmp / dt.Top * 100) dt.PercentDrawDown = tmp / dt.Top * 100;// новый PercentDrawDown
+                }
+              //  dt.MaxDrawDown = dt.MaxDrawDown < dt.PercentDrawDown ? dt.PercentDrawDown : dt.MaxDrawDown;
+              //  dt.PercentDrawDown = dt.MaxDrawDown / dt.Depo * 100;
+            }
+           // datas[0].Profit = datas[0].ResultDepo - datas[0].Depo;
+
             _dataGrid.ItemsSource = datas;
  
 
@@ -175,10 +224,13 @@ namespace Capital
         }
         private void ShowPlot(int index)
         {
-            plotView?.Model?.Series[0]?.IsVisible = false;
-            plotView?.Model?.Series[1]?.IsVisible = false;
-            plotView?.Model?.Series[2]?.IsVisible = false;
-            plotView?.Model?.Series[3]?.IsVisible = false;
+            if (plotView?.Model?.Series != null)
+            {
+                foreach (var series in plotView?.Model?.Series)
+                {
+                    series.IsVisible = false;
+                }
+            }
             switch (index)
             {
                 case 0:
@@ -194,10 +246,13 @@ namespace Capital
                     plotView?.Model?.Series[3]?.IsVisible = true;
                     break;
                 case 4:
-                    plotView?.Model?.Series[0]?.IsVisible = true;
-                    plotView?.Model?.Series[1]?.IsVisible = true;
-                    plotView?.Model?.Series[2]?.IsVisible = true;
-                    plotView?.Model?.Series[3]?.IsVisible = true;
+                    if (plotView?.Model?.Series != null)
+                    {
+                        foreach (var series in plotView.Model.Series)
+                        {
+                            series.IsVisible = true;
+                        }
+                    }
                     break;
             }
             plotView?.InvalidatePlot(true);
@@ -222,11 +277,23 @@ namespace Capital
             if (e.Column is DataGridTextColumn col)
             {
                 // Форматирование числа с разделителем тысяч
-                col.Binding = new Binding(e.PropertyName)
+                if (e.PropertyName== "PerecentProfit" || e.PropertyName == "PercentDrawDown")
                 {
-                    StringFormat = "{0:N0}",
-                    ConverterCulture = new CultureInfo("ru-RU")
-                };
+                    col.Binding = new Binding(e.PropertyName)
+                    {
+                        StringFormat = "{0:N2}",
+                        ConverterCulture = new CultureInfo("ru-RU")
+                    };
+                }
+                else
+                {
+                    col.Binding = new Binding(e.PropertyName)
+                    {
+                        StringFormat = "{0:N0}",
+                        ConverterCulture = new CultureInfo("ru-RU")
+                    };
+                }
+                     
                 // Стиль для отображения
                 var displayStyle = new Style(typeof(TextBlock));
                 displayStyle.Setters.Add(new Setter(TextBlock.TextAlignmentProperty, TextAlignment.Right));

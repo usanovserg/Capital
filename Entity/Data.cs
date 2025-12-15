@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows.Input.Manipulations;
 
 namespace Capital.Entity
 {
@@ -11,7 +12,16 @@ namespace Capital.Entity
         {
             StrategyType = strategyType;
             Depo = depoStart;
+            MaxDrawDown = 0;
+            Top= Bottom = depoStart;
+            Direction = true;
         }
+        #region Fields ==================================================================
+        // поля для вычисления MaxDrawDown, MDD
+        public decimal Top;
+        public decimal Bottom;
+        public Boolean Direction;
+        #endregion  ==================================================================
         #region Properties ==================================================================
 
         public StrategyType StrategyType { get; set; }
