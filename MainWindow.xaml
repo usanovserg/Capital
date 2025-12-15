@@ -7,6 +7,129 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="800" Width="1200">
     <Grid>
-        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="150"/>
+            <ColumnDefinition Width="*"
+                              MinWidth="50"
+                              MaxWidth="150"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"
+                           MinHeight="350"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Депозит"
+                   Margin="6"
+                   TextAlignment="Center"
+                   Grid.Row="0" Grid.Column="0"/>
+        <TextBlock Text="Начальный лот"
+                   TextAlignment="Center"
+                   Margin="6"
+                   Grid.Row="1" Grid.Column="0"/>
+        <TextBlock Text="Тейк"
+                   TextAlignment="Center"
+                   Margin="6"
+                   Grid.Row="2" Grid.Column="0"/>
+        <TextBlock Text="Стоп"
+                   TextAlignment="Center"
+                   Margin="6"
+                   Grid.Row="3" Grid.Column="0"/>
+        <TextBlock Text="Комиссия"
+                   TextAlignment="Center"
+                   Margin="6"
+                   Grid.Row="4" Grid.Column="0"/>
+        <TextBlock Text="Процент приб."
+                   TextAlignment="Center"
+                   Margin="6"
+                   Grid.Row="5" Grid.Column="0"/>
+        <TextBlock Text="Кол-во сделок"
+                   TextAlignment="Center"
+                   Margin="6"
+                   Grid.Row="6" Grid.Column="0"/>
+        <TextBlock Text="Мин. % депо"
+                   TextAlignment="Center"
+                   Margin="6"
+                   Grid.Row="7" Grid.Column="0"/>
+        <TextBlock Text="Гарант. обесп."
+                   TextAlignment="Center"
+                   Margin="6"
+                   Grid.Row="9" Grid.Column="0"/>
+        <ComboBox Name="_comboBox"
+                  Margin="15,3"
+                  Grid.Row="11" Grid.Column="0"/>
+
+        <TextBox x:Name="_depo"
+                 Margin="10,5,10,5"
+                 BorderBrush="LightGray"
+                 BorderThickness="2"
+                 Grid.Row="0" Grid.Column="1"/>
+        <TextBox x:Name="_startLot"
+                 Margin="10,5,10,5"
+                 BorderBrush="LightGray"
+                 BorderThickness="2"
+                 Grid.Row="1" Grid.Column="1"/>
+        <TextBox x:Name="_take"
+                 Margin="10,5,10,5"
+                 BorderBrush="LightGray"
+                 BorderThickness="2"
+                 Grid.Row="2" Grid.Column="1"/>
+        <TextBox x:Name="_stop"
+                 Margin="10,5,10,5"
+                 BorderBrush="LightGray"
+                 BorderThickness="2"
+                 Grid.Row="3" Grid.Column="1"/>
+        <TextBox x:Name="_comiss"
+                 Margin="10,5,10,5"
+                 BorderBrush="LightGray"
+                 BorderThickness="2"
+                 Grid.Row="4" Grid.Column="1"/>
+        <TextBox x:Name="_percentProfit"
+                 Margin="10,5,10,5"
+                 BorderBrush="LightGray"
+                 BorderThickness="2"
+                 Grid.Row="5" Grid.Column="1"/>
+        <TextBox x:Name="_countTrades"
+                 Margin="10,5,10,5"
+                 BorderBrush="LightGray"
+                 BorderThickness="2"
+                 Grid.Row="6" Grid.Column="1"/>
+        <TextBox x:Name="_minStartPercent"
+                 Margin="10,5,10,5"
+                 BorderBrush="LightGray"
+                 BorderThickness="2"
+                 Grid.Row="7" Grid.Column="1"/>
+        <TextBox x:Name="_go"
+                 Margin="10,5,10,5"
+                 BorderBrush="LightGray"
+                 BorderThickness="2"
+                 Grid.Row="9" Grid.Column="1"/>
+        <Button Content="РАССЧИТАТЬ"
+                Margin="15,3"
+                Grid.Row="11" Grid.Column="1"
+                Click="Button_Click"/>
+
+        <GroupBox Header="Таблица результатов"
+                  Grid.Row="0" Grid.Column="2"
+                  Grid.RowSpan="12"
+                  Margin="10,5">
+            <DataGrid x:Name="_dataGrid"
+                      Margin="3"/>
+
+        </GroupBox>
+
     </Grid>
 </Window>
