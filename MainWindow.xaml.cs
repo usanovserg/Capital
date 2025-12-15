@@ -157,9 +157,9 @@ namespace Capital
             foreach (var data in datas) 
             {
                 data.Profit = data.ResultDepo - data.Depo;
-                data.PercentProfit = data.Profit/data.Depo*100;
-                data.MaxDrawDown = maxDrawDown[j];
-                data.PercentDrawDown = percentDrawDown[j];
+                data.PercentProfit = Math.Round(data.Profit/data.Depo*100,2);
+                data.MaxDrawDown = Math.Round(maxDrawDown[j],2);
+                data.PercentDrawDown = Math.Round(percentDrawDown[j],2);
                 j++;
             }
 
