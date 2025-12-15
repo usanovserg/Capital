@@ -23,7 +23,6 @@ namespace Capital.Entity
         public Boolean Direction;
         #endregion  ==================================================================
         #region Properties ==================================================================
-
         public StrategyType StrategyType { get; set; }
         public decimal Depo 
         { 

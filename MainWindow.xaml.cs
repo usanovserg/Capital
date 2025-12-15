@@ -92,15 +92,13 @@ namespace Capital
             decimal minStartPercent = GetDecimalFromString(_minStartPercent.Text);
             decimal go = GetDecimalFromString(_go.Text);
 
-            
-            var series1 = new LineSeries();
-            var series2 = new LineSeries();
-            var series3 = new LineSeries();
-            var series4 = new LineSeries();
-            series1.Points.Add(new DataPoint(0, (double)depoStart));
-            series2.Points.Add(new DataPoint(0, (double)depoStart));
-            series3.Points.Add(new DataPoint(0, (double)depoStart));
-            series4.Points.Add(new DataPoint(0, (double)depoStart));
+            // создаем серии для PlotModel
+            List<LineSeries> series = new List<LineSeries>();
+            for (int j=0; j< Enum.GetValues(typeof(StrategyType)).Length; j++)
+            {
+                series.Add(new LineSeries());
+                series[j].Points.Add(new DataPoint(0, (double)depoStart));
+            }
 
             List<Data> datas  = new List<Data>();
             foreach (StrategyType type in _strategies)
@@ -115,13 +113,11 @@ namespace Capital
 
             int lotDown = startLot;
 
-            Boolean floss = false;
             for (int i=0; i<countTrades; i++)
             {
                 int rnd = _random.Next(1,100);
                 if (rnd <= percetnProfit)
                 {
-                    floss = false;
                     // сделка прибыльная
                     // ======== 1 strategy========================
                     datas[0].ResultDepo += (take - comiss) * startLot;
@@ -189,36 +185,32 @@ namespace Capital
                         // в диапозоне двигаемся
                     }
                 }
-                series1.Points.Add(new DataPoint(i+1, (double)datas[0].ResultDepo));
-                series2.Points.Add(new DataPoint(i+1, (double)datas[1].ResultDepo));
-                series3.Points.Add(new DataPoint(i+1, (double)datas[2].ResultDepo));
-                series4.Points.Add(new DataPoint(i+1, (double)datas[3].ResultDepo));
+                // добавляем новые точку в series
+                for (int j = 0; j < Enum.GetValues<StrategyType>().Length; j++)
+                {
+                    series[j].Points.Add(new DataPoint(i + 1, (double)datas[j].ResultDepo));
+                }
             }
             // вычисление показателей
-            foreach(Data dt in datas)
+            foreach (Data dt in datas)
             {
                 dt.Profit = dt.ResultDepo - dt.Depo;
-                dt.PerecentProfit = dt.Profit / dt.Depo*100;
+                dt.PerecentProfit = dt.Profit / dt.Depo * 100;
                 if (!dt.Direction)
                 {
                     decimal tmp = dt.Top - dt.Bottom;
                     if (dt.MaxDrawDown < tmp) dt.MaxDrawDown = tmp; // новый MaxDrawDown
                     if (dt.PercentDrawDown < tmp / dt.Top * 100) dt.PercentDrawDown = tmp / dt.Top * 100;// новый PercentDrawDown
                 }
-              //  dt.MaxDrawDown = dt.MaxDrawDown < dt.PercentDrawDown ? dt.PercentDrawDown : dt.MaxDrawDown;
-              //  dt.PercentDrawDown = dt.MaxDrawDown / dt.Depo * 100;
             }
-           // datas[0].Profit = datas[0].ResultDepo - datas[0].Depo;
-
             _dataGrid.ItemsSource = datas;
- 
 
+            // добавляем series в PlotModel
             model = new PlotModel { Title = "График изменения капитала" };
-            model.Series.Add(series1);
-            model.Series.Add(series2);
-            model.Series.Add(series3);
-            model.Series.Add(series4);
-
+            for (int j = 0; j < Enum.GetValues(typeof(StrategyType)).Length; j++)
+            {
+                model.Series.Add(series[j]);
+            }
             plotView?.Model = model;
             ShowPlot(_comboBox.SelectedIndex);
         }
@@ -226,7 +218,7 @@ namespace Capital
         {
             if (plotView?.Model?.Series != null)
             {
-                foreach (var series in plotView?.Model?.Series)
+                foreach (var series in plotView.Model.Series)
                 {
                     series.IsVisible = false;
                 }
@@ -277,23 +269,15 @@ namespace Capital
             if (e.Column is DataGridTextColumn col)
             {
                 // Форматирование числа с разделителем тысяч
-                if (e.PropertyName== "PerecentProfit" || e.PropertyName == "PercentDrawDown")
+                string format =
+                    e.PropertyName == "PerecentProfit" || e.PropertyName == "PercentDrawDown"
+                    ? "{0:N2}"
+                    : "{0:N0}";
+                col.Binding = new Binding(e.PropertyName)
                 {
-                    col.Binding = new Binding(e.PropertyName)
-                    {
-                        StringFormat = "{0:N2}",
-                        ConverterCulture = new CultureInfo("ru-RU")
-                    };
-                }
-                else
-                {
-                    col.Binding = new Binding(e.PropertyName)
-                    {
-                        StringFormat = "{0:N0}",
-                        ConverterCulture = new CultureInfo("ru-RU")
-                    };
-                }
-                     
+                    StringFormat = format,
+                    ConverterCulture = new CultureInfo("ru-RU")
+                };
                 // Стиль для отображения
                 var displayStyle = new Style(typeof(TextBlock));
                 displayStyle.Setters.Add(new Setter(TextBlock.TextAlignmentProperty, TextAlignment.Right));
