@@ -82,10 +82,16 @@ namespace Capital
             decimal go = GetDecimalFromString(_go.Text);
 
             List<Data> datas = new List<Data>();
+            List<decimal> maxDrawDown = new List<decimal>();
+            List<decimal> maxResultDepo = new List<decimal>();
+            List<decimal> percentDrawDown = new List<decimal>();
 
-            foreach(StrategyType type in _strategies)
+            foreach (StrategyType type in _strategies)
             {
                 datas.Add(new Data(depoStart, type));
+                maxDrawDown.Add(decimal.MaxValue);
+                maxResultDepo.Add(decimal.MinValue);
+                percentDrawDown.Add(0);
             }
 
             int lotPercent = startLot;
@@ -135,9 +141,30 @@ namespace Capital
 
                     if (lotDown == 0) lotDown = 1;
                 }
+
+                for(int k=0;k<datas.Count;k++) 
+                { 
+                    maxResultDepo[k] = Math.Max(maxResultDepo[k], datas[k].ResultDepo);
+                    maxDrawDown[k] = Math.Min(maxDrawDown[k],  datas[k].ResultDepo-maxResultDepo[k]);
+                    percentDrawDown[k] = maxDrawDown[k] / maxResultDepo[k] * 100;               
+                }
+
+            }
+
+
+
+            int j = 0;
+            foreach (var data in datas) 
+            {
+                data.Profit = data.ResultDepo - data.Depo;
+                data.PercentProfit = data.Profit/data.Depo*100;
+                data.MaxDrawDown = maxDrawDown[j];
+                data.PercentDrawDown = percentDrawDown[j];
+                j++;
             }
 
             _dataGrid.ItemsSource= datas;
+            var trt = _dataGrid;
         }
 
 

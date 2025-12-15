@@ -76,7 +76,8 @@
                   Grid.Column="2" Grid.RowSpan="12"
                   Margin="10,1">
             <DataGrid x:Name="_dataGrid"
-                      Margin="5"/>
+                      Margin="5"
+                      />
         </GroupBox>
     </Grid>
 </Window>
