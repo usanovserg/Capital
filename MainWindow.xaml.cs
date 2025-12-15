@@ -1,5 +1,6 @@
 ﻿using Capital.Entity;
 using Capital.Enums;
+using System;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -91,7 +92,7 @@ namespace Capital
                 datas.Add(new Data(depoStart, type));
                 maxDrawDown.Add(decimal.MaxValue);
                 maxResultDepo.Add(decimal.MinValue);
-                percentDrawDown.Add(0);
+                percentDrawDown.Add(decimal.MaxValue);
             }
 
             int lotPercent = startLot;
@@ -146,7 +147,8 @@ namespace Capital
                 { 
                     maxResultDepo[k] = Math.Max(maxResultDepo[k], datas[k].ResultDepo);
                     maxDrawDown[k] = Math.Min(maxDrawDown[k],  datas[k].ResultDepo-maxResultDepo[k]);
-                    percentDrawDown[k] = maxDrawDown[k] / maxResultDepo[k] * 100;               
+                    //percentDrawDown[k] = maxDrawDown[k] / maxResultDepo[k] * 100;
+                    percentDrawDown[k] = Math.Min(percentDrawDown[k], (datas[k].ResultDepo - maxResultDepo[k])/ maxResultDepo[k]*100);
                 }
 
             }
