@@ -20,7 +20,7 @@ namespace Capital.Entity
         // поля для вычисления MaxDrawDown, MDD
         public decimal Top;
         public decimal Bottom;
-        public Boolean Direction;
+        public Boolean Direction; // направление изменения депозита
         #endregion  ==================================================================
         #region Properties ==================================================================
         public StrategyType StrategyType { get; set; }

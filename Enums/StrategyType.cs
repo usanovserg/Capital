@@ -9,7 +9,8 @@ namespace Capital.Enums
         FIX,
         CAPITALIZATION,
         PROGESS,
-        DOWNGRADE
+        DOWNGRADE,
+        test
     }
 
 }

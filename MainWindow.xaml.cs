@@ -33,7 +33,7 @@ namespace Capital
             Init();
         }
         #region Fields ==================================================================
-        List<StrategyType> _strategies = new List<StrategyType>()
+        List<StrategyType> _strategies = new List<StrategyType>()   // выбираем стратегии которые будем использовать
         {
             StrategyType.FIX,
             StrategyType.CAPITALIZATION,
@@ -94,7 +94,7 @@ namespace Capital
 
             // создаем серии для PlotModel
             List<LineSeries> series = new List<LineSeries>();
-            for (int j=0; j< Enum.GetValues(typeof(StrategyType)).Length; j++)
+            for (int j=0; j< _strategies.Count; j++)
             {
                 series.Add(new LineSeries());
                 series[j].Points.Add(new DataPoint(0, (double)depoStart));
@@ -119,41 +119,54 @@ namespace Capital
                 if (rnd <= percetnProfit)
                 {
                     // сделка прибыльная
-                    // ======== 1 strategy========================
-                    datas[0].ResultDepo += (take - comiss) * startLot;
-
-                    // ======== 2 strategy========================
-                    datas[1].ResultDepo += (take - comiss) * lotPercent;
-                    int newLot = CalculateLot(datas[1].ResultDepo, percent, go);
-                    if (lotPercent<newLot) lotPercent = newLot;
-
-                    // ======== 3 strategy========================
-                    datas[2].ResultDepo += (take - comiss) * lotProgress;
-                    lotProgress = CalculateLot(depoStart, minStartPercent* multiply, go);
-
-                    // ======== 4 strategy========================
-                    datas[3].ResultDepo += (take - comiss) * lotDown;
-                    lotDown = startLot;
+                    foreach (Data dt in datas)
+                    {
+                        switch (dt.StrategyType)
+                        {
+                            case StrategyType.FIX:
+                                dt.ResultDepo += (take - comiss) * startLot;
+                                break;
+                            case StrategyType.CAPITALIZATION:
+                                dt.ResultDepo += (take - comiss) * lotPercent;
+                                int newLot = CalculateLot(dt.ResultDepo, percent, go);
+                                if (lotPercent < newLot) lotPercent = newLot;
+                                break;
+                            case StrategyType.PROGESS:
+                                dt.ResultDepo += (take - comiss) * lotProgress;
+                                lotProgress = CalculateLot(depoStart, minStartPercent * multiply, go);
+                                break;
+                            case StrategyType.DOWNGRADE:
+                                dt.ResultDepo += (take - comiss) * lotDown;
+                                lotDown = startLot;
+                                break;
+                        }
+                    }
                 }
                 else
                 {
                     // убытки
-                    // ========1 strategy========================
-                    datas[0].ResultDepo -= (stop + comiss) * startLot;
-
-                    // ======== 2 strategy========================
-                    datas[1].ResultDepo -= (stop + comiss) * lotPercent;
-
-                    // ======== 3 strategy========================
-                    datas[2].ResultDepo -= (stop + comiss) * lotProgress;
-                    lotProgress = CalculateLot(depoStart, minStartPercent, go);
-
-                    // ======== 4 strategy========================
-                    datas[3].ResultDepo -= (stop + comiss) * lotDown;
-                    lotDown /= 2;
-                    if (lotDown == 0) lotDown = 1;
+                    foreach (Data dt in datas)
+                    {
+                        switch (dt.StrategyType)
+                        {
+                            case StrategyType.FIX:
+                                dt.ResultDepo -= (stop + comiss) * startLot;
+                                break;
+                            case StrategyType.CAPITALIZATION:
+                                dt.ResultDepo -= (stop + comiss) * lotPercent;
+                                break;
+                            case StrategyType.PROGESS:
+                                dt.ResultDepo -= (stop + comiss) * lotProgress;
+                                lotProgress = CalculateLot(depoStart, minStartPercent, go);
+                                break;
+                            case StrategyType.DOWNGRADE:
+                                dt.ResultDepo -= (stop + comiss) * lotDown;
+                                lotDown /= 2;
+                                if (lotDown == 0) lotDown = 1;
+                                break;
+                        }
+                    }
                 }
-
                 // вычисление MaxDrawDown PercentDrawDown
                 foreach (Data dt in datas) 
                 {
@@ -185,8 +198,8 @@ namespace Capital
                         // в диапозоне двигаемся
                     }
                 }
-                // добавляем новые точку в series
-                for (int j = 0; j < Enum.GetValues<StrategyType>().Length; j++)
+                // добавляем новую точку в series
+                for (int j = 0; j < _strategies.Count; j++)
                 {
                     series[j].Points.Add(new DataPoint(i + 1, (double)datas[j].ResultDepo));
                 }
@@ -207,45 +220,31 @@ namespace Capital
 
             // добавляем series в PlotModel
             model = new PlotModel { Title = "График изменения капитала" };
-            for (int j = 0; j < Enum.GetValues(typeof(StrategyType)).Length; j++)
+            for (int j = 0; j < _strategies.Count; j++)
             {
                 model.Series.Add(series[j]);
             }
             plotView?.Model = model;
             ShowPlot(_comboBox.SelectedIndex);
         }
+        /// <summary>
+        /// прорисока графика по индексу из ComboBox
+        /// </summary>
+        /// <param name="index"></param>
         private void ShowPlot(int index)
         {
             if (plotView?.Model?.Series != null)
             {
-                foreach (var series in plotView.Model.Series)
+                Boolean AllActivate = false;
+                if (index == plotView.Model.Series.Count)
+                    AllActivate=true;
+                for (int i = 0; i < plotView.Model.Series.Count; i++)
                 {
-                    series.IsVisible = false;
+                    if (i == index)
+                        plotView.Model.Series[i].IsVisible = true;
+                    else
+                        plotView.Model.Series[i].IsVisible = AllActivate;
                 }
-            }
-            switch (index)
-            {
-                case 0:
-                    plotView?.Model?.Series[0]?.IsVisible = true;
-                    break;
-                case 1:
-                    plotView?.Model?.Series[1]?.IsVisible = true;
-                    break;
-                case 2:
-                    plotView?.Model?.Series[2]?.IsVisible = true;
-                    break;
-                case 3:
-                    plotView?.Model?.Series[3]?.IsVisible = true;
-                    break;
-                case 4:
-                    if (plotView?.Model?.Series != null)
-                    {
-                        foreach (var series in plotView.Model.Series)
-                        {
-                            series.IsVisible = true;
-                        }
-                    }
-                    break;
             }
             plotView?.InvalidatePlot(true);
         }
@@ -264,6 +263,9 @@ namespace Capital
             if (int.TryParse(str, out int result)) return result;
             return 0;
         }
+        /// <summary>
+        /// обработчик события прорисовки колонки таблицы
+        /// </summary>
         private void DataGrid_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
         {
             if (e.Column is DataGridTextColumn col)
