@@ -1,8 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "my0P2b7Fx1c=",
+  "dgSpecHash": "R1q5bOHVR8c=",
   "success": true,
-  "projectFilePath": "D:\\repos\\Capital\\Capital.csproj",
-  "expectedPackageFiles": [],
+  "projectFilePath": "C:\\Users\\Home\\Source\\Repos\\Capital\\Capital.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Home\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\9.0.11\\microsoft.windowsdesktop.app.ref.9.0.11.nupkg.sha512",
+    "C:\\Users\\Home\\.nuget\\packages\\microsoft.netcore.app.ref\\9.0.11\\microsoft.netcore.app.ref.9.0.11.nupkg.sha512",
+    "C:\\Users\\Home\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\9.0.11\\microsoft.aspnetcore.app.ref.9.0.11.nupkg.sha512",
+    "C:\\Users\\Home\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\9.0.11\\microsoft.netcore.app.host.win-x64.9.0.11.nupkg.sha512"
+  ],
   "logs": []
 }
