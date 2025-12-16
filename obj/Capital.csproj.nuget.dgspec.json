@@ -11,7 +11,7 @@
         "projectName": "Capital",
         "projectPath": "C:\\Users\\aleks\\Source\\Repos\\Capital\\Capital.csproj",
         "packagesPath": "C:\\Users\\aleks\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\aleks\\Source\\Repos\\Capital\\obj\\",
+        "outputPath": "C:\\Users\\aleks\\source\\repos\\Capital\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\aleks\\AppData\\Roaming\\NuGet\\NuGet.Config"
