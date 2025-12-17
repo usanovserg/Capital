@@ -16,12 +16,10 @@ namespace Capital.Entity
         }
 
 
-
-
         #region Properties ========================================================
 
-        public StrategyType StrategyType { get; set; }
 
+        public StrategyType StrategyType { get; set; }
 
 
         public decimal Depo
@@ -43,6 +41,8 @@ namespace Capital.Entity
             set
             {
                 _resultDepo = value;
+                Profit = ResultDepo - Depo;
+                PercentProfit = Profit / Depo * 100;
             }
         }
         private decimal _resultDepo;

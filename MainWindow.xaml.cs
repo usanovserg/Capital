@@ -67,7 +67,7 @@ namespace Capital
             _take.Text = "300";
             _stop.Text = "100";
             _commis.Text = "5";
-            _countTrades.Text = "4";
+            _countTrades.Text = "1000";
             _percentProfit.Text = "30";
             _go.Text = "5000";
             _minStartPersent.Text = "20";
@@ -102,8 +102,6 @@ namespace Capital
             decimal percProfit = GetDecimalFromString(_percentProfit.Text);
             decimal minStartPercent = GetDecimalFromString(_minStartPersent.Text);
             decimal go = GetDecimalFromString(_go.Text);
-
-
 
             List<Data> datas = new List<Data>();
 
@@ -194,66 +192,63 @@ namespace Capital
 
                 }
 
-                // столбец Profit
-                datas[0].Profit = datas[0].ResultDepo - datas[0].Depo;
-                datas[1].Profit = datas[1].ResultDepo - datas[1].Depo;
-                datas[2].Profit = datas[2].ResultDepo - datas[2].Depo;
-                datas[3].Profit = datas[3].ResultDepo - datas[3].Depo;
+                //// столбец Profit
+                //datas[0].Profit = datas[0].ResultDepo - datas[0].Depo;
+                //datas[1].Profit = datas[1].ResultDepo - datas[1].Depo;
+                //datas[2].Profit = datas[2].ResultDepo - datas[2].Depo;
+                //datas[3].Profit = datas[3].ResultDepo - datas[3].Depo;
 
-                // столбец PercentProfit
-                datas[0].PercentProfit = Math.Round(datas[0].Profit / datas[0].Depo * 100, 2);
-                datas[1].PercentProfit = Math.Round(datas[1].Profit / datas[1].Depo * 100, 2);
-                datas[2].PercentProfit = Math.Round(datas[2].Profit / datas[2].Depo * 100, 2);
-                datas[3].PercentProfit = Math.Round(datas[3].Profit / datas[3].Depo * 100, 2);
+                //// столбец PercentProfit
+                //datas[0].PercentProfit = Math.Round(datas[0].Profit / datas[0].Depo * 100, 2);
+                //datas[1].PercentProfit = Math.Round(datas[1].Profit / datas[1].Depo * 100, 2);
+                //datas[2].PercentProfit = Math.Round(datas[2].Profit / datas[2].Depo * 100, 2);
+                //datas[3].PercentProfit = Math.Round(datas[3].Profit / datas[3].Depo * 100, 2);
 
 
-                // столбец MaxDrawDown
-                // стратегия 1 в лоб
+                //// столбец MaxDrawDown
+                //// стратегия 1 в лоб
 
-                decimal peak1 = depoStart;
-                decimal drawDown1 = 0;
-                decimal maxDrawDown1 = 0;
+                //decimal peak1 = depoStart;
+                //decimal drawDown1 = 0;
+                //decimal maxDrawDown1 = 0;
 
-                if (datas[0].ResultDepo > peak1)
-                {
-                    peak1 = datas[0].ResultDepo;
-                }
-                else
-                {
-                    drawDown1 = peak1 - datas[0].ResultDepo;
-                }
-                if (drawDown1 > maxDrawDown1)
-                {
-                    maxDrawDown1 = drawDown1;
-                    datas[0].MaxDrawDown = maxDrawDown1;
-                    datas[0].PercentDrawDown = (peak1 - datas[0].ResultDepo) / peak1 * 100;
-                }
+                //if (datas[0].ResultDepo > peak1)
+                //{
+                //    peak1 = datas[0].ResultDepo;
+                //}
+                //else
+                //{
+                //    drawDown1 = peak1 - datas[0].ResultDepo;
+                //}
+                //if (drawDown1 > maxDrawDown1)
+                //{
+                //    maxDrawDown1 = drawDown1;
+                //    datas[0].MaxDrawDown = maxDrawDown1;
+                //    datas[0].PercentDrawDown = (peak1 - datas[0].ResultDepo) / peak1 * 100;
+                //}
 
                 // стратегия 1 через методы
                 //datas[0].MaxDrawDown = MaxDrawDown(datas[0].ResultDepo, depoStart);
                 //datas[0].PercentDrawDown = PercentDrawDown(datas[0].ResultDepo, depoStart);
 
-
-                // стратегия 2 в лоб
-
-                decimal peak2 = depoStart;
-                decimal drawDown2 = 0;
-                decimal maxDrawDown2 = 0;
-
-                if (datas[1].ResultDepo > peak2)
-                {
-                    peak2 = datas[1].ResultDepo;
-                }
-                else
-                {
-                    drawDown2 = peak2 - datas[1].ResultDepo;
-                }
-                if (drawDown2 > maxDrawDown2)
-                {
-                    maxDrawDown2 = drawDown2;
-                    datas[1].MaxDrawDown = maxDrawDown2;
-                    datas[1].PercentDrawDown = (peak2 - datas[1].ResultDepo) / peak2 * 100;
-                }
+                //// стратегия 2 в лоб
+                //decimal peak2 = depoStart;
+                //decimal drawDown2 = 0;
+                //decimal maxDrawDown2 = 0;
+                //if (datas[1].ResultDepo > peak2)
+                //{
+                //    peak2 = datas[1].ResultDepo;
+                //}
+                //else
+                //{
+                //    drawDown2 = peak2 - datas[1].ResultDepo;
+                //}
+                //if (drawDown2 > maxDrawDown2)
+                //{
+                //    maxDrawDown2 = drawDown2;
+                //    datas[1].MaxDrawDown = maxDrawDown2;
+                //    datas[1].PercentDrawDown = (peak2 - datas[1].ResultDepo) / peak2 * 100;
+                //}
 
 
 
@@ -269,55 +264,55 @@ namespace Capital
 
 
 
-        private decimal MaxDrawDown(decimal ResultDepo, decimal depoStart)
-        {
-            decimal peak = depoStart;
-            decimal drawDown = 0;
-            decimal maxDrawDown = 0;
+        //private decimal MaxDrawDown(decimal ResultDepo, decimal depoStart)
+        //{
+        //    decimal peak = depoStart;
+        //    decimal drawDown = 0;
+        //    decimal maxDrawDown = 0;
 
-            if (ResultDepo > peak)
-            {
-                peak = ResultDepo;
-            }
-            else
-            {
-                drawDown = peak - ResultDepo;
-            }
+        //    if (ResultDepo > peak)
+        //    {
+        //        peak = ResultDepo;
+        //    }
+        //    else
+        //    {
+        //        drawDown = peak - ResultDepo;
+        //    }
 
-            if (drawDown > maxDrawDown)
-            {
-                maxDrawDown = drawDown;
-                //datas[0].PercentDrawDown = (peak - datas[0].ResultDepo) / peak * 100;
-            }
+        //    if (drawDown > maxDrawDown)
+        //    {
+        //        maxDrawDown = drawDown;
+        //        //datas[0].PercentDrawDown = (peak - datas[0].ResultDepo) / peak * 100;
+        //    }
 
-            return maxDrawDown;
-        }
+        //    return maxDrawDown;
+        //}
 
 
 
-        private decimal PercentDrawDown(decimal ResultDepo, decimal depoStart)
-        {
-            decimal peak = depoStart;
-            decimal drawDown = 0;
-            decimal maxDrawDown = 0;
+        //private decimal PercentDrawDown(decimal ResultDepo, decimal depoStart)
+        //{
+        //    decimal peak = depoStart;
+        //    decimal drawDown = 0;
+        //    decimal maxDrawDown = 0;
 
-            if (ResultDepo > peak)
-            {
-                peak = ResultDepo;
-            }
-            else
-            {
-                drawDown = peak - ResultDepo;
-            }
+        //    if (ResultDepo > peak)
+        //    {
+        //        peak = ResultDepo;
+        //    }
+        //    else
+        //    {
+        //        drawDown = peak - ResultDepo;
+        //    }
 
-            if (drawDown > maxDrawDown)
-            {
-                maxDrawDown = drawDown;
-                //datas[0].PercentDrawDown = (peak - datas[0].ResultDepo) / peak * 100;
-            }
+        //    if (drawDown > maxDrawDown)
+        //    {
+        //        maxDrawDown = drawDown;
+        //        //datas[0].PercentDrawDown = (peak - datas[0].ResultDepo) / peak * 100;
+        //    }
 
-            return maxDrawDown / peak * 100;
-        }
+        //    return maxDrawDown / peak * 100;
+        //}
 
 
 
