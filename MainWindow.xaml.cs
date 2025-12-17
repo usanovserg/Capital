@@ -1,5 +1,7 @@
 ﻿using Capital.Entity;
 using Capital.Enums;
+using OxyPlot;
+using OxyPlot.Series;
 using System;
 using System.Globalization;
 using System.Text;
@@ -38,6 +40,7 @@ namespace Capital
         };
 
         Random _random =new Random();
+        PlotModel model;
 
         #endregion
 
@@ -45,9 +48,17 @@ namespace Capital
 
         private void Init()
         {
-            _comBox.ItemsSource = _strategies;
+            //_comBox.ItemsSource = _strategies;
+            
+            foreach (StrategyType type in _strategies)
+            {
+                _comBox.Items.Add(type.ToString());
+            }
+
+            _comBox.Items.Add("Все стратегии");
             _comBox.SelectionChanged += _comBox_SelectionChanged;
             _comBox.SelectedIndex = 0;
+            
             _depo.Text = "100000";
             _startLot.Text = "10";
             _take.Text= "300";
@@ -64,6 +75,8 @@ namespace Capital
             ComboBox comboBox = (ComboBox)sender;
 
             int index = comboBox.SelectedIndex;
+
+            ShowPlot(index);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -88,12 +101,21 @@ namespace Capital
             List<decimal> maxResultDepo = new List<decimal>();
             List<decimal> percentDrawDown = new List<decimal>();
 
+            // создаем серии для PlotModel
+            List<LineSeries> series = new List<LineSeries>();
+            for (int k = 0; k < _strategies.Count; k++)
+            {
+                series.Add(new LineSeries());
+                series[k].Points.Add(new DataPoint(0, (double)depoStart));
+            }
+
             foreach (StrategyType type in _strategies)
             {
                 datas.Add(new Data(depoStart, type));
                 maxDrawDown.Add(decimal.MaxValue);
                 maxResultDepo.Add(decimal.MinValue);
                 percentDrawDown.Add(decimal.MaxValue);
+
             }
 
             int lotPercent = startLot;
@@ -152,6 +174,12 @@ namespace Capital
                     percentDrawDown[k] = Math.Min(percentDrawDown[k], (datas[k].ResultDepo - maxResultDepo[k])/ maxResultDepo[k]*100);
                 }
 
+                // добавляем новую точку в series
+                for (int k = 0; k < _strategies.Count; k++)
+                {
+                    series[k].Points.Add(new DataPoint(i + 1, (double)datas[k].ResultDepo));
+                }
+
             }
 
 
@@ -168,10 +196,39 @@ namespace Capital
             }
 
             _dataGrid.ItemsSource= datas;
-            var trt = _dataGrid;
+            //var trt = _dataGrid;
+
+            // добавляем series в PlotModel
+            model = new PlotModel { Title = "График изменения капитала" };
+            for (int k = 0; j < _strategies.Count; k++)
+            {
+                model.Series.Add(series[k]);
+            }
+            plotView.Model = model;
+            ShowPlot(_comBox.SelectedIndex);
         }
 
-
+        /// <summary>
+        /// прорисока графика по индексу из ComboBox
+        /// </summary>
+        /// <param name="index"></param>
+        private void ShowPlot(int index)
+        {
+            if (plotView?.Model?.Series != null)
+            {
+                Boolean AllActivate = false;
+                if (index == plotView.Model.Series.Count)
+                    AllActivate = true;
+                for (int i = 0; i < plotView.Model.Series.Count; i++)
+                {
+                    if (i == index)
+                        plotView.Model.Series[i].IsVisible = true;
+                    else
+                        plotView.Model.Series[i].IsVisible = AllActivate;
+                }
+            }
+            plotView?.InvalidatePlot(true);
+        }
         private int CalculateLot(decimal currentDepo, decimal percent, decimal go)
         {
             if(percent>100) { percent = 100; }
