@@ -13,9 +13,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\aleks\\Source\\Repos\\Capital\\Capital.csproj",
-      "projectName": "Capital",
-      "projectPath": "C:\\Users\\aleks\\Source\\Repos\\Capital\\Capital.csproj",
+      "projectUniqueName": "C:\\Users\\aleks\\Source\\Repos\\Capital\\Capital_.csproj",
+      "projectName": "Capital_",
+      "projectPath": "C:\\Users\\aleks\\Source\\Repos\\Capital\\Capital_.csproj",
       "packagesPath": "C:\\Users\\aleks\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\aleks\\Source\\Repos\\Capital\\obj\\",
       "projectStyle": "PackageReference",

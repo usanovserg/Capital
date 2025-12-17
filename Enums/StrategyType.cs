@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CapitalYAV.Enums
+namespace Capital.Enums
 {
     public enum StrategyType
     {

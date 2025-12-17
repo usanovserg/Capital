@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CapitalYAV.Enums;
+using Capital.Enums;
 
-namespace CapitalYAV.Entity
+namespace Capital.Entity
 {
     public class Data
     {
