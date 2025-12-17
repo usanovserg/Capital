@@ -77,7 +77,7 @@
                   Margin="10,1">
             <DataGrid x:Name="_dataGrid"
                       Margin="5"
-                      />
+                      AutoGeneratingColumn="DataGrid_AutoGeneratingColumn"/>
         </GroupBox>
     </Grid>
 </Window>
