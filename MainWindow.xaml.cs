@@ -40,7 +40,7 @@ namespace Capital
         };
 
         Random _random =new Random();
-        PlotModel model;
+        PlotModel model, model2;
 
         #endregion
 
@@ -103,10 +103,15 @@ namespace Capital
 
             // создаем серии для PlotModel
             List<LineSeries> series = new List<LineSeries>();
+            List<LineSeries> seriesmDD = new List<LineSeries>();
+
             for (int k = 0; k < _strategies.Count; k++)
             {
                 series.Add(new LineSeries());
                 series[k].Points.Add(new DataPoint(0, (double)depoStart));
+
+                seriesmDD.Add(new LineSeries());
+                seriesmDD[k].Points.Add(new DataPoint(0, 0));
             }
 
             foreach (StrategyType type in _strategies)
@@ -181,6 +186,7 @@ namespace Capital
                     {
                         series[k].Points.Add(new DataPoint(i, (double)datas[k].ResultDepo));
 
+                        seriesmDD[k].Points.Add(new DataPoint(i, (double)((datas[k].ResultDepo - maxResultDepo[k]) / maxResultDepo[k] * 100)));
                     }
                 }
 
@@ -208,6 +214,14 @@ namespace Capital
                 model.Series.Add(series[k]);
             }
             plotView?.Model = model;
+
+            model2 = new PlotModel { Title = "График максимальной просадки, %" };
+            for (int k = 0; k < _strategies.Count; k++)
+            {
+                model2.Series.Add(seriesmDD[k]);
+            }
+            plotView2?.Model = model2;
+
             ShowPlot(_comBox.SelectedIndex);
         }
 
@@ -220,17 +234,32 @@ namespace Capital
             if (plotView?.Model?.Series != null)
             {
                 Boolean AllActivate = false;
+                Boolean AllActivate2 = false;
+
                 if (index == plotView.Model.Series.Count)
+                {
                     AllActivate = true;
+                    AllActivate2 = true;
+                }
                 for (int i = 0; i < plotView.Model.Series.Count; i++)
                 {
                     if (i == index)
+                    {
                         plotView.Model.Series[i].IsVisible = true;
+                        plotView2.Model.Series[i].IsVisible = true;
+
+                    }
                     else
+                    { 
                         plotView.Model.Series[i].IsVisible = AllActivate;
+                        plotView2.Model.Series[i].IsVisible = AllActivate;
+
+                    }
                 }
             }
             plotView?.InvalidatePlot(true);
+            plotView2?.InvalidatePlot(true);
+
         }
         private int CalculateLot(decimal currentDepo, decimal percent, decimal go)
         {

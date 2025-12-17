@@ -28,7 +28,9 @@
             <RowDefinition Height="30"/>
             <RowDefinition Height="30"/>
             <RowDefinition Height="30"/>
-            <RowDefinition Height="*" MinHeight="350"/>
+            <RowDefinition Height="350" MinHeight="350"/>
+            <RowDefinition Height="*" MinHeight="150"/>
+
         </Grid.RowDefinitions>
 
         <TextBlock Text="Депозит"/>
@@ -83,7 +85,12 @@
         <oxy:PlotView x:Name="plotView"
                       Grid.ColumnSpan="3"
                       Grid.Column="0"
-                      Grid.Row="13"
+                      Grid.Row="12"
                       Margin="5"/>
+        <oxy:PlotView x:Name="plotView2"
+                      Grid.ColumnSpan="3"
+                      Grid.Column="0"
+                      Grid.Row="13"
+                      Margin="5"/>        
     </Grid>
 </Window>
