@@ -210,7 +210,7 @@ namespace Capital
             // добавляем series в PlotModel
             model = new PlotModel
             {
-                Title = "График изменения капитала",
+                Title = "График капитала",
                 PlotMargins = new OxyThickness(60, 10, 10, 0),
                 Padding = new OxyThickness(0, 0, 0, 5) // Отступ снизу для совмещения осей };
             };
