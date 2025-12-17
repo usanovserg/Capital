@@ -208,14 +208,25 @@ namespace Capital
             _dataGrid.ItemsSource= datas;
 
             // добавляем series в PlotModel
-            model = new PlotModel { Title = "График изменения капитала" };
+            model = new PlotModel
+            {
+                Title = "График изменения капитала",
+                PlotMargins = new OxyThickness(60, 10, 10, 0),
+                Padding = new OxyThickness(0, 0, 0, 5) // Отступ снизу для совмещения осей };
+            };
+
             for (int k = 0; k < _strategies.Count; k++)
             {
                 model.Series.Add(series[k]);
             }
             plotView?.Model = model;
 
-            model2 = new PlotModel { Title = "График максимальной просадки, %" };
+            model2 = new PlotModel 
+            { 
+                Title = "График максимальной просадки, %",
+                PlotMargins = new OxyThickness(60, 0, 10, 40),
+                Padding = new OxyThickness(0, 0, 0, 0)
+            };
             for (int k = 0; k < _strategies.Count; k++)
             {
                 model2.Series.Add(seriesmDD[k]);
