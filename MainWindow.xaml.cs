@@ -68,10 +68,12 @@ namespace Capital
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Calculate();
+            List<Data> datas = Calculate();
+
+            Draw(datas);
         }
 
-        private void Calculate()
+        private List<Data> Calculate()
         {
             decimal depoStart = GetDecimalFromString(_depo.Text);
             int startLot = GetIntFromString(_startLot.Text);
@@ -108,8 +110,7 @@ namespace Capital
                     //==================================== 1 стратегия ===============================
 
                     datas[0].ResultDepo += (take - comiss) * startLot;
-
-                    //datas[0].Profit += datas[0].ResultDepo - depoStart;
+                    
 
                     //==================================== 2 стартегия ===============================
 
@@ -160,6 +161,20 @@ namespace Capital
             }
 
             _dataGrid.ItemsSource = datas;
+
+            return datas;
+        }
+
+        private void Draw(List<Data> datas)
+        {
+            int index = _comboBox.SelectedIndex;
+
+            List<decimal> listEquity = datas[index].GetListEquity();
+
+            int count = listEquity.Count;            
+
+            decimal maxEquty = listEquity.Max();
+            decimal minEquty = listEquity.Min();
         }
 
         private int CalculateLot(decimal currentDepo, decimal percent, decimal go)

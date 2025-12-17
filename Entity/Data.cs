@@ -32,6 +32,9 @@ namespace Capital.Entity
         }
         decimal _depo;
 
+        /// <summary>
+        /// Результат эквити (депо)
+        /// </summary>
         public decimal ResultDepo
         {
             get => _resultDepo;
@@ -39,6 +42,14 @@ namespace Capital.Entity
             set
             {
                 _resultDepo = value;
+
+                Profit = ResultDepo - Depo;
+
+                PercentProfit = Profit * 100 / Depo;
+
+                ListEquity.Add(ResultDepo);
+
+                CalcDrawDown();
             }
         }
         decimal _resultDepo;
@@ -56,7 +67,7 @@ namespace Capital.Entity
         {
             get { return _maxDrownDown; }
 
-            set { _maxDrownDown = value; }
+            set { _maxDrownDown = value; CalcPercentDrawDown(); }
         }
         decimal _maxDrownDown;
 
@@ -70,9 +81,47 @@ namespace Capital.Entity
 
         #region Fields ====================================================
 
+        List<decimal> ListEquity = new List<decimal>();
+
+        private decimal _max = 0;
+
+        private decimal _min = 0;
+
         #endregion
 
         #region Methods ===================================================
+
+        public List<decimal> GetListEquity()
+        {
+            return ListEquity;
+        }
+
+        private void CalcDrawDown()
+        {
+            if (_max < ResultDepo)
+            {
+                _max = ResultDepo;
+                _min = ResultDepo;
+            }
+
+            if (_min > ResultDepo)
+            {
+                _min = ResultDepo;
+
+                if (MaxDrownDown < _max - _min)
+                {
+                    MaxDrownDown = _max - _min;
+                }             
+
+            }
+        }
+
+        private void CalcPercentDrawDown()
+        {
+            decimal percent = MaxDrownDown * 100 / ResultDepo; 
+            
+            if (percent > PercentDrawnDown) PercentDrawnDown = Math.Round(percent,2);
+        }
 
         #endregion
     }
