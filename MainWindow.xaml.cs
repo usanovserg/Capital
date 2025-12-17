@@ -109,7 +109,7 @@ namespace Capital
 
                     datas[0].ResultDepo += (take - comiss) * startLot;
 
-                    datas[0].Profit += datas[0].ResultDepo - depoStart;
+                    //datas[0].Profit += datas[0].ResultDepo - depoStart;
 
                     //==================================== 2 стартегия ===============================
 
