@@ -1,6 +1,7 @@
 ﻿using Capital.Entity;
 using Capital.Enums;
 using System;
+using System.Globalization;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -159,9 +160,10 @@ namespace Capital
             foreach (var data in datas) 
             {
                 data.Profit = data.ResultDepo - data.Depo;
-                data.PercentProfit = Math.Round(data.Profit/data.Depo*100,2);
-                data.MaxDrawDown = Math.Round(maxDrawDown[j],2);
-                data.PercentDrawDown = Math.Round(percentDrawDown[j],2);
+                //data.PercentProfit = Math.Round(data.Profit/data.Depo*100,2);
+                data.PercentProfit = data.Profit / data.Depo * 100;
+                data.MaxDrawDown = maxDrawDown[j];
+                data.PercentDrawDown = percentDrawDown[j];
                 j++;
             }
 
@@ -189,6 +191,30 @@ namespace Capital
             if (int.TryParse(str, out int result)) return result;
             return 0; 
         }
+
+        /// <summary>
+        /// обработчик события прорисовки колонки таблицы
+        /// </summary>
+        private void DataGrid_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
+        {
+            if (e.Column is DataGridTextColumn col)
+            {
+                // Форматирование числа с разделителем тысяч
+                string format =
+                    e.PropertyName == "PercentProfit" || e.PropertyName == "PercentDrawDown"
+                    ? "{0:N2}"
+                    : "{0:N0}";
+                col.Binding = new Binding(e.PropertyName)
+                {
+                    StringFormat = format,
+                    ConverterCulture = new CultureInfo("ru-RU")
+                };
+                // Стиль для отображения
+                var displayStyle = new Style(typeof(TextBlock));
+                displayStyle.Setters.Add(new Setter(TextBlock.TextAlignmentProperty, TextAlignment.Right));
+                col.ElementStyle = displayStyle;
+            }
+        }
         #endregion
-     }
+    }
 }
