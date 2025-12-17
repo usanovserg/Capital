@@ -177,7 +177,11 @@ namespace Capital
                 // добавляем новую точку в series
                 for (int k = 0; k < _strategies.Count; k++)
                 {
-                    series[k].Points.Add(new DataPoint(i + 1, (double)datas[k].ResultDepo));
+                    if (i!=0) 
+                    {
+                        series[k].Points.Add(new DataPoint(i, (double)datas[k].ResultDepo));
+
+                    }
                 }
 
             }
@@ -196,15 +200,14 @@ namespace Capital
             }
 
             _dataGrid.ItemsSource= datas;
-            //var trt = _dataGrid;
 
             // добавляем series в PlotModel
             model = new PlotModel { Title = "График изменения капитала" };
-            for (int k = 0; j < _strategies.Count; k++)
+            for (int k = 0; k < _strategies.Count; k++)
             {
                 model.Series.Add(series[k]);
             }
-            plotView.Model = model;
+            plotView?.Model = model;
             ShowPlot(_comBox.SelectedIndex);
         }
 
