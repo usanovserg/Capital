@@ -37,6 +37,8 @@ namespace Capital
 
         Random _random = new Random();
 
+        private List<Data>? _lastCalculatedDatas;////
+
         #endregion
 
         #region Methods ===================================================================
@@ -68,23 +70,35 @@ namespace Capital
             _minStartPercent.Text = "20";
             _go.Text = "5000";            
         }
+
+        /// <summary>
+        /// вызывается при смене стратегии в комбобокс
+        /// перерисовывает график без перерасчета
+        /// </summary>
+
         private void _comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ComboBox comboBox = (ComboBox) sender;
-
-            int index = comboBox.SelectedIndex;
-
+            if (_lastCalculatedDatas != null && _canvas.IsLoaded)
+            {
+                Draw(_lastCalculatedDatas);
+            }
         }
-
-
+        /// <summary>
+        /// обработчик нажатия кнопки (Расситать)
+        /// Выполняет рассчет и сохраняет результат
+        /// </summary>
+      
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            List<Data> datas = Calculate();
+            _lastCalculatedDatas = Calculate(); // сохраняем результат
 
-            Draw(datas);
+            Draw(_lastCalculatedDatas);        // рисуем график
 
         }
-
+        /// <summary>
+        /// Выполняем рассчет всех стратегий
+        /// </summary>
+        
         private List<Data> Calculate()
         {
             decimal depoStart = GetDecimalFromString(_depo.Text);
@@ -98,8 +112,6 @@ namespace Capital
             decimal go = GetDecimalFromString(_go.Text);
 
             List<Data> datas = new List<Data>();
-
-
             foreach (StrategyType type in _strategies)
             {
                 datas.Add(new Data(depoStart, type));
@@ -164,70 +176,130 @@ namespace Capital
 
             return datas;
         }
-
+        /// <summary>
+        /// отрисовка графика эквити ЛИНИЕЙ (не точками)
+        /// </summary>
+       
         private void Draw(List<Data> datas) 
         {
-            _canvas.Children.Clear();                                                           
-
+            // очищаем от предыдущего графика
+            _canvas.Children.Clear(); 
+            // защита от ошибок
+            if (datas == null) return; ///  
             int index = _comboBox.SelectedIndex;
+            if (index <0 || index >= datas.Count) return;///
+
             List<decimal> listEquity = datas[index].GetListEquity();
 
+            if (listEquity == null || listEquity.Count ==0) return; ///
+
+            // находим максимум и минимум для масштабирования
             int count = listEquity.Count;
-            decimal maxEquity = listEquity.Max();
+            decimal maxEquity = listEquity.Max();   
             decimal minEquity = listEquity.Min();
 
-            double stepX = _canvas.ActualWidth / count;
-            double koef = (double)(maxEquity - minEquity) / _canvas.ActualHeight;
+            // защита от деления на ноль, если все значения одинаковые
+            if (maxEquity == minEquity) ///
+                minEquity = maxEquity - 1;  ///
 
-            double x = 0;
-            double y = 0;
+            // int count = listEquity.Count;
 
+            //  размер холста
+            double canvasWidth = _canvas.ActualWidth;///
+            double canvasHeight = _canvas.ActualHeight;///
+            // шаг по Х расстояниие между точками
+            double stepX = _canvas.ActualWidth / Math.Max(1,count -1);///
+            // масштаб по  Y
+            double rangeY = (double)(maxEquity - minEquity); ///
+            double scaleY = rangeY > 0 ? canvasHeight / rangeY : 1; ///
+
+            ///double koef = (double)(maxEquity - minEquity) / _canvas.ActualHeight;
+
+            ///double x = 0;
+            ///double y = 0;
+            // создаем ломаннную линию один раз
+            var polyline = new Polyline 
+            {
+                Stroke = Brushes.Black, // цвет линии
+                StrokeThickness = 1.5   // толщина линии
+
+            };
+            // собираем точку графика
+            var points = new PointCollection();///
             for (int i = 0; i< count; i++) 
             {
-                y = _canvas.ActualHeight - (double)(listEquity[i] - minEquity) / koef;
+               double x = i * stepX;///
+               double y = _canvas.ActualHeight - (double)(listEquity[i] - minEquity) * scaleY;///
+                points.Add(new Point(x, y)); ///
+                ///_canvas.Children.Add(polyline);
 
-                Ellipse ellipse = new Ellipse()
-                {
-                    Width = 2,
-                    Height = 2,
-                    Stroke = Brushes.Black
+                ///y = _canvas.ActualHeight - (double)(listEquity[i] - minEquity) / koef;
 
-                };
-                Canvas.SetLeft(ellipse, x);
-                Canvas.SetTop(ellipse, y);
+                ////Ellipse ellipse = new Ellipse()
+                ///{
+                /// Width = 2,
+                /// Height = 2,
+                /// Stroke = Brushes.Black
 
-                _canvas.Children.Add(ellipse);
-
-
-                x += stepX;
+                ///};
+                ///Canvas.SetLeft(ellipse, x);
+                ///Canvas.SetTop(ellipse, y);
+                ///x += stepX;
             }
-
+            // присваеваем точки линии 
+            polyline.Points = points;
+            // добавляем на холст только один раз - после цикла
+            _canvas.Children.Add(polyline);
 
         ///if (_dataGrid == null)
         }
-
-
+        /// <summary>
+        /// обновляем график при изменениие размера окна, вызывается автоматически
+        /// </summary>
+        
+        private void Canvas_SizeChanged(object sender, SizeChangedEventArgs e) 
+        {
+            if (_lastCalculatedDatas != null)
+            {
+                Draw(_lastCalculatedDatas);
+            }
+             
+        }
+        /// <summary>
+        /// Расчет лота по текущему депозиту и проценту
+        /// </summary>
+        
         private int CalculateLot(decimal currentDepo,decimal percent, decimal go) 
         { 
-            if (percent > 100) { percent = 100; }
+            if (percent > 100)  percent = 100; 
             decimal lot = currentDepo/go/100*percent;
-            return (int)lot;
+            ///return (int)lot;
+            return (int)Math.Max(1,lot);/// лот не может быть  меньше 1
         
         }
-            //decimal.TryParse(_depo.Text, out depoStart);
-             
+        //decimal.TryParse(_depo.Text, out depoStart);
+
+        /// <summary>
+        /// Безопасное преобразование строки в decimal
+        /// </summary>
 
         private decimal GetDecimalFromString(string str) 
         {
-            if (decimal.TryParse(str,out decimal result)) return result;
+           return decimal.TryParse(str, out decimal result)? result:0;///
+           /// if (decimal.TryParse(str,out decimal result)) return result;
 
-            return 0;       
+            ///return 0;       
         }
+        /// <summary>
+        /// безопасное преобразование строки в INT
+        /// </summary>
+
         private int GetIntFromString(string str)
         {
-            if (int.TryParse(str, out int result)) return result;
+            return int.TryParse(str, out int result)? result:0;///
+            ///if (int.TryParse(str, out int result)) return result;
 
-            return 0;
+            ///return 0;
         }
 
 
