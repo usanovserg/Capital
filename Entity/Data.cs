@@ -35,6 +35,9 @@ namespace Capital.Entity
 
 
 
+        /// <summary>
+        /// Результат (депо) Equity
+        /// </summary>
         public decimal ResultDepo
         {
             get { return _resultDepo; }
@@ -43,6 +46,8 @@ namespace Capital.Entity
                 _resultDepo = value;
                 Profit = ResultDepo - Depo;
                 PercentProfit = Profit / Depo * 100;
+                ListEquity.Add(ResultDepo);
+                CalcDrawDown();
             }
         }
         private decimal _resultDepo;
@@ -69,6 +74,7 @@ namespace Capital.Entity
             set
             {
                 _maxDrawDown = value;
+                CalcPercentDrawDown();
             }
         }
         decimal _maxDrawDown;
@@ -80,17 +86,56 @@ namespace Capital.Entity
         /// </summary>
         public decimal PercentDrawDown { get; set; }
 
-
         #endregion Properties
 
 
 
         #region Fields ========================================================
 
+        private List<decimal> ListEquity = new List<decimal>();
+        private decimal _max = 0;
+        private decimal _min = 0;
+
         #endregion Fields
 
 
         #region Methods ========================================================
+
+        public List<decimal> GetListEquity()
+        {
+            return ListEquity;
+        }
+
+        private void CalcDrawDown()
+        {
+            // если обновился max
+            if (_max < ResultDepo)
+            {
+                _max = ResultDepo;
+                _min = ResultDepo;
+            }
+
+            // если обновился min
+            if (_min > ResultDepo)
+            {
+                _min = ResultDepo;
+                if ( MaxDrawDown < (_max - _min) )
+                {
+                    MaxDrawDown = (_max - _min);
+                }                
+            }
+        }
+
+
+
+        private void CalcPercentDrawDown()
+        {
+            decimal percent = MaxDrawDown / ResultDepo * 100;
+            if (percent > PercentDrawDown)
+            {
+                PercentDrawDown =  Math.Round(percent, 2);
+            }
+        }
 
         #endregion Methods
 

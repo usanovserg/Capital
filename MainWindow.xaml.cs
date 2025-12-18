@@ -87,11 +87,12 @@ namespace Capital
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Calculate();
+            List<Data> datas = Calculate();
+            Draw(datas);
         }
 
 
-        private void Calculate()
+        private List<Data> Calculate()
         {
             decimal depoStart = GetDecimalFromString(_depo.Text);
             int startLot = GetIntFromString(_startLot.Text);
@@ -132,21 +133,11 @@ namespace Capital
                 datas.Add(new Data(depoStart, type));
             }
 
-
             int lotPercent = startLot;
-
             decimal percent = startLot * go * 100 / depoStart;
-
             decimal multiply = take / stop;
             int lotProgress = CalculateLot(depoStart, minStartPercent, go);
-
             int lotDown = startLot;
-
-            //decimal minDepo = depoStart;
-
-
-
-
 
             // цикл, который будет создавать рандомные сделки
             for (int i = 0; i < countTrades; i++)
@@ -189,130 +180,53 @@ namespace Capital
                     lotDown /= 2;
                     if (lotDown == 0)
                         lotDown = 1;
-
                 }
-
-                //// столбец Profit
-                //datas[0].Profit = datas[0].ResultDepo - datas[0].Depo;
-                //datas[1].Profit = datas[1].ResultDepo - datas[1].Depo;
-                //datas[2].Profit = datas[2].ResultDepo - datas[2].Depo;
-                //datas[3].Profit = datas[3].ResultDepo - datas[3].Depo;
-
-                //// столбец PercentProfit
-                //datas[0].PercentProfit = Math.Round(datas[0].Profit / datas[0].Depo * 100, 2);
-                //datas[1].PercentProfit = Math.Round(datas[1].Profit / datas[1].Depo * 100, 2);
-                //datas[2].PercentProfit = Math.Round(datas[2].Profit / datas[2].Depo * 100, 2);
-                //datas[3].PercentProfit = Math.Round(datas[3].Profit / datas[3].Depo * 100, 2);
-
-
-                //// столбец MaxDrawDown
-                //// стратегия 1 в лоб
-
-                //decimal peak1 = depoStart;
-                //decimal drawDown1 = 0;
-                //decimal maxDrawDown1 = 0;
-
-                //if (datas[0].ResultDepo > peak1)
-                //{
-                //    peak1 = datas[0].ResultDepo;
-                //}
-                //else
-                //{
-                //    drawDown1 = peak1 - datas[0].ResultDepo;
-                //}
-                //if (drawDown1 > maxDrawDown1)
-                //{
-                //    maxDrawDown1 = drawDown1;
-                //    datas[0].MaxDrawDown = maxDrawDown1;
-                //    datas[0].PercentDrawDown = (peak1 - datas[0].ResultDepo) / peak1 * 100;
-                //}
-
-                // стратегия 1 через методы
-                //datas[0].MaxDrawDown = MaxDrawDown(datas[0].ResultDepo, depoStart);
-                //datas[0].PercentDrawDown = PercentDrawDown(datas[0].ResultDepo, depoStart);
-
-                //// стратегия 2 в лоб
-                //decimal peak2 = depoStart;
-                //decimal drawDown2 = 0;
-                //decimal maxDrawDown2 = 0;
-                //if (datas[1].ResultDepo > peak2)
-                //{
-                //    peak2 = datas[1].ResultDepo;
-                //}
-                //else
-                //{
-                //    drawDown2 = peak2 - datas[1].ResultDepo;
-                //}
-                //if (drawDown2 > maxDrawDown2)
-                //{
-                //    maxDrawDown2 = drawDown2;
-                //    datas[1].MaxDrawDown = maxDrawDown2;
-                //    datas[1].PercentDrawDown = (peak2 - datas[1].ResultDepo) / peak2 * 100;
-                //}
-
-
-
-
-
             }
-
-
-            // в самом конце
+            // в самом конце в _dataGrid записываем datas
             _dataGrid.ItemsSource = datas;
+
+            return datas;
         }
 
 
 
+        private void Draw(List<Data> datas)
+        {
+            _canvas.Children.Clear();
 
-        //private decimal MaxDrawDown(decimal ResultDepo, decimal depoStart)
-        //{
-        //    decimal peak = depoStart;
-        //    decimal drawDown = 0;
-        //    decimal maxDrawDown = 0;
+            int index = _comboBox.SelectedIndex;
+            List<decimal> listEquity = datas[index].GetListEquity();
+            int count = listEquity.Count;
+            decimal maxEquity = listEquity.Max();   // находим макс в списке
+            decimal minEquity = listEquity.Min();
+            double stepX = _canvas.ActualWidth / count;     // шаг по Х = текущая ширина канваса / кол-во
+            double koef = (double)(maxEquity - minEquity) / _canvas.ActualHeight;
 
-        //    if (ResultDepo > peak)
-        //    {
-        //        peak = ResultDepo;
-        //    }
-        //    else
-        //    {
-        //        drawDown = peak - ResultDepo;
-        //    }
+            double x = 0;
+            double y = 0;
 
-        //    if (drawDown > maxDrawDown)
-        //    {
-        //        maxDrawDown = drawDown;
-        //        //datas[0].PercentDrawDown = (peak - datas[0].ResultDepo) / peak * 100;
-        //    }
+            for (int i = 0; i < count; i++)
+            {
+                y = _canvas.ActualHeight - (double)(listEquity[i] - minEquity) / koef;
 
-        //    return maxDrawDown;
-        //}
+                Ellipse ellipse = new Ellipse()
+                {
+                    Width = 2,
+                    Height = 2,
+                    Stroke = Brushes.Black
+                };
+
+                Canvas.SetLeft(ellipse, x);
+                Canvas.SetTop(ellipse, y);
+
+                _canvas.Children.Add(ellipse);
+                
+                
+                x += stepX;
+            }
+        }
 
 
-
-        //private decimal PercentDrawDown(decimal ResultDepo, decimal depoStart)
-        //{
-        //    decimal peak = depoStart;
-        //    decimal drawDown = 0;
-        //    decimal maxDrawDown = 0;
-
-        //    if (ResultDepo > peak)
-        //    {
-        //        peak = ResultDepo;
-        //    }
-        //    else
-        //    {
-        //        drawDown = peak - ResultDepo;
-        //    }
-
-        //    if (drawDown > maxDrawDown)
-        //    {
-        //        maxDrawDown = drawDown;
-        //        //datas[0].PercentDrawDown = (peak - datas[0].ResultDepo) / peak * 100;
-        //    }
-
-        //    return maxDrawDown / peak * 100;
-        //}
 
 
 
