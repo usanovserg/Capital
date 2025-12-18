@@ -32,7 +32,8 @@ namespace Capital
                 StrategyType.FIX,
                 StrategyType.CAPITALIZATION,
                 StrategyType.PROGRESS,
-                StrategyType.DOWNGRADE
+                StrategyType.DOWNGRADE,
+                StrategyType.ALL_STRATEGIES
         };
 
         Random _random = new Random();
@@ -136,9 +137,7 @@ namespace Capital
                 {
                     //==================================== 1 стратегия ===============================
 
-                    datas[0].ResultDepo -= (stop + comiss) * startLot;
-
-                    datas[0].Profit -= datas[0].ResultDepo - depoStart;
+                    datas[0].ResultDepo -= (stop + comiss) * startLot;                    
 
                     //==================================== 2 стартегия ===============================
 
@@ -167,14 +166,41 @@ namespace Capital
 
         private void Draw(List<Data> datas)
         {
+            _canvas.Children.Clear();
+
             int index = _comboBox.SelectedIndex;
 
             List<decimal> listEquity = datas[index].GetListEquity();
 
             int count = listEquity.Count;            
 
-            decimal maxEquty = listEquity.Max();
-            decimal minEquty = listEquity.Min();
+            decimal maxEquity = listEquity.Max();
+            decimal minEquity = listEquity.Min();
+
+            double stepX = _canvas.ActualWidth / count;
+            double koef = (double)(maxEquity - minEquity) / _canvas.ActualHeight;
+
+            double x = 0;
+            double y = 0;
+
+            for (int i = 0; i < count; i++)
+            {
+                y = _canvas.ActualHeight - (double)(listEquity[i] - minEquity) / koef;
+
+                Ellipse ellipse = new Ellipse()
+                {
+                    Width = 2,
+                    Height = 2,
+                    Stroke = Brushes.Black,
+                };
+
+                Canvas.SetLeft(ellipse, x);
+                Canvas.SetTop(ellipse, y);
+
+                _canvas.Children.Add(ellipse);
+
+                x += stepX;
+            }
         }
 
         private int CalculateLot(decimal currentDepo, decimal percent, decimal go)

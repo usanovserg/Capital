@@ -65,9 +65,13 @@ namespace Capital.Entity
         /// </summary>
         public decimal MaxDrownDown
         {
-            get { return _maxDrownDown; }
+            get => _maxDrownDown; 
 
-            set { _maxDrownDown = value; CalcPercentDrawDown(); }
+            set 
+            { 
+                _maxDrownDown = value; 
+                CalcPercentDrawDown(); 
+            }
         }
         decimal _maxDrownDown;
 
@@ -120,7 +124,7 @@ namespace Capital.Entity
         {
             decimal percent = MaxDrownDown * 100 / ResultDepo; 
             
-            if (percent > PercentDrawnDown) PercentDrawnDown = Math.Round(percent,2);
+            if (percent > PercentDrawnDown) PercentDrawnDown = Math.Round(percent, 2);
         }
 
         #endregion
