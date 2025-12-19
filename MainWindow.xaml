@@ -10,8 +10,8 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="150" />
             <ColumnDefinition Width="*"
-                          MinWidth="50"
-                          MaxWidth="150" />
+                              MinWidth="50"
+                              MaxWidth="150" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
@@ -77,9 +77,9 @@
 
         <GroupBox Header="Таблица результатов"
               Grid.Column="2" Grid.RowSpan="12" 
-              Margin="10, 1" >
+              Margin="10, 1" > 
             <DataGrid x:Name="_dataGrid"
-                  Margin="5" />
+                  Margin="5, 0" />
         </GroupBox>
 
     </Grid>

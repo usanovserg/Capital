@@ -47,7 +47,7 @@ namespace Capital
             //_combobox.ItemsSource = new List<StrategyType>();
             _combobox.ItemsSource = _strategies ;
 
-            _combobox.SelectionChanged += _combobox_SelectionChanged;
+            _combobox.SelectionChanged += _combobox_SelectionChanged; //Подписались на событие
             _combobox.SelectedIndex = 0;
 
             _depo.Text = "100000";
@@ -103,7 +103,6 @@ namespace Capital
             int lotProgress = CalculateLot(depoStart, minStartPercent, go);
 
             int lotDown = startLot;
-
             
             for (int i = 0; i < countTrades; i++)
             {
@@ -156,7 +155,7 @@ namespace Capital
 
             }
 
-            _dataGrid.ItemsSource = datas;
+            _dataGrid.ItemsSource = datas; //Запись в таблицу
 
         }
 

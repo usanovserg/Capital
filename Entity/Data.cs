@@ -21,6 +21,9 @@ namespace Capital.Entity
 
         public StrategyType StrategyType { get; set; }
 
+        /// <summary>
+        /// До сделки
+        /// </summary>
         public decimal Depo 
         {
             get => _depo;
@@ -33,7 +36,9 @@ namespace Capital.Entity
         }
         decimal _depo;
 
-
+        /// <summary>
+        /// осле сделки
+        /// </summary>
         public decimal ResultDepo 
         {
             get => _resultDepo ;
@@ -50,8 +55,7 @@ namespace Capital.Entity
 
         /// <summary>
         /// Относительный профит в процентах
-        /// </summary>
-        
+        /// </summary>        
         public decimal PercentProfit { get; set; }
                 
         /// <summary>
