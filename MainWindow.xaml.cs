@@ -72,11 +72,13 @@ namespace Capital
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Calculate();
+            List<Data> datas =  Calculate();
+
+            Draw(datas);
         }
 
 
-        private void Calculate()
+        private List<Data> Calculate()
         {
             decimal depoStart = GetDecimalFromString( _depo.Text );
             int startLot = GetIntFromString( _startLot.Text );
@@ -157,9 +159,48 @@ namespace Capital
 
             _dataGrid.ItemsSource = datas; //Запись в таблицу
 
+            return datas;
         }
 
+        private void Draw(List<Data> datas)
+        {
+            _canvas.Children.Clear();
 
+            int index = _combobox.SelectedIndex;  //Получаем индекс выбранного комбобокса.
+
+            List<decimal> ListEquity = datas[index].GetListEquity();
+
+            int count = ListEquity.Count; //Количество элементов
+            decimal maxEquity = ListEquity.Max(); //Макс. значение элемента
+            decimal minEquity = ListEquity.Min(); //Мин. значение
+
+            double stepX = _canvas.ActualWidth / count;
+
+            double koef = (double)(maxEquity - minEquity) / _canvas.ActualHeight; //К-т масштабирования по вертикали
+
+            double x = 0; //текущие 
+            double y = 0; //координаты
+
+            for (int i = 0; i < count; i++)
+            {
+                y = _canvas.ActualHeight - (double)(ListEquity[i] - minEquity) / koef;
+
+                Ellipse ellipse = new Ellipse()
+                {
+                    Width = 2,
+                    Height = 2,
+                    Stroke = Brushes.Black
+                };
+
+                Canvas.SetLeft(ellipse, x);
+                Canvas.SetTop(ellipse, y);
+              //  Canvas.SetBottom(ellipse, y);
+
+                _canvas.Children.Add(ellipse);   
+
+                x += stepX;
+            }
+        }
         private int CalculateLot(decimal currentDepo, decimal percent, decimal go)
         {
             if (percent > 100) { percent = 100; }
