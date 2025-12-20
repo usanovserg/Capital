@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Enams\" />
+    <Folder Include="Enums\" />
     <Folder Include="Entity\" />
   </ItemGroup>
 
