@@ -61,7 +61,7 @@ namespace Capital
             
 
             _comboBox.SelectionChanged += _comboBox_SelectionChanged;
-            //_canvas.SizeChanged += _canvas_SizeChanged;
+            _canvas.SizeChanged += _canvas_SizeChanged;
             _comboBox.SelectedIndex = 0;
 
             _depo.Text = "100000";
@@ -268,10 +268,7 @@ namespace Capital
 
             // Цвета для каждой стратегии
             Brush[] colors = { Brushes.Red, Brushes.Green, Brushes.Blue, Brushes.Orange };
-
-            // Начальная позиция для текста
-            double textY = 20; // отступ сверху
-            double textX = 10; // отступ слева
+                       
 
             for (int i = 0; i < allEquities.Count; i++)
             {
@@ -299,18 +296,20 @@ namespace Capital
                 {
                     Text = datas[i].StrategyType.ToString(), // выводим назавние стратегии
                     Foreground = colors[i % colors.Length], // цвет как у линии
+                    Background = Brushes.White, // белый фон
+                    Opacity = 1, // полупрозрачность
+                    Padding = new Thickness(3), // отступ внутри
                     FontSize = 12,
-                    FontWeight = FontWeights.Bold,
-                };
+                    FontWeight = FontWeights.DemiBold,
+                };                 
 
-                // Позиционируем текст рядом с последней точкой линии
-                double lastX = (listEquity.Count - 1) * stepX;
-                double lastY = canvasHeight - (double)(listEquity.Last() - minEquity) * scaleY;
-
-                Canvas.SetLeft(label, lastX + 5); // немного справа от последней точки
-                Canvas.SetTop(label, lastY - 15); // немного выше
+                Canvas.SetLeft(label, canvasWidth - 1100); // отступ от правого края
+                Canvas.SetTop(label, 10 + i * 20); // отступ сверху
 
                 _canvas.Children.Add(label);
+
+                DrawXAxisLabels(canvasHeight, (int)minEquity, (double)maxEquity);
+                DrawYAxisLabels(canvasWidth, allEquities[0].Count, (decimal)stepX);
             }
         }
 
@@ -354,6 +353,9 @@ namespace Capital
             };
            
             _canvas.Children.Add(polyline);
+
+            DrawXAxisLabels(canvasHeight, (int)minEquity, (double)maxEquity);
+            DrawYAxisLabels(canvasWidth, listEquity.Count, (decimal)stepX);
         }
 
         private int CalculateLot(decimal currentDepo, decimal percent, decimal go)
@@ -392,9 +394,49 @@ namespace Capital
             Draw(datas, _comboBox.SelectedIndex);
         }
 
-        //private void GroupBox_SizeChanged(object sender, SizeChangedEventArgs e)
-        //{
-        //    _dataGrid.ItemsSource = datas;
-        //}
+        private void GroupBox_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            _dataGrid.ItemsSource = datas;
+        }
+
+        // Подписи по оси Y
+        void DrawYAxisLabels(double canvasHeight, decimal minEquity, decimal maxEquity)
+        {
+            //Максимум
+            AddLabel($"{maxEquity:N0}", 5, 10, Brushes.Black);
+
+            //Минимум
+            AddLabel($"{minEquity:N0}", 5, canvasHeight - 20, Brushes.Black);
+
+            // Среднее
+            decimal mid = (maxEquity + minEquity) / 2;
+            AddLabel($"{mid:N0}", 5, canvasHeight / 2 - 10, Brushes.Black);
+        }
+
+        // Подписи по оси X
+        void DrawXAxisLabels(double canvasWidth, int count, double stepX)
+        {
+            for (int i = 0; i < count; i += Math.Max(1, count / 10)) // не более 10 меток
+            {
+                double x = i * stepX;
+                AddLabel($"{i}", x - 10, _canvas.ActualHeight - 20, Brushes.Black);
+            }
+        }
+
+        // Вспомогательный метод для добавления текста
+        void AddLabel(string text, double x,  double y, Brush color)
+        {
+            TextBlock label = new TextBlock
+            {
+                Text = text,
+                Foreground = color,
+                FontSize = 10,
+                IsHitTestVisible = false // чтобы не мешал взаимодействию
+            };
+
+            Canvas.SetLeft(label, Math.Max(0, x)); // не выходить за левый край
+            Canvas.SetTop(label, Math.Max(0, y)); // не выходить за верхний край
+            _canvas.Children.Add(label);
+        } 
     }
 }
