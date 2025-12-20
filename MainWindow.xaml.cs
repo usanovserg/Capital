@@ -3,6 +3,7 @@ using Capital.Enums;
 using OxyPlot;
 using OxyPlot.Series;
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.Text;
 using System.Windows;
@@ -14,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Xml.Linq;
 
 namespace Capital
 {
@@ -35,12 +37,13 @@ namespace Capital
             StrategyType.FIX,
             StrategyType.CAPITALIZATION,
             StrategyType.PROGRESS,
-            StrategyType.DOWNGRADE
-        
+            StrategyType.DOWNGRADE,
+
         };
 
+        List<Data> datas = new List<Data>();
+
         Random _random =new Random();
-        PlotModel model, model2;
 
         #endregion
 
@@ -57,6 +60,7 @@ namespace Capital
 
             _comBox.Items.Add("Все стратегии");
             _comBox.SelectionChanged += _comBox_SelectionChanged;
+            _canvas.SizeChanged += _canvas_SizeChanged; ;
             _comBox.SelectedIndex = 0;
             
             _depo.Text = "100000";
@@ -70,18 +74,23 @@ namespace Capital
             _minStartPercent.Text = "20";
         }
 
+        private void _canvas_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            Draw();
+        }
+
         private void _comBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ComboBox comboBox = (ComboBox)sender;
 
             int index = comboBox.SelectedIndex;
-
-            ShowPlot(index);
+            Draw();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             Calculate();
+            Draw();
         }
 
         private void Calculate() 
@@ -96,31 +105,11 @@ namespace Capital
             decimal minStartPercent = GetDecimalFromString(_minStartPercent.Text);
             decimal go = GetDecimalFromString(_go.Text);
 
-            List<Data> datas = new List<Data>();
-            List<decimal> maxDrawDown = new List<decimal>();
-            List<decimal> maxResultDepo = new List<decimal>();
-            List<decimal> percentDrawDown = new List<decimal>();
-
-            // создаем серии для PlotModel
-            List<LineSeries> series = new List<LineSeries>();
-            List<LineSeries> seriesmDD = new List<LineSeries>();
-
-            for (int k = 0; k < _strategies.Count; k++)
-            {
-                series.Add(new LineSeries());
-                series[k].Points.Add(new DataPoint(0, (double)depoStart));
-
-                seriesmDD.Add(new LineSeries());
-                seriesmDD[k].Points.Add(new DataPoint(0, 0));
-            }
+            datas = new List<Data>();
 
             foreach (StrategyType type in _strategies)
             {
                 datas.Add(new Data(depoStart, type));
-                maxDrawDown.Add(decimal.MaxValue);
-                maxResultDepo.Add(decimal.MinValue);
-                percentDrawDown.Add(decimal.MaxValue);
-
             }
 
             int lotPercent = startLot;
@@ -171,107 +160,82 @@ namespace Capital
                     if (lotDown == 0) lotDown = 1;
                 }
 
-                for(int k=0;k<datas.Count;k++) 
-                { 
-                    maxResultDepo[k] = Math.Max(maxResultDepo[k], datas[k].ResultDepo);
-                    maxDrawDown[k] = Math.Min(maxDrawDown[k],  datas[k].ResultDepo-maxResultDepo[k]);
-                    //percentDrawDown[k] = maxDrawDown[k] / maxResultDepo[k] * 100;
-                    percentDrawDown[k] = Math.Min(percentDrawDown[k], (datas[k].ResultDepo - maxResultDepo[k])/ maxResultDepo[k]*100);
-                }
-
-                // добавляем новую точку в series
-                for (int k = 0; k < _strategies.Count; k++)
-                {
-                    if (i!=0) 
-                    {
-                        series[k].Points.Add(new DataPoint(i, (double)datas[k].ResultDepo));
-
-                        seriesmDD[k].Points.Add(new DataPoint(i, (double)((datas[k].ResultDepo - maxResultDepo[k]) / maxResultDepo[k] * 100)));
-                    }
-                }
-
-            }
-
-
-
-            int j = 0;
-            foreach (var data in datas) 
-            {
-                data.Profit = data.ResultDepo - data.Depo;
-                //data.PercentProfit = Math.Round(data.Profit/data.Depo*100,2);
-                data.PercentProfit = data.Profit / data.Depo * 100;
-                data.MaxDrawDown = maxDrawDown[j];
-                data.PercentDrawDown = percentDrawDown[j];
-                j++;
+               
             }
 
             _dataGrid.ItemsSource= datas;
 
-            // добавляем series в PlotModel
-            model = new PlotModel
-            {
-                Title = "График капитала",
-                PlotMargins = new OxyThickness(60, 10, 10, 0),
-                Padding = new OxyThickness(0, 0, 0, 5) // Отступ снизу для совмещения осей };
-            };
+        }
 
-            for (int k = 0; k < _strategies.Count; k++)
+        private void Draw() 
+        {
+            _canvas.Children.Clear();
+            int index = _comBox.SelectedIndex;
+            switch (index)
             {
-                model.Series.Add(series[k]);
+                case 0:
+                    DrawLine(index, Brushes.Orange);
+                    break;
+                case 1:
+                    DrawLine(index, Brushes.Red);
+                    break;
+                case 2:
+                    DrawLine(index, Brushes.Green);
+                    break;
+                case 3:
+                    DrawLine(index, Brushes.Blue);
+                    break;
+                case 4:
+                    DrawLine(0, Brushes.Orange);
+                    DrawLine(1, Brushes.Red);
+                    DrawLine(2, Brushes.Green);
+                    DrawLine(3, Brushes.Blue);
+                    break;
             }
-            plotView?.Model = model;
 
-            model2 = new PlotModel 
-            { 
-                Title = "График максимальной просадки, %",
-                PlotMargins = new OxyThickness(60, 0, 10, 40),
-                Padding = new OxyThickness(0, 0, 0, 0)
-            };
-            for (int k = 0; k < _strategies.Count; k++)
+
+        }
+
+        private void DrawLine(int index,SolidColorBrush color) 
+        {
+            if (datas.Count == 0) return;
+
+            List<decimal> ListEquity = datas[index].GetListEquity();
+            int count =ListEquity.Count;
+            decimal maxEquity = ListEquity.Max();
+            decimal minEquity = ListEquity.Min();
+
+            double stepX = _canvas.ActualWidth/ count;
+            double koef = (double)(maxEquity - minEquity) / _canvas.ActualHeight;
+
+            double x = 0;
+            double y = 0;
+
+            for (int i=0; i<count;i++)
             {
-                model2.Series.Add(seriesmDD[k]);
-            }
-            plotView2?.Model = model2;
+                y = _canvas.ActualHeight - (double)(ListEquity[i] - minEquity) / koef;
+                
+                Ellipse ellipse = new Ellipse() 
+                { 
+                    Width =2,
+                    Height = 2,
+                    Stroke = color
+                };
 
-            ShowPlot(_comBox.SelectedIndex);
+                Canvas.SetLeft(ellipse, x);
+                Canvas.SetTop(ellipse, y);
+
+                _canvas.Children.Add(ellipse);
+
+                x += stepX;
+            }
         }
 
         /// <summary>
         /// прорисока графика по индексу из ComboBox
         /// </summary>
         /// <param name="index"></param>
-        private void ShowPlot(int index)
-        {
-            if (plotView?.Model?.Series != null)
-            {
-                Boolean AllActivate = false;
-                Boolean AllActivate2 = false;
 
-                if (index == plotView.Model.Series.Count)
-                {
-                    AllActivate = true;
-                    AllActivate2 = true;
-                }
-                for (int i = 0; i < plotView.Model.Series.Count; i++)
-                {
-                    if (i == index)
-                    {
-                        plotView.Model.Series[i].IsVisible = true;
-                        plotView2.Model.Series[i].IsVisible = true;
-
-                    }
-                    else
-                    { 
-                        plotView.Model.Series[i].IsVisible = AllActivate;
-                        plotView2.Model.Series[i].IsVisible = AllActivate;
-
-                    }
-                }
-            }
-            plotView?.InvalidatePlot(true);
-            plotView2?.InvalidatePlot(true);
-
-        }
         private int CalculateLot(decimal currentDepo, decimal percent, decimal go)
         {
             if(percent>100) { percent = 100; }

@@ -28,8 +28,7 @@
             <RowDefinition Height="20"/>
             <RowDefinition Height="20"/>
             <RowDefinition Height="20"/>
-            <RowDefinition Height="*" MinHeight="250"/>
-            <RowDefinition Height="*" MinHeight="100"/>
+            <RowDefinition Height="125*" MinHeight="250"/>
 
         </Grid.RowDefinitions>
 
@@ -51,7 +50,7 @@
         <TextBlock Text="Гарант. обесп."
                    Grid.Row="9"/>
         <ComboBox Name="_comBox"
-                  Grid.Row="11" Margin="5,0"/>
+                  Grid.Row="11" Margin="5,0,5,0"/>
 
         <TextBox x:Name="_depo"
                  Grid.Column="1"/>
@@ -77,20 +76,20 @@
 
         <GroupBox Header="Таблица результатов"
                   Grid.Column="2" Grid.RowSpan="12"
-                  Margin="10,1">
+                  Margin="10,1,10,1">
             <DataGrid x:Name="_dataGrid"
                       Margin="5"
                       AutoGeneratingColumn="DataGrid_AutoGeneratingColumn"/>
         </GroupBox>
-        <oxy:PlotView x:Name="plotView"
-                      Grid.ColumnSpan="3"
-                      Grid.Column="0"
-                      Grid.Row="12"
-                      Margin="5"/>
-        <oxy:PlotView x:Name="plotView2"
-                      Grid.ColumnSpan="3"
-                      Grid.Column="0"
-                      Grid.Row="13"
-                      Margin="5"/>        
+        <Canvas
+            x:Name="_canvas"
+            Grid.Row="12"
+            Grid.ColumnSpan="3"
+            Margin="10,10,10,10"
+            
+            Background = "LightGray">
+
+
+        </Canvas>
     </Grid>
 </Window>

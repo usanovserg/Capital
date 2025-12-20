@@ -15,6 +15,8 @@ namespace Capital.Entity
 
             this.Depo = DepoStart;
         }
+        List<decimal> ListEquity = new List<decimal>();
+        decimal MaxResultDepo;
 
         #region Properties =========================================================
         public StrategyType StrategyType { get; set; }
@@ -27,6 +29,7 @@ namespace Capital.Entity
             { 
                 _depo = value;
                 ResultDepo = value;
+                MaxResultDepo = value;
             } 
 
         }
@@ -40,6 +43,10 @@ namespace Capital.Entity
             set
             {
                 _resultDepo = value;
+                Profit = ResultDepo - Depo;
+                PercentProfit = Profit*100/Depo;
+                ListEquity.Add(ResultDepo);
+                CalcDrawDown();
             }
         }
         decimal _resultDepo;
@@ -58,12 +65,33 @@ namespace Capital.Entity
         {
             get => _maxDrawDown;
 
-            set { _maxDrawDown = value; }
+            set { _maxDrawDown = value;
+                CalcPercentDrawDown();
+            }
         }
 
         decimal _maxDrawDown;
 
         public decimal PercentDrawDown { get; set;  }
+
+        private void CalcDrawDown() 
+        {
+            MaxResultDepo = Math.Max(MaxResultDepo, ResultDepo);
+            MaxDrawDown = Math.Min(MaxDrawDown, ResultDepo - MaxResultDepo);
+
+        }
+
+        private void CalcPercentDrawDown() 
+        {
+            PercentDrawDown = Math.Min(PercentDrawDown, (ResultDepo - MaxResultDepo) / MaxResultDepo * 100);
+
+        }
+
+        public List<decimal> GetListEquity() 
+        { 
+            return ListEquity;
+        
+        }
         #endregion
     };
 

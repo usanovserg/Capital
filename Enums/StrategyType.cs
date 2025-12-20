@@ -14,6 +14,8 @@ public enum StrategyType
 
         PROGRESS,
 
-        DOWNGRADE
+        DOWNGRADE,
+
+        ALL
     }
 }
