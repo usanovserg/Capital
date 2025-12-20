@@ -78,13 +78,15 @@
                   Margin="10,1">
             <DataGrid x:Name="_dataGrid"
                       Margin="5"/>
-
         </GroupBox>
+
+
 
         <Canvas x:Name="_canvas"
                 Grid.Row="13"
                 Grid.ColumnSpan="3"
-                Margin = "10" Background ="DarkGray">
-        </Canvas>
+                Margin = "10" Background ="DarkGray"
+                SizeChanged="_canvas_SizeChanged"/>
+
     </Grid>
 </Window>

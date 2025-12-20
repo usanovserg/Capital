@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Documents;
 
 namespace Capital.Entity
 {
@@ -11,9 +12,16 @@ namespace Capital.Entity
     {
         public Data(decimal depoStart, StrategyType strategyType)
         {
-            StrategyType = strategyType;
+            
+            StrategyType = strategyType;                     
 
-            Depo = depoStart;
+            _depo = depoStart > 0 ? depoStart : 1;
+            _resultDepo = _depo;
+            Profit = 0;
+            PercentProfit = 0;
+            ListEquity = new List<decimal> { _depo };
+            _max = _depo;
+            _min = _depo;
         }
 
         #region Properties=================================================
@@ -26,8 +34,9 @@ namespace Capital.Entity
 
             set
             {
+                if (value == 0) return; // установил защиту и не трогаем ResultDepo здесь
                 _depo = value;
-                ResultDepo = value;
+                //ResultDepo = value;
             }
         }
         decimal _depo;
@@ -45,7 +54,7 @@ namespace Capital.Entity
 
                 Profit = ResultDepo - Depo;
 
-                PercentProfit = Profit * 100 / Depo;
+                PercentProfit = _depo != 0 ? Math.Round(Profit * 100 / _depo, 2) : 0; // защита от деления на ноль
 
                 ListEquity.Add(ResultDepo);
 
