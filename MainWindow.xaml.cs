@@ -62,7 +62,7 @@ namespace Capital
 
             _comboBox.SelectionChanged += _comboBox_SelectionChanged;
             _canvas.SizeChanged += _canvas_SizeChanged;
-            _comboBox.SelectedIndex = 0;
+            _comboBox.SelectedIndex = 4;
 
             _depo.Text = "100000";
             _startLot.Text = "10";
@@ -94,11 +94,7 @@ namespace Capital
 
         private List<Data> Calculate()
         {
-            Console.WriteLine($"[DEBUG] _depo.Text = '{_depo.Text}'");
             decimal depoStart = GetDecimalFromString(_depo.Text);
-            Console.WriteLine($"[DEBUG] depoStart = {depoStart}");
-
-            // decimal depoStart = GetDecimalFromString(_depo.Text);
             int startLot = GetIntFromString(_startLot.Text);
             decimal take = GetDecimalFromString(_take.Text);
             decimal stop = GetDecimalFromString(_stop.Text);
@@ -233,7 +229,7 @@ namespace Capital
             if (listEquity.Count == 0 || listEquity == null) return;
 
             // Рисуем один график
-            DrawSingleGraph(listEquity, Brushes.Black);           
+            DrawSingleGraph(listEquity, Brushes.DarkGoldenrod);           
         }
 
         private void DrawAllStrategies(List<Data> datas)
@@ -306,11 +302,10 @@ namespace Capital
                 Canvas.SetLeft(label, canvasWidth - 1100); // отступ от правого края
                 Canvas.SetTop(label, 10 + i * 20); // отступ сверху
 
-                _canvas.Children.Add(label);
-
-                DrawXAxisLabels(canvasHeight, (int)minEquity, (double)maxEquity);
-                DrawYAxisLabels(canvasWidth, allEquities[0].Count, (decimal)stepX);
+                _canvas.Children.Add(label);                
             }
+            DrawXAxisLabels(canvasHeight, minEquity, maxEquity);
+            DrawYAxisLabels(canvasWidth, allEquities[0].Count, stepX);
         }
 
         private void DrawSingleGraph(List<decimal> listEquity, Brush color)

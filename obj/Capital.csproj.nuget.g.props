@@ -12,4 +12,7 @@
   <ItemGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
     <SourceRoot Include="C:\Users\Home\.nuget\packages\" />
   </ItemGroup>
+  <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <PkgOxyPlot_Wpf Condition=" '$(PkgOxyPlot_Wpf)' == '' ">C:\Users\Home\.nuget\packages\oxyplot.wpf\2.2.0</PkgOxyPlot_Wpf>
+  </PropertyGroup>
 </Project>
