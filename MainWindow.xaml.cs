@@ -38,6 +38,7 @@ namespace Capital
             StrategyType.CAPITALIZATION,
             StrategyType.PROGRESS,
             StrategyType.DOWNGRADE,
+            StrategyType.ALL
 
         };
 
@@ -58,7 +59,7 @@ namespace Capital
                 _comBox.Items.Add(type.ToString());
             }
 
-            _comBox.Items.Add("Все стратегии");
+            //_comBox.Items.Add("Все стратегии");
             _comBox.SelectionChanged += _comBox_SelectionChanged;
             _canvas.SizeChanged += _canvas_SizeChanged; ;
             _comBox.SelectedIndex = 0;
@@ -111,6 +112,8 @@ namespace Capital
             {
                 datas.Add(new Data(depoStart, type));
             }
+
+            datas.RemoveAt(datas.Count-1);
 
             int lotPercent = startLot;
             decimal percent = startLot * go * 100 / depoStart;
@@ -202,8 +205,31 @@ namespace Capital
 
             List<decimal> ListEquity = datas[index].GetListEquity();
             int count =ListEquity.Count;
-            decimal maxEquity = ListEquity.Max();
-            decimal minEquity = ListEquity.Min();
+
+            decimal maxEquity;
+            decimal minEquity;
+
+            if (_comBox.SelectedItem.ToString() == StrategyType.ALL.ToString())
+            {
+                var listMaxEquity = new List<decimal>();
+                var listMinEquity = new List<decimal>();
+
+                foreach (var data in datas)
+                {
+                    listMaxEquity.Add(data.GetListEquity().Max());
+                    listMinEquity.Add(data.GetListEquity().Min());
+
+                }
+                maxEquity = listMaxEquity.Max();
+                minEquity = listMinEquity.Min();
+
+            }
+            else
+            {
+                maxEquity = ListEquity.Max();
+                minEquity = ListEquity.Min();
+            }
+
 
             double stepX = _canvas.ActualWidth/ count;
             double koef = (double)(maxEquity - minEquity) / _canvas.ActualHeight;
@@ -211,11 +237,14 @@ namespace Capital
             double x = 0;
             double y = 0;
 
+            double _x = 0;
+            double _y = _canvas.ActualHeight - (double)(ListEquity[0] - minEquity) / koef;
+
             for (int i=0; i<count;i++)
             {
                 y = _canvas.ActualHeight - (double)(ListEquity[i] - minEquity) / koef;
                 
-                Ellipse ellipse = new Ellipse() 
+                /*Ellipse ellipse = new Ellipse() 
                 { 
                     Width =2,
                     Height = 2,
@@ -224,10 +253,24 @@ namespace Capital
 
                 Canvas.SetLeft(ellipse, x);
                 Canvas.SetTop(ellipse, y);
-
                 _canvas.Children.Add(ellipse);
+                */
+
+                Line line = new Line()
+                {
+                    Stroke = color,
+                    StrokeThickness = 4
+                };
+                line.X1 = _x;
+                line.X2 = x;
+                line.Y1 = _y;
+                line.Y2 = y;
+
+                _canvas.Children.Add(line);
 
                 x += stepX;
+                _x = x;
+                _y = y;
             }
         }
 
