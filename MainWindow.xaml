@@ -4,7 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Capital"
-        xmlns:oxy="http://oxyplot.org/wpf"
         mc:Ignorable="d"
         Title="Capital with OxyPlot" Height="700" Width="1200">
     <Grid Margin="10">
