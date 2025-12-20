@@ -67,6 +67,12 @@ namespace Capital
             ComboBox comboBox = (ComboBox)sender;
             
             int index = comboBox.SelectedIndex;
+
+            // Init();
+            //List<Data> datas = Calculate();
+            //Draw(datas);
+
+           // Button_Click(sender, e);
         }
 
 
@@ -183,20 +189,36 @@ namespace Capital
 
             for (int i = 0; i < count; i++)
             {
+                double x_old = x;
+                double y_old = y;
+
                 y = _canvas.ActualHeight - (double)(ListEquity[i] - minEquity) / koef;
 
-                Ellipse ellipse = new Ellipse()
-                {
-                    Width = 2,
-                    Height = 2,
-                    Stroke = Brushes.Black
-                };
+                #region Comment Elipse
+                //Ellipse ellipse = new Ellipse()
+                //{
+                //    Width = 2,
+                //    Height = 2,
+                //    Stroke = Brushes.Black
+                //};
 
-                Canvas.SetLeft(ellipse, x);
-                Canvas.SetTop(ellipse, y);
-              //  Canvas.SetBottom(ellipse, y);
+                //  Canvas.SetLeft(ellipse, x);
+                //  Canvas.SetTop(ellipse, y);
 
-                _canvas.Children.Add(ellipse);   
+                //  _canvas.Children.Add(ellipse);   
+                #endregion
+
+                Line line = new Line();
+                
+                line.X1 = x_old;
+                line.Y1 = y_old;
+                line.X2 = x;
+                line.Y2 = y;
+
+                line.Stroke = Brushes.Black;
+                line.StrokeThickness = 1;
+
+                _canvas.Children.Add(line);
 
                 x += stepX;
             }
