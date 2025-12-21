@@ -101,10 +101,13 @@ namespace Capital.Entity
 
         #region Methods ========================================================
 
+
         public List<decimal> GetListEquity()
         {
             return ListEquity;
         }
+
+
 
         private void CalcDrawDown()
         {

@@ -197,8 +197,8 @@ namespace Capital
             int index = _comboBox.SelectedIndex;
             List<decimal> listEquity = datas[index].GetListEquity();
             int count = listEquity.Count;
-            decimal maxEquity = listEquity.Max();   // находим макс в списке
-            decimal minEquity = listEquity.Min();
+            decimal maxEquity = listEquity.Max();           // находим макс в списке
+            decimal minEquity = listEquity.Min();           // находим мин в списке
             double stepX = _canvas.ActualWidth / count;     // шаг по Х = текущая ширина канваса / кол-во
             double koef = (double)(maxEquity - minEquity) / _canvas.ActualHeight;
 
@@ -228,8 +228,6 @@ namespace Capital
 
 
 
-
-
         private int CalculateLot(decimal currentDepo, decimal percent, decimal go)
         {
             if (percent > 100)
@@ -250,6 +248,7 @@ namespace Capital
             }
             return 0;
         }
+
 
 
         private int GetIntFromString(string str)
