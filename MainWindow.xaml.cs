@@ -181,50 +181,36 @@ namespace Capital
             double x = 0;
             double y = 0;
 
-            double X1 = 0; 
-            double Y1 = 0; 
-            double X2 = 0; 
-            double Y2 = 0; 
+            double lX1 = 0; 
+            double lY1 = 0; 
+            double lX2 = 0; 
+            double lY2 = 0; 
 
             for (int i = 0; i < count; i++)
             {
-                X1 = X2;
-                Y1 = Y2;
+              
+                lY1 = lY2;
+
                 y = _canvas.ActualHeight - (double)(listEquity[i] - minEquity) / koef;
-                Y2 = y;
-                //    Ellipse ellipse = new Ellipse()
-                //    {
-                //       Width = 2,
-                //       Height = 2,
-                //       Stroke = Brushes.Black
-                //   };
-                
 
-              //  double px = x;
-              //  double py = y;
-              //  points.Add(new Point(x, y));
+                lY2 = y;
 
-                Polyline polyline = new Polyline();
-                polyline.Stroke = Brushes.Black;
-                polyline.StrokeThickness = 2;
-                PointCollection points = new PointCollection();
+                Line line = new Line()
+                {
+                    Stroke = Brushes.Black,
+                    StrokeThickness = 2,
+                    X1 = lX1,
+                    X2 = lX2,
+                    Y1 = lY1,
+                    Y2 = lY2
+                };
 
-                points.Add(new Point(x, y));
-                polyline.Points = points;
-
-
-
-
-
-
-             //   Canvas.SetLeft(polyline, x);
-             //   Canvas.SetTop(polyline, y);
-
-                //  _canvas.Children.Add(ellipse);
-                _canvas.Children.Add(polyline);
-
+                lX1 = lX2;
                 x += stepX;
-                X2 = x;
+                lX2 = x;
+                _canvas.Children.Add(line);
+
+                
             }
         }
         private int CalculateLot(decimal currentDepo, decimal percent, decimal go)
