@@ -27,6 +27,8 @@ namespace Capital
 
         #region Fields ========================================
 
+        List<Data> datas;
+
         List<StrategyType> _strategies = new List<StrategyType>()
         {
                 StrategyType.FIX,
@@ -70,7 +72,7 @@ namespace Capital
 
             // Init();
             //List<Data> datas = Calculate();
-            //Draw(datas);
+            if (datas != null)  Draw(datas);
 
            // Button_Click(sender, e);
         }
@@ -96,7 +98,7 @@ namespace Capital
             decimal minStartPercent = GetDecimalFromString(_minStartPercent.Text);
             decimal go = GetDecimalFromString( _go.Text );
 
-            List<Data> datas = new List<Data>();
+            datas = new List<Data>();
 
            
             foreach (StrategyType type in _strategies)
