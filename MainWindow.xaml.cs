@@ -62,15 +62,58 @@ namespace Capital
         private void _comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ComboBox comboBox = (ComboBox)sender;
-            int index = comboBox.SelectedIndex;
+            Draw(_datas);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Calculate();
+            List<Data> datas = Calculate();
+            Draw(datas);
         }
 
-        private void Calculate()
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            Draw(_datas);
+        }
+
+        private void Draw(List<Data> datas)
+        {
+            if(datas == null || datas.Count == 0) return;
+    
+            _canvas.Children.Clear();
+    
+            int index = _comboBox.SelectedIndex;
+            List<decimal> listEquity = datas[index].GetListEquity();
+    
+            int count = listEquity.Count;
+            if (count < 2) return;
+    
+            decimal maxEquity = listEquity.Max();
+            decimal minEquity = listEquity.Min();
+    
+            double stepX = _canvas.ActualWidth / (count - 1);
+            double koef = (double)(maxEquity - minEquity) / _canvas.ActualHeight;
+    
+            Polyline polyline = new Polyline()
+            {
+                Stroke = Brushes.Black,
+                StrokeThickness = 1,
+                Points = new PointCollection()
+            };
+    
+            double x = 0;
+    
+            for (int i = 0; i < count; i++)
+            {
+                double y = _canvas.ActualHeight - (double)(listEquity[i] - minEquity) / koef;
+                polyline.Points.Add(new Point(x, y));
+                x += stepX;
+            }
+    
+            _canvas.Children.Add(polyline);
+        }
+        
+        private List<Data> Calculate()
         {
             decimal depoStart = GetDecimalFromString(_depo.Text);
             int startLot = GetIntFromString(_startLot.Text);
@@ -82,11 +125,12 @@ namespace Capital
             decimal minStartPercent = GetDecimalFromString(_minStartPercent.Text);
             decimal go = GetDecimalFromString(_go.Text);
 
-            List<Data> datas = new List<Data>();
+            // List<Data> datas = new List<Data>();
+            _datas = new List<Data>();
 
             foreach (StrategyType type in _strategies)
             {
-                datas.Add(new Data(depoStart, type));
+                _datas.Add(new Data(depoStart, type));
             }
             
             int lotPercent = startLot;
@@ -106,22 +150,22 @@ namespace Capital
                     // Сделка прибыльная
                     
                     //============================= 1 strategy ====================================
-                    datas[0].ResultDepo += (take - comiss) * startLot;
+                    _datas[0].ResultDepo += (take - comiss) * startLot;
                     //============================= 2 strategy ====================================
-                    datas[1].ResultDepo += (take - comiss) * lotPercent;
+                    _datas[1].ResultDepo += (take - comiss) * lotPercent;
                     
-                    int newLot = CalculateLot(datas[1].ResultDepo, percent, go);
+                    int newLot = CalculateLot(_datas[1].ResultDepo, percent, go);
                     
                     if (lotPercent < newLot) lotPercent = newLot;
                     
                     //============================= 3 strategy ====================================
-                    datas[2].ResultDepo += (take - comiss) * lotProgress;
+                    _datas[2].ResultDepo += (take - comiss) * lotProgress;
                     
                     lotProgress = CalculateLot(depoStart, minStartPercent * multiply, go);
                     
                     //============================= 4 strategy ====================================
                     
-                    datas[3].ResultDepo += (take - comiss) * lotDown;
+                    _datas[3].ResultDepo += (take - comiss) * lotDown;
 
                     lotDown = startLot;
                 }
@@ -129,32 +173,36 @@ namespace Capital
                 {
                     // Сделка убыточная
                     //============================= 1 strategy ====================================
-                    datas[0].ResultDepo -= (stop + comiss) * startLot;
+                    _datas[0].ResultDepo -= (stop + comiss) * startLot;
                     
                     //============================= 2 strategy ====================================
                     
-                    datas[1].ResultDepo -= (stop + comiss) * lotPercent;
+                    _datas[1].ResultDepo -= (stop + comiss) * lotPercent;
                     
                     //============================= 3 strategy ====================================
-                    datas[2].ResultDepo -= (stop + comiss) * lotProgress;
+                    _datas[2].ResultDepo -= (stop + comiss) * lotProgress;
                     
                     lotProgress = CalculateLot(depoStart, minStartPercent, go);
                     
                     //============================= 4 strategy ====================================
                     
-                    datas[3].ResultDepo -= (stop + comiss) * lotDown;
+                    _datas[3].ResultDepo -= (stop + comiss) * lotDown;
 
                     lotDown /= 2;
                     
                     if (lotDown == 0) lotDown = 1;
                 }
                 
-                _dataGrid.ItemsSource = datas;
                 
             }
             
+            _dataGrid.ItemsSource = _datas;
+
+            return _datas;
         }
 
+        private List<Data> _datas = new List<Data>();
+        
         private int CalculateLot(decimal currentDepo, decimal percent, decimal go)
         {
             if (percent > 100) { percent = 100; }
@@ -175,5 +223,6 @@ namespace Capital
         }
 
         #endregion
+        
     }
 }
