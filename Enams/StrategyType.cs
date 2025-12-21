@@ -14,6 +14,8 @@ namespace Capital.Enams
 
         PROGRESS,
 
-        DOWNGRADE
+        DOWNGRADE,
+
+        ALL
     }
 }
