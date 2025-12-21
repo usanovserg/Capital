@@ -13,6 +13,7 @@ using System.Windows.Shapes;
 
 namespace Capital
 {
+    
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -86,9 +87,6 @@ namespace Capital
         private void Canvas_SizeChanged(object sender, SizeChangedEventArgs e)
         {            
             if (datas != null) Draw(datas);
-
-            double newWidth = e.NewSize.Width;
-            double newHeight = e.NewSize.Height;
                          
         }
 
@@ -176,6 +174,7 @@ namespace Capital
             return datas;
         }
 
+        
         private void Draw(List<Data> datas)
         {
             _canvas.Children.Clear();
