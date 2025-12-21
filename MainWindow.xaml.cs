@@ -1,5 +1,6 @@
 ﻿using Capital.Entity;
 using Capital.Enums;
+using System;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -26,23 +27,36 @@ namespace Capital
         }
 
         #region Fields ========================================
-
+        
         List<StrategyType> _strategies = new List<StrategyType>()
         {
                 StrategyType.FIX,
                 StrategyType.CAPITALIZATION,
                 StrategyType.PROGRESS,
-                StrategyType.DOWNGRADE
+                StrategyType.DOWNGRADE,
+               
+        };
+
+        List<StrategyType> _comboBoxStrategies = new List<StrategyType>()
+        {
+                StrategyType.FIX,
+                StrategyType.CAPITALIZATION,
+                StrategyType.PROGRESS,
+                StrategyType.DOWNGRADE,
+                StrategyType.ALL
         };
 
         Random _random = new Random();
+
+        List<Data> datas = new List<Data>();
+        bool checkButtonClick = false;
         #endregion
 
         #region Methods ===========================================
 
         private void Init() 
         {
-            _comboBox.ItemsSource = _strategies;
+            _comboBox.ItemsSource = _comboBoxStrategies;
 
             _comboBox.SelectionChanged += _comboBox_SelectionChanged;
             _comboBox.SelectedIndex = 0;
@@ -52,25 +66,39 @@ namespace Capital
             _take.Text = "300";
             _stop.Text = "100";
             _comiss.Text = "5";
-            _countTrades.Text = "1000";
+            _countTrades.Text = "5";
             _percentProfit.Text = "30";
             _go.Text = "5000";
             _minStartPercent.Text = "20";
         }
-
+        
         private void _comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ComboBox comboBox = (ComboBox)sender;
             
             int index = comboBox.SelectedIndex;
+
+            if (checkButtonClick) 
+            {
+                GetTrend(index);
+            }
+
+            
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Calculate();
+            datas = Calculate();
+                        
+            int index = _comboBox.SelectedIndex;
+
+            GetTrend(index);
+
+            checkButtonClick = true;
         }
 
-        private void Calculate() 
+
+        private List<Data> Calculate() 
         {
             decimal depoStart = GetDecimalFromString(_depo.Text);
             int startLot = GetIntFromString(_startLot.Text);
@@ -88,6 +116,11 @@ namespace Capital
             {
                 datas.Add(new Data(depoStart, type));
             }
+
+            datas[0].StrategyColor = StrategyColor.Black.ToString();
+            datas[1].StrategyColor = StrategyColor.Orange.ToString();
+            datas[2].StrategyColor = StrategyColor.Green.ToString();
+            datas[3].StrategyColor = StrategyColor.Blue.ToString();
 
             int lotPercent = startLot;
             decimal percent = startLot * go * 100 / depoStart;
@@ -138,6 +171,7 @@ namespace Capital
             }
 
             _dataGrid.ItemsSource = datas;
+            return datas;
 
         }
 
@@ -163,8 +197,7 @@ namespace Capital
             else
             {
                 return 0;
-            }
-    ;
+            };
 
         }
 
@@ -176,10 +209,205 @@ namespace Capital
             return (int)lot;
         }
 
+        private void Draw(List<Data> datas, int index) 
+        {
+            List<decimal> ListEquity;
+
+            ListEquity = datas[index].GetListEquity();
+         
+            int count = ListEquity.Count;
+            decimal maxEquity = ListEquity.Max();
+            decimal minEquity = ListEquity.Min();
+
+            if (_ellipse.IsChecked == true) 
+            {
+                // График, посторенный точками ==============================
+                
+                double stepX = _canvas.ActualWidth / count;
+                double koef = (double)(maxEquity - minEquity) / _canvas.ActualHeight;
+
+                double x = 0;
+                double y = 0;
+
+                for (int i = 0; i < count; i++)
+                {
+                    y = _canvas.ActualHeight - (double)(ListEquity[i] - minEquity) / koef;
+
+                    Ellipse ellipse = new Ellipse();
+
+                    if (index == 0) 
+                    {
+                        ellipse = new Ellipse
+                        {
+                            Width = 2,
+                            Height = 2,
+                            Stroke = Brushes.Black
+                        };
+                    }
+
+                    if (index == 1)
+                    {
+                        ellipse = new Ellipse
+                        {
+                            Width = 2,
+                            Height = 2,
+                            Stroke = Brushes.Orange
+                        };
+                    }
+
+                    if (index == 2)
+                    {
+                        ellipse = new Ellipse
+                        {
+                            Width = 2,
+                            Height = 2,
+                            Stroke = Brushes.Green
+                        };
+                    }
+
+                    if (index == 3)
+                    {
+                        ellipse = new Ellipse
+                        {
+                            Width = 2,
+                            Height = 2,
+                            Stroke = Brushes.Blue
+                        };
+                    }
 
 
-        #endregion
+                    Canvas.SetLeft(ellipse, x);
+                    Canvas.SetTop(ellipse, y);
+
+                    _canvas.Children.Add(ellipse);
+
+                    x += stepX;
+                }
+
+                // =======================================================
+
+            }
+
+            if (_line.IsChecked == true) 
+                
+            {
+                // График, построенный линиями ============================
+                double canvasWidth = _canvas.ActualWidth; //Фактическая ширина
+                double canvasHeight = _canvas.ActualHeight; // Фактическая высота
+                double lineStepX = _canvas.ActualWidth / count;
+                double lineKoef = (double)(maxEquity - minEquity) / _canvas.ActualHeight;
+
+                var polyline = new Polyline();
+                if (index == 0)
+                {
+                    polyline = new Polyline
+                    {
+                        Stroke = Brushes.Black,
+                        StrokeThickness = 1
+                    };
+                }
 
 
+                if (index == 1)
+                {
+                    polyline = new Polyline
+                    {
+                        Stroke = Brushes.Orange,
+                        StrokeThickness = 1
+                    };
+                }
+
+                if (index == 2)
+                {
+                    polyline = new Polyline
+                    {
+                        Stroke = Brushes.Green,
+                        StrokeThickness = 1
+                    };
+                }
+
+                if (index == 3)
+                {
+                    polyline = new Polyline
+                    {
+                        Stroke = Brushes.Blue,
+                        StrokeThickness = 1
+                    };
+                }
+
+                double lineX = 0;
+                double lineY = _canvas.ActualHeight;
+
+                var points = new PointCollection();
+                for (int k = 0; k < count; k++)
+                {
+                    points.Add(new Point(lineX, lineY));
+                    polyline.Points = points;
+
+                    lineY = _canvas.ActualHeight - (double)(ListEquity[k] - minEquity) / lineKoef;
+                    lineX += lineStepX;
+
+                }
+                _canvas.Children.Add(polyline);
+
+                //==========================================================
+
+            }
+
+
+
+        }
+
+        private void GetTrend(int index) 
+        {
+
+                if (index == 4)
+                {
+                    _canvas.Children.Clear();
+
+                    for (int i = 0; i < index; i++)
+                    {
+                        Draw(datas, i);
+                    }
+                }
+                else
+                {
+                    _canvas.Children.Clear();
+                    Draw(datas, index);
+                }
+           
+        }
+
+        private void _canvas_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+        
+            if (checkButtonClick)
+            {
+                int index = _comboBox.SelectedIndex;
+                GetTrend(index);
+            }
+
+        }
+
+        private void RadioButtonLineChecked(object sender, RoutedEventArgs e)
+        {
+            
+            if (checkButtonClick)
+            {
+                int index = _comboBox.SelectedIndex;
+                GetTrend(index);
+            }
+        }
+
+        private void RadioButtonEllipseChecked(object sender, RoutedEventArgs e)
+        {
+          
+            if (checkButtonClick)
+            {
+                int index = _comboBox.SelectedIndex;
+                GetTrend(index);
+            }
+        }
+#endregion
     }
 }

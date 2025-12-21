@@ -6,13 +6,12 @@ using System.Threading.Tasks;
 
 namespace Capital.Enums
 {
-    public enum StrategyType
+    public enum StrategyColor
     {
-        FIX,
-        CAPITALIZATION,
-        PROGRESS,
-        DOWNGRADE,
-        ALL
-
+        Black,
+        Orange,
+        Green,
+        Blue
+        
     }
 }

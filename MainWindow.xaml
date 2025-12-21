@@ -68,6 +68,21 @@
                    TextAlignment="Center"
                    Margin="6"
                    Grid.Row="9" Grid.Column="0"/>
+        <TextBlock Text="Вид графика:"
+                   TextAlignment="Left"
+                   Margin="15,6"
+                   Grid.Row="9" Grid.Column="2"/>
+        <RadioButton x:Name="_ellipse"
+                     Content="Точки"
+                     Margin="15,6"
+                     Grid.Row="10" Grid.Column="2"
+                     Checked="RadioButtonEllipseChecked"/>
+        <RadioButton x:Name="_line" 
+                     Content="Линия"
+                     Margin="15,6"
+                     IsChecked="True"
+                     Grid.Row="11" Grid.Column="2"
+                     Checked="RadioButtonLineChecked"/>
         <ComboBox Name="_comboBox"
                   Margin="15,3"
                   Grid.Row="11" Grid.Column="0"/>
@@ -124,12 +139,19 @@
 
         <GroupBox Header="Таблица результатов"
                   Grid.Row="0" Grid.Column="2"
-                  Grid.RowSpan="12"
+                  Grid.RowSpan="8"
                   Margin="10,5">
             <DataGrid x:Name="_dataGrid"
                       Margin="3"/>
 
         </GroupBox>
+
+        <Canvas x:Name = "_canvas"
+                
+                Grid.Row="13"
+                Grid.ColumnSpan="3"
+                Margin="10" Background="LightGray"
+                SizeChanged="_canvas_SizeChanged"/>
 
     </Grid>
 </Window>
