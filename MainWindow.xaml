@@ -82,10 +82,10 @@
 
 
         <Canvas x:Name="_canvas"
-                Grid.Row="13"
+                Grid.Row="12"
                 Grid.ColumnSpan="3"
-                Margin="10" Background="LightGray">
-
+                Margin="0,20,-90,0" Background="LightGray">
+        
         </Canvas>
 
     </Grid>

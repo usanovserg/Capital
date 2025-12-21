@@ -180,23 +180,44 @@ namespace Capital
             double x = 0;
             double y = 0;
 
+            double X1 = 0; 
+            double Y1 = 0; 
+            double X2 = 0; 
+            double Y2 = 0; 
+
             for (int i = 0; i < count; i++)
             {
+                X1 = X2;
+                Y1 = Y2;
                 y = _canvas.ActualHeight - (double)(listEquity[i] - minEquity) / koef;
+                Y2 = y;
+                //    Ellipse ellipse = new Ellipse()
+                //    {
+                //       Width = 2,
+                //       Height = 2,
+                //       Stroke = Brushes.Black
+                //   };
+                PointCollection points = new PointCollection();
 
-                Ellipse ellipse = new Ellipse()
+              //  double px = x;
+              //  double py = y;
+                points.Add(new Point(x, y));
+
+                Polyline polyline = new Polyline()
                 {
-                    Width = 2,
-                    Height = 2,
-                    Stroke = Brushes.Black
+                    Points = points,
+                    Stroke = Brushes.Black,
+                    StrokeThickness = 2
                 };
+             
+             //   Canvas.SetLeft(polyline, x);
+             //   Canvas.SetTop(polyline, y);
 
-                Canvas.SetLeft(ellipse, x);
-                Canvas.SetTop(ellipse, y);
-
-                _canvas.Children.Add(ellipse);
+              //  _canvas.Children.Add(ellipse);
+                _canvas.Children.Add(polyline);
 
                 x += stepX;
+                X2 = x;
             }
         }
         private int CalculateLot(decimal currentDepo, decimal percent, decimal go)
