@@ -1,5 +1,9 @@
 ﻿using Capital.Entity;
 using Capital.Enums;
+using OxyPlot;
+using OxyPlot.Wpf;
+using OxyPlot.Axes;
+using OxyPlot.Series;
 using System.Globalization;
 using System.Text;
 using System.Windows;
@@ -12,6 +16,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+
 
 namespace Capital
 {
@@ -43,6 +48,10 @@ namespace Capital
 
         List<Data> datas = new List<Data>();
 
+        int _totalProfitCount = 0;
+        int _totalLossCount = 0;     
+        
+
         #endregion
 
         #region Methods======================================================
@@ -60,8 +69,7 @@ namespace Capital
             _comboBox.ItemsSource = _strategies;
             
 
-            _comboBox.SelectionChanged += _comboBox_SelectionChanged;
-            _canvas.SizeChanged += _canvas_SizeChanged;
+            _comboBox.SelectionChanged += _comboBox_SelectionChanged;            
             _comboBox.SelectedIndex = 4;
 
             _depo.Text = "100000";
@@ -80,9 +88,18 @@ namespace Capital
         {
             //ComboBox comboBox = (ComboBox)sender;
 
-            if (!_isInitialized) return; // не обрабатываем событие, пока окно не загрузилось
+            if (!_isInitialized) return;
 
-            Draw(datas, _comboBox.SelectedIndex);
+            int index = _comboBox.SelectedIndex;
+
+            if (index == _strategies.IndexOf(StrategyType.ALL_STRATEGIES))
+            {
+                DrawAllStrategies(datas); // ← рисует все 4 линии
+            }
+            else if (index >= 0 && index < datas.Count)
+            {
+                DrawSingleGraph(datas[index]); // ← рисует одну линию
+            }
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -116,7 +133,9 @@ namespace Capital
                 MessageBox.Show("Количество сделок должно быть больше нуля!");
                 return new List<Data>();
             }
-
+            // сбрасываем счетчики
+            _totalProfitCount = 0;
+            _totalLossCount = 0;
 
             List<Data> datas = new List<Data>();
 
@@ -125,8 +144,7 @@ namespace Capital
                 if (type != StrategyType.ALL_STRATEGIES)
                 {
                     datas.Add(new Data(depoStart, type));
-                }
-                                                   
+                }                                                   
             }
 
             int lotPercent = startLot;
@@ -143,7 +161,8 @@ namespace Capital
                 int rnd = _random.Next(1, 100);
 
                 if (rnd <= percentProfit)            // Сделка прибыльная
-                {
+                { 
+                    _totalProfitCount++;
                     //==================================== 1 стратегия ===============================
 
                     datas[0].ResultDepo += (take - comiss) * startLot;
@@ -171,7 +190,8 @@ namespace Capital
                     
                 }
                 else                                  //Сделка убыточная
-                {
+                {   
+                    _totalLossCount++;
                     //==================================== 1 стратегия ===============================
 
                     datas[0].ResultDepo -= (stop + comiss) * startLot;                    
@@ -195,9 +215,12 @@ namespace Capital
                     if (lotDown == 0) lotDown = 1;
                     
                 }
+                
             }
+            _totalProfit.Text = _totalProfitCount.ToString();
+            _totalLoss.Text = _totalLossCount.ToString();
 
-            _dataGrid.ItemsSource = datas;
+            _dataGrid.ItemsSource = datas;            
 
             return datas;
         }
@@ -209,7 +232,7 @@ namespace Capital
         private void Draw(List<Data> datas, int index)
         {
             // чистим предыдущую зарисовку canvas
-            _canvas.Children.Clear();
+            _plotView.Model = null;
 
             if (datas == null || datas.Count == 0) return; // выходим при ошибке
                         
@@ -229,129 +252,121 @@ namespace Capital
             if (listEquity.Count == 0 || listEquity == null) return;
 
             // Рисуем один график
-            DrawSingleGraph(listEquity, Brushes.DarkGoldenrod);           
+            DrawSingleGraph(datas[index]);           
         }
 
         private void DrawAllStrategies(List<Data> datas)
         {
-            if (datas == null || datas.Count == 0) return; // выходим из метода при ошибке
+            var plotModel = new PlotModel { Title = "Результаты всех стратегий" };
 
-            // Собираем все точки из всех стратегий
-            List<List<decimal>> allEquities = new List<List<decimal>>();
-
-            foreach ( var data in datas)
+            // Ось X: номера сделок
+            plotModel.Axes.Add(new LinearAxis
             {
-                var equity = data.GetListEquity();
-                if (equity != null && equity.Count > 0) 
-                    allEquities.Add(equity);
-            }
-            if (allEquities.Count == 0) return;
+                Position = AxisPosition.Bottom,
+                Title = "Количество сделок",
+                Minimum = 0,
+                Maximum = datas[0].GetListEquity().Count - 1
+            });
 
-            // Находим общий максимум и минимум
-            decimal maxEquity = allEquities.SelectMany(x => x).Max();
-            decimal minEquity = allEquities.SelectMany(x => x).Min();
-            
-            if (maxEquity == minEquity) minEquity = maxEquity - 1; // защита от деления на ноль, если все значения одинаковы
-
-            double canvasWidth = _canvas.ActualWidth;// размер холста
-            double canvasHeight = _canvas.ActualHeight;
-
-            if (canvasHeight <= 1 || canvasWidth <= 1) return;
-
-            double stepX = _canvas.ActualWidth / Math.Max(1, allEquities[0].Count - 1); // шаг по Х расстояние между точками
-            double rangeY = (double)(maxEquity - minEquity); 
-            double scaleY = rangeY > 0 ? canvasHeight / rangeY : 1;
-
-            // Цвета для каждой стратегии
-            Brush[] colors = { Brushes.Red, Brushes.Green, Brushes.Blue, Brushes.Orange };
-                       
-
-            for (int i = 0; i < allEquities.Count; i++)
+            // Ось Y: депо
+            decimal min = datas.SelectMany(d => d.GetListEquity()).Min();
+            decimal max = datas.SelectMany(d => d.GetListEquity()).Max();
+            plotModel.Axes.Add(new LinearAxis
             {
-                var points = new PointCollection();
-                var listEquity = allEquities[i];
+                Position = AxisPosition.Left,
+                Title = "Депозит (руб.)",
+                Minimum = (double)min,
+                Maximum = (double)max
+            });
+
+            // Цвета
+            var colors = new[] { OxyColors.Red, OxyColors.Green, OxyColors.Blue, OxyColors.Orange };
+
+            for (int i = 0; i < datas.Count; i++)
+            {
+                var listEquity = datas[i].GetListEquity();
+                var lineSeries = new LineSeries
+                {
+                    Title = datas[i].StrategyType.ToString(),
+                    Color = colors[i],
+                    MarkerType = MarkerType.None,
+                    StrokeThickness = 2, // толщина линии
+                    LineStyle = LineStyle.Solid // сплошная линия
+                };
 
                 for (int j = 0; j < listEquity.Count; j++)
                 {
-                    double x = j * stepX;
-                    double y = canvasHeight - (double)(listEquity[j] - minEquity) * scaleY;
-                    points.Add(new Point(x, y));
+                    lineSeries.Points.Add(new DataPoint(j, (double)listEquity[j]));
                 }
 
-                var polyline = new Polyline
-                {
-                    Stroke = colors[i % colors.Length], // циклиически (на каждой итерации цикла) выбираем цвет
-                    StrokeThickness = 2,
-                    Points = points
-                };
-
-                _canvas.Children.Add(polyline);
-
-                // Добавляем текстовую метку
-                TextBlock label = new TextBlock
-                {
-                    Text = datas[i].StrategyType.ToString(), // выводим назавние стратегии
-                    Foreground = colors[i % colors.Length], // цвет как у линии
-                    Background = Brushes.White, // белый фон
-                    Opacity = 1, // полупрозрачность
-                    Padding = new Thickness(3), // отступ внутри
-                    FontSize = 12,
-                    FontWeight = FontWeights.DemiBold,
-                };                 
-
-                Canvas.SetLeft(label, canvasWidth - 1100); // отступ от правого края
-                Canvas.SetTop(label, 10 + i * 20); // отступ сверху
-
-                _canvas.Children.Add(label);                
+                plotModel.Series.Add(lineSeries);
             }
-            DrawXAxisLabels(canvasHeight, minEquity, maxEquity);
-            DrawYAxisLabels(canvasWidth, allEquities[0].Count, stepX);
-        }
 
-        private void DrawSingleGraph(List<decimal> listEquity, Brush color)
+            _plotView.Model = plotModel;
+        }
+        private void DrawSingleGraph(Data selectedData)
         {
-            if (_canvas.ActualWidth == 0 || _canvas.ActualHeight == 0) return;
+            if (selectedData == null) return;
 
-            int count = listEquity.Count;
+            var equity = selectedData.GetListEquity();
+            if (equity == null || equity.Count == 0) return;
 
-            double canvasWidth = _canvas.ActualWidth;// размер холста
-            double canvasHeight = _canvas.ActualHeight;
-            
-            if (canvasWidth <= 1 || canvasHeight <= 1) return;
-
-            double stepX = canvasWidth / Math.Max(1, listEquity.Count - 1); // шаг по Х расстояние между точками
-            decimal maxEquity = listEquity.Max(); // определяем максимум и минимум для масштабирования
-            decimal minEquity = listEquity.Min();
-
-            if (maxEquity == minEquity) minEquity = maxEquity - 1; // защита от деления на ноль, если все значения одинаковы            
-
-            double rangeY = (double)(maxEquity - minEquity); // мaсштаб по Y
-            double scaleY = rangeY > 0 ? canvasHeight / rangeY : 1;           
-            
-
-            var points = new PointCollection(); // создание конструктора для точки в canvas
-
-            for (int i = 0; i < listEquity.Count; i++)
+            var plotModel = new PlotModel
             {
-                double x = i * stepX;
+                Title = $"Стратегия: {selectedData.StrategyType}",
+                PlotMargins = new OxyThickness(60, 10, 10, 50) // отступы для осей
+            };
 
-                double y = canvasHeight - (double)(listEquity[i] - minEquity) * scaleY;
+            // === Ось X: номера сделок (0, 1, 2, ..., N) ===
+            plotModel.Axes.Add(new LinearAxis
+            {
+                Position = AxisPosition.Bottom,
+                Title = "Количество сделок",
+                Minimum = 0,
+                Maximum = equity.Count - 1,
+                MajorStep = Math.Max(1, (equity.Count - 1) / 5), // не более 5 меток
+                IsPanEnabled = false,
+                IsZoomEnabled = false
+            });
 
-                points.Add(new Point(x, y));                
+            // === Ось Y: значения депо ===
+            decimal minEquity = equity.Min();
+            decimal maxEquity = equity.Max();
+            // Небольшой отступ сверху и снизу
+            double marginY = (double)(maxEquity - minEquity) * 0.05;
+            if (marginY == 0) marginY = 1000;
+
+            plotModel.Axes.Add(new LinearAxis
+            {
+                Position = AxisPosition.Left,
+                Title = "Депозит (руб.)",
+                Minimum = (double)minEquity - marginY,
+                Maximum = (double)maxEquity + marginY,
+                StringFormat = "N0", // формат: 100000 вместо 1E+05
+                IsPanEnabled = false,
+                IsZoomEnabled = false
+            });
+
+            // === Одна серия (одна линия) ===
+            var lineSeries = new LineSeries
+            {
+                Title = selectedData.StrategyType.ToString(),
+                Color = OxyColors.Blue,
+                MarkerType = MarkerType.None,
+                StrokeThickness = 2, // толщина линии
+                LineStyle = LineStyle.Solid // сплошная линия 
+            };
+
+            for (int i = 0; i < equity.Count; i++)
+            {
+                lineSeries.Points.Add(new DataPoint(i, (double)equity[i]));
             }
 
-            var polyline = new Polyline  // создание линии
-            {
-                Stroke = color,
-                StrokeThickness = 2,
-                Points = points
-            };
-           
-            _canvas.Children.Add(polyline);
+            plotModel.Series.Add(lineSeries);
 
-            DrawXAxisLabels(canvasHeight, (int)minEquity, (double)maxEquity);
-            DrawYAxisLabels(canvasWidth, listEquity.Count, (decimal)stepX);
-        }
+            // Присваиваем модель графику
+            _plotView.Model = plotModel;
+        }        
 
         private int CalculateLot(decimal currentDepo, decimal percent, decimal go)
         {
@@ -394,44 +409,6 @@ namespace Capital
             _dataGrid.ItemsSource = datas;
         }
 
-        // Подписи по оси Y
-        void DrawYAxisLabels(double canvasHeight, decimal minEquity, decimal maxEquity)
-        {
-            //Максимум
-            AddLabel($"{maxEquity:N0}", 5, 10, Brushes.Black);
-
-            //Минимум
-            AddLabel($"{minEquity:N0}", 5, canvasHeight - 20, Brushes.Black);
-
-            // Среднее
-            decimal mid = (maxEquity + minEquity) / 2;
-            AddLabel($"{mid:N0}", 5, canvasHeight / 2 - 10, Brushes.Black);
-        }
-
-        // Подписи по оси X
-        void DrawXAxisLabels(double canvasWidth, int count, double stepX)
-        {
-            for (int i = 0; i < count; i += Math.Max(1, count / 10)) // не более 10 меток
-            {
-                double x = i * stepX;
-                AddLabel($"{i}", x - 10, _canvas.ActualHeight - 20, Brushes.Black);
-            }
-        }
-
-        // Вспомогательный метод для добавления текста
-        void AddLabel(string text, double x,  double y, Brush color)
-        {
-            TextBlock label = new TextBlock
-            {
-                Text = text,
-                Foreground = color,
-                FontSize = 10,
-                IsHitTestVisible = false // чтобы не мешал взаимодействию
-            };
-
-            Canvas.SetLeft(label, Math.Max(0, x)); // не выходить за левый край
-            Canvas.SetTop(label, Math.Max(0, y)); // не выходить за верхний край
-            _canvas.Children.Add(label);
-        } 
+        
     }
 }

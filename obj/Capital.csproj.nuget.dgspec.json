@@ -46,6 +46,10 @@
         "net9.0-windows7.0": {
           "targetAlias": "net9.0-windows7.0",
           "dependencies": {
+            "OxyPlot.Core": {
+              "target": "Package",
+              "version": "[2.2.0, )"
+            },
             "OxyPlot.Wpf": {
               "target": "Package",
               "version": "[2.2.0, )"

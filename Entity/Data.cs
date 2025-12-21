@@ -1,10 +1,12 @@
 ﻿using Capital.Enums;
+using static System.Windows.Media.Color;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Documents;
+using OxyPlot;
 
 namespace Capital.Entity
 {
@@ -27,6 +29,8 @@ namespace Capital.Entity
         #region Properties=================================================
 
         public StrategyType StrategyType { get; set; }
+
+        public OxyColor Color { get; set; }
 
         public decimal Depo
         {
