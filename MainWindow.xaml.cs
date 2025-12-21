@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -197,23 +198,29 @@ namespace Capital
                 //       Height = 2,
                 //       Stroke = Brushes.Black
                 //   };
-                PointCollection points = new PointCollection();
+                
 
               //  double px = x;
               //  double py = y;
-                points.Add(new Point(x, y));
+              //  points.Add(new Point(x, y));
 
-                Polyline polyline = new Polyline()
-                {
-                    Points = points,
-                    Stroke = Brushes.Black,
-                    StrokeThickness = 2
-                };
-             
+                Polyline polyline = new Polyline();
+                polyline.Stroke = Brushes.Black;
+                polyline.StrokeThickness = 2;
+                PointCollection points = new PointCollection();
+
+                points.Add(new Point(x, y));
+                polyline.Points = points;
+
+
+
+
+
+
              //   Canvas.SetLeft(polyline, x);
              //   Canvas.SetTop(polyline, y);
 
-              //  _canvas.Children.Add(ellipse);
+                //  _canvas.Children.Add(ellipse);
                 _canvas.Children.Add(polyline);
 
                 x += stepX;
