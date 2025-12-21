@@ -83,6 +83,7 @@
         </GroupBox>
 
         <Canvas x:Name="_canvas" 
+                SizeChanged="Canvas_SizeChanged"
                 Grid.Row="13"
                 Grid.ColumnSpan="3"
                 Margin="10" Background="LightGray"/>

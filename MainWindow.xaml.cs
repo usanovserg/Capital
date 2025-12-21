@@ -70,11 +70,8 @@ namespace Capital
             
             int index = comboBox.SelectedIndex;
 
-            // Init();
-            //List<Data> datas = Calculate();
             if (datas != null)  Draw(datas);
 
-           // Button_Click(sender, e);
         }
 
 
@@ -85,6 +82,14 @@ namespace Capital
             Draw(datas);
         }
 
+        private void Canvas_SizeChanged(object sender, SizeChangedEventArgs e)
+        {            
+            if (datas != null) Draw(datas);
+
+            double newWidth = e.NewSize.Width;
+            double newHeight = e.NewSize.Height;
+                         
+        }
 
         private List<Data> Calculate()
         {
