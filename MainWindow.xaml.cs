@@ -122,10 +122,16 @@ namespace Capital
 
             datas = new List<Data>();
 
-           
-            foreach (StrategyType type in _strategies)
+            #region Comment
+            //foreach (StrategyType type in _strategies)
+            //{
+            //    datas.Add(new Data(depoStart, type));
+            //}
+            #endregion
+
+            for (int i = 0; i < _strategies.Count() - 1; i++)
             {
-                datas.Add(new Data(depoStart, type));
+            datas.Add(new Data(depoStart, _strategies[i]));
             }
 
             int lotPercent = startLot;
@@ -192,7 +198,10 @@ namespace Capital
             return datas;
         }
 
-        
+        /// <summary>
+        /// Подготовка данных для вывода линии методом DrawOne
+        /// </summary>
+        /// <param name="datas"></param>
         private void Draw(List<Data> datas)
         {
             _canvas.Children.Clear();
@@ -280,6 +289,13 @@ namespace Capital
             }
         }
 
+        /// <summary>
+        /// Вывод линии по данным, подготовленным методом Draw
+        /// </summary>
+        /// <param name="ListEquity"></param>
+        /// <param name="index"></param>
+        /// <param name="minEquity"></param>
+        /// <param name="maxEquity"></param>
         private void DrawOne(List<decimal> ListEquity, int index, decimal minEquity, decimal maxEquity)
         {
 
