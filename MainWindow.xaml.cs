@@ -66,7 +66,7 @@ namespace Capital
             _take.Text = "300";
             _stop.Text = "100";
             _comiss.Text = "5";
-            _countTrades.Text = "5";
+            _countTrades.Text = "1000";
             _percentProfit.Text = "30";
             _go.Text = "5000";
             _minStartPercent.Text = "20";
@@ -216,8 +216,37 @@ namespace Capital
             ListEquity = datas[index].GetListEquity();
          
             int count = ListEquity.Count;
-            decimal maxEquity = ListEquity.Max();
-            decimal minEquity = ListEquity.Min();
+
+            //decimal maxEquity = ListEquity.Max();
+            //decimal minEquity = ListEquity.Min();
+
+
+            // Расчет границ для построения графиков 
+
+            decimal maxEquity;
+            decimal minEquity;
+
+            if (_comboBox.SelectedIndex == 4)
+            {
+                var listMaxEquity = new List<decimal>();
+                var listMinEquity = new List<decimal>();
+
+                foreach (var data in datas)
+                {
+                    listMaxEquity.Add(data.GetListEquity().Max());
+                    listMinEquity.Add(data.GetListEquity().Min());
+
+                }
+                maxEquity = listMaxEquity.Max();
+                minEquity = listMinEquity.Min();
+
+            }
+            else
+            {
+                maxEquity = ListEquity.Max();
+                minEquity = ListEquity.Min();
+            }
+            //===================================================================
 
             if (_ellipse.IsChecked == true) 
             {
