@@ -16,6 +16,8 @@ namespace Capital.Entity
             this.Depo = DepoStart;
         }
         List<decimal> ListEquity = new List<decimal>();
+        List<decimal> ListDrawDown = new List<decimal>();
+
         decimal MaxResultDepo;
 
         #region Properties =========================================================
@@ -84,6 +86,7 @@ namespace Capital.Entity
         private void CalcPercentDrawDown() 
         {
             PercentDrawDown = Math.Min(PercentDrawDown, (ResultDepo - MaxResultDepo) / MaxResultDepo * 100);
+            ListDrawDown.Add((ResultDepo - MaxResultDepo) / MaxResultDepo * 100);
 
         }
 
@@ -91,6 +94,12 @@ namespace Capital.Entity
         { 
             return ListEquity;
         
+        }
+
+        public List<decimal> GetListDrawDown()
+        {
+            return ListDrawDown;
+
         }
         #endregion
     };

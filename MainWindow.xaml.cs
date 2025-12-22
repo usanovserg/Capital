@@ -171,26 +171,36 @@ namespace Capital
         private void Draw() 
         {
             _canvas.Children.Clear();
+            _canvas2.Children.Clear();
+
             int index = _comBox.SelectedIndex;
             switch (index)
             {
                 case 0:
                     DrawLine(index, Brushes.Orange);
+                    DrawLine2(index, Brushes.Orange);
                     break;
                 case 1:
                     DrawLine(index, Brushes.Red);
+                    DrawLine2(index, Brushes.Red);
                     break;
                 case 2:
                     DrawLine(index, Brushes.Green);
+                    DrawLine2(index, Brushes.Green);
                     break;
                 case 3:
                     DrawLine(index, Brushes.Blue);
+                    DrawLine2(index, Brushes.Blue);
                     break;
                 case 4:
                     DrawLine(0, Brushes.Orange);
+                    DrawLine2(0, Brushes.Orange);
                     DrawLine(1, Brushes.Red);
+                    DrawLine2(1, Brushes.Red);
                     DrawLine(2, Brushes.Green);
+                    DrawLine2(2, Brushes.Green);
                     DrawLine(3, Brushes.Blue);
+                    DrawLine2(3, Brushes.Blue);
                     break;
             }
 
@@ -272,6 +282,68 @@ namespace Capital
             }
         }
 
+        private void DrawLine2(int index, SolidColorBrush color)
+        {
+            if (datas.Count == 0) return;
+
+            List<decimal> ListDD = datas[index].GetListDrawDown();
+            int count = ListDD.Count;
+
+            decimal maxDD;
+            decimal minDD;
+
+            if (_comBox.SelectedItem.ToString() == StrategyType.ALL.ToString())
+            {
+                var listMaxDD = new List<decimal>();
+                var listMinDD = new List<decimal>();
+
+                foreach (var data in datas)
+                {
+                    listMaxDD.Add(data.GetListDrawDown().Max());
+                    listMinDD.Add(data.GetListDrawDown().Min());
+
+                }
+                maxDD = listMaxDD.Max();
+                minDD = listMinDD.Min();
+
+            }
+            else
+            {
+                maxDD = ListDD.Max();
+                minDD = ListDD.Min();
+            }
+
+
+            double stepX = _canvas2.ActualWidth / count;
+            double koef = (double)(maxDD - minDD) / _canvas2.ActualHeight;
+
+            double x = 0;
+            double y = 0;
+
+            double _x = 0;
+            double _y = _canvas2.ActualHeight - (double)(ListDD[0] - minDD) / koef;
+
+            for (int i = 0; i < count; i++)
+            {
+                y = _canvas2.ActualHeight - (double)(ListDD[i] - minDD) / koef;
+
+                Line line = new Line()
+                {
+                    Stroke = color,
+                    StrokeThickness = 4
+                };
+                line.X1 = _x;
+                line.X2 = x;
+                line.Y1 = _y;
+                line.Y2 = y;
+
+                _canvas2.Children.Add(line);
+
+                x += stepX;
+                _x = x;
+                _y = y;
+            }
+        }
         /// <summary>
         /// прорисока графика по индексу из ComboBox
         /// </summary>
