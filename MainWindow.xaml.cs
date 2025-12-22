@@ -186,51 +186,56 @@ namespace Capital
 
             if (StrategyType.ALL != (StrategyType)index)
             {  //Если выбрана любая стратегия кроме ВСЕХ
-
-                //              List<decimal> ListEquity = datas[index].GetListEquity();
+               
                 ListEquity = datas[index].GetListEquity();
-
-                int count = ListEquity.Count; //Количество элементов
 
                 decimal maxEquity = ListEquity.Max(); //Макс. значение элемента
                 decimal minEquity = ListEquity.Min(); //Мин. значение
 
-                double stepX = _canvas.ActualWidth / count;
+                DrawOne(ListEquity, index, minEquity, maxEquity);
 
-                double koef = (double)(maxEquity - minEquity) / _canvas.ActualHeight; //К-т масштабирования по вертикали
+                #region Comments  //int count = ListEquity.Count; //Количество элементов
 
-                double x = 0; //текущие 
-                double y = 0; //координаты
+                //decimal maxEquity = ListEquity.Max(); //Макс. значение элемента
+                //decimal minEquity = ListEquity.Min(); //Мин. значение
 
-                for (int i = 0; i < count; i++)
-                {
-                    double x_old = x;
-                    double y_old = y;
+                //double stepX = _canvas.ActualWidth / count;
 
-                    if (Math.Abs(koef) < double.Epsilon)
-                    {
-                        y = 0;
-                    }
-                    else
-                    {
-                        y = _canvas.ActualHeight - (double)(ListEquity[i] - minEquity) / koef;
-                    }
+                //double koef = (double)(maxEquity - minEquity) / _canvas.ActualHeight; //К-т масштабирования по вертикали
+
+                //double x = 0; //текущие 
+                //double y = 0; //координаты
+
+                //for (int i = 0; i < count; i++)
+                //{
+                //    double x_old = x;
+                //    double y_old = y;
+
+                //    if (Math.Abs(koef) < double.Epsilon)
+                //    {
+                //        y = 0;
+                //    }
+                //    else
+                //    {
+                //        y = _canvas.ActualHeight - (double)(ListEquity[i] - minEquity) / koef;
+                //    }
 
 
-                    Line line = new Line();
+                //    Line line = new Line();
 
-                    line.X1 = x_old;
-                    line.Y1 = y_old;
-                    line.X2 = x;
-                    line.Y2 = y;
+                //    line.X1 = x_old;
+                //    line.Y1 = y_old;
+                //    line.X2 = x;
+                //    line.Y2 = y;
 
-                    line.Stroke = Brushes.Black;
-                    line.StrokeThickness = 1;
+                //    line.Stroke = Brushes.Black;
+                //    line.StrokeThickness = 1;
 
-                    _canvas.Children.Add(line);
+                //    _canvas.Children.Add(line);
 
-                    x += stepX;
-                }
+                //    x += stepX;
+                //}
+                #endregion
             }
             else  //Тут будем выводить все графики на один Canvas
             {
@@ -250,26 +255,24 @@ namespace Capital
 
                 }
 
-                double koef = (double)(maxEquity - minEquity) / _canvas.ActualHeight; //К-т масштабирования по вертикали
+             //   double koef = (double)(maxEquity - minEquity) / _canvas.ActualHeight; //К-т масштабирования по вертикали
 
                 for (int i = 0; i < countOfEnum - 1; i++)
                 {
                     ListEquity = datas[i].GetListEquity();
-                    DrawOne(ListEquity, i, minEquity, koef);
+                    DrawOne(ListEquity, i, minEquity, maxEquity);
                 }
             }
         }
 
-        private void DrawOne(List<decimal> ListEquity, int index, decimal minEquity, double koef)
+        private void DrawOne(List<decimal> ListEquity, int index, decimal minEquity, decimal maxEquity)
         {
 
             int count = ListEquity.Count; //Количество элементов
-            //decimal maxEquity = ListEquity.Max(); //Макс. значение элемента
-            //decimal minEquity = ListEquity.Min(); //Мин. значение
-
+           
             double stepX = _canvas.ActualWidth / count;
 
-            //double koef = (double)(maxEquity - minEquity) / _canvas.ActualHeight; //К-т масштабирования по вертикали
+            double koef = (double)(maxEquity - minEquity) / _canvas.ActualHeight; //К-т масштабирования по вертикали
 
             double x = 0; //текущие 
             double y = 0; //координаты
@@ -295,7 +298,7 @@ namespace Capital
                 line.X2 = x;
                 line.Y2 = y;
 
-                line.Stroke = Brushes.Black;
+                line.Stroke = Brushes.Black ; 
                 line.StrokeThickness = 1;
 
                 _canvas.Children.Add(line);
@@ -303,47 +306,7 @@ namespace Capital
                 x += stepX;
             }
         }
-        //private void Draw(List<Data> datas)
-        //{
-        //    _canvas.Children.Clear();
-
-
-        //    int index = _combobox.SelectedIndex;  //Получаем индекс выбранного комбобокса.
-
-        //    if (StrategyType.ALL != (StrategyType)index) //Если выбрана любая стратегия кроме ВСЕХ
-        //    {
-        //        //  DrawOne(datas, index);
-        //    }
-        //    else                                         //Тут будем выводить все графики на один Canvas 
-        //    {
-        //        decimal maxEquity = 0;
-        //        decimal minEquity = 0;
-
-        //        int countOfEnum = Enum.GetValues<StrategyType>().Length;
-
-        //        for (int i = 0; i < countOfEnum - 1; i++) //Считаем параметры (min, max. koeff) по всем стратегиям одновременно 
-        //        {
-        //            ListEquity = datas[index].GetListEquity();
-
-        //            if (maxEquity < ListEquity.Max()) maxEquity = ListEquity.Max();  //Макс. значение элемента из всех стратегий
-        //            if (minEquity > ListEquity.Min()) ; minEquity = ListEquity.Min(); //Мин. значение элемента из всех стратегий
-
-        //        }
-
-        //        //  int count = ListEquity.Count; //Количество элементов
-        //        //  double stepX = _canvas.ActualWidth / count;  
-
-        //        double koef = (double)(maxEquity - minEquity) / _canvas.ActualHeight; //К-т масштабирования по вертикали
-
-        //        for (int i = 0; i < countOfEnum - 1; i++)
-        //        {
-        //            DrawOne(ListEquity, i, minEquity, koef);
-        //        }
-
-
-        //    }
-        //}
-
+      
         private int CalculateLot(decimal currentDepo, decimal percent, decimal go)
         {
             if (percent > 100) { percent = 100; }
