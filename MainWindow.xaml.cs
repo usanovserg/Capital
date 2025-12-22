@@ -1,5 +1,6 @@
-﻿using Capital.Entity;
-using Capital.Enams;
+﻿using Capital.Enams;
+using Capital.Entity;
+using System;
 using System.Text;        
 using System.Windows;
 using System.Windows.Controls;
@@ -29,6 +30,8 @@ namespace Capital
         #region Fields ========================================
 
         List<Data> datas;
+
+        List<decimal> ListEquity;
 
         List<StrategyType> _strategies = new List<StrategyType>()
         {
@@ -181,15 +184,92 @@ namespace Capital
 
             int index = _combobox.SelectedIndex;  //Получаем индекс выбранного комбобокса.
 
-            List<decimal> ListEquity = datas[index].GetListEquity();
+            if (StrategyType.ALL != (StrategyType)index)
+            {  //Если выбрана любая стратегия кроме ВСЕХ
+
+                //              List<decimal> ListEquity = datas[index].GetListEquity();
+                ListEquity = datas[index].GetListEquity();
+
+                int count = ListEquity.Count; //Количество элементов
+
+                decimal maxEquity = ListEquity.Max(); //Макс. значение элемента
+                decimal minEquity = ListEquity.Min(); //Мин. значение
+
+                double stepX = _canvas.ActualWidth / count;
+
+                double koef = (double)(maxEquity - minEquity) / _canvas.ActualHeight; //К-т масштабирования по вертикали
+
+                double x = 0; //текущие 
+                double y = 0; //координаты
+
+                for (int i = 0; i < count; i++)
+                {
+                    double x_old = x;
+                    double y_old = y;
+
+                    if (Math.Abs(koef) < double.Epsilon)
+                    {
+                        y = 0;
+                    }
+                    else
+                    {
+                        y = _canvas.ActualHeight - (double)(ListEquity[i] - minEquity) / koef;
+                    }
+
+
+                    Line line = new Line();
+
+                    line.X1 = x_old;
+                    line.Y1 = y_old;
+                    line.X2 = x;
+                    line.Y2 = y;
+
+                    line.Stroke = Brushes.Black;
+                    line.StrokeThickness = 1;
+
+                    _canvas.Children.Add(line);
+
+                    x += stepX;
+                }
+            }
+            else  //Тут будем выводить все графики на один Canvas
+            {
+             //   ListEquity = datas[index].GetListEquity();
+
+                decimal maxEquity = 0;
+                decimal minEquity = decimal.MaxValue;
+
+                int countOfEnum = Enum.GetValues<StrategyType>().Length;
+
+                for (int i = 0; i < countOfEnum - 1; i++) //Считаем параметры (min, max. koeff) по всем стратегиям одновременно 
+                {
+                    ListEquity = datas[i].GetListEquity();
+
+                    if (maxEquity < ListEquity.Max()) maxEquity = ListEquity.Max();  //Макс. значение элемента из всех стратегий
+                    if (minEquity > ListEquity.Min()) minEquity = ListEquity.Min(); //Мин. значение элемента из всех стратегий
+
+                }
+
+                double koef = (double)(maxEquity - minEquity) / _canvas.ActualHeight; //К-т масштабирования по вертикали
+
+                for (int i = 0; i < countOfEnum - 1; i++)
+                {
+                    ListEquity = datas[i].GetListEquity();
+                    DrawOne(ListEquity, i, minEquity, koef);
+                }
+            }
+        }
+
+        private void DrawOne(List<decimal> ListEquity, int index, decimal minEquity, double koef)
+        {
 
             int count = ListEquity.Count; //Количество элементов
-            decimal maxEquity = ListEquity.Max(); //Макс. значение элемента
-            decimal minEquity = ListEquity.Min(); //Мин. значение
+            //decimal maxEquity = ListEquity.Max(); //Макс. значение элемента
+            //decimal minEquity = ListEquity.Min(); //Мин. значение
 
             double stepX = _canvas.ActualWidth / count;
 
-            double koef = (double)(maxEquity - minEquity) / _canvas.ActualHeight; //К-т масштабирования по вертикали
+            //double koef = (double)(maxEquity - minEquity) / _canvas.ActualHeight; //К-т масштабирования по вертикали
 
             double x = 0; //текущие 
             double y = 0; //координаты
@@ -199,11 +279,17 @@ namespace Capital
                 double x_old = x;
                 double y_old = y;
 
-                y = _canvas.ActualHeight - (double)(ListEquity[i] - minEquity) / koef;
-                               
+                if (Math.Abs(koef) < double.Epsilon)
+                {
+                    y = 0;
+                }
+                else
+                {
+                    y = _canvas.ActualHeight - (double)(ListEquity[i] - minEquity) / koef;
+                }
 
                 Line line = new Line();
-                
+
                 line.X1 = x_old;
                 line.Y1 = y_old;
                 line.X2 = x;
@@ -257,49 +343,7 @@ namespace Capital
 
         //    }
         //}
-        private void DrawOne(List<decimal> ListEquity, int index, decimal minEquity, double koef)
-        {
 
-            int count = ListEquity.Count; //Количество элементов
-            //decimal maxEquity = ListEquity.Max(); //Макс. значение элемента
-            //decimal minEquity = ListEquity.Min(); //Мин. значение
-
-            double stepX = _canvas.ActualWidth / count;
-
-            //double koef = (double)(maxEquity - minEquity) / _canvas.ActualHeight; //К-т масштабирования по вертикали
-
-            double x = 0; //текущие 
-            double y = 0; //координаты
-
-            for (int i = 0; i < count; i++)
-            {
-                double x_old = x;
-                double y_old = y;
-
-                if (Math.Abs(koef) < double.Epsilon)
-                {
-                    y = 0;
-                }
-                else
-                {
-                    y = _canvas.ActualHeight - (double)(ListEquity[i] - minEquity) / koef;
-                }
-
-                Line line = new Line();
-
-                line.X1 = x_old;
-                line.Y1 = y_old;
-                line.X2 = x;
-                line.Y2 = y;
-
-                line.Stroke = Brushes.Black;
-                line.StrokeThickness = 1;
-
-                _canvas.Children.Add(line);
-
-                x += stepX;
-            }
-        }
         private int CalculateLot(decimal currentDepo, decimal percent, decimal go)
         {
             if (percent > 100) { percent = 100; }
