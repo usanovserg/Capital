@@ -280,6 +280,25 @@ namespace Capital
                 _x = x;
                 _y = y;
             }
+
+            _x = 0;
+            _y = _canvas.ActualHeight - (double)(ListEquity[0] - minEquity) / koef;
+
+            x = (count - 1)*stepX;
+            y = _y;
+
+            Line line0 = new Line()
+            {
+                Stroke = Brushes.Black,
+                StrokeThickness = 2
+            };
+            line0.X1 = _x;
+            line0.X2 = x;
+            line0.Y1 = _y;
+            line0.Y2 = y;
+
+            _canvas.Children.Add(line0);
+
         }
 
         private void DrawLine2(int index, SolidColorBrush color)
