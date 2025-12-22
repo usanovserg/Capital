@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -43,6 +44,20 @@ namespace Capital
         };
 
         Random _random = new Random();
+
+        private static readonly Color[] LineColors = new Color[]
+        {
+            Colors.Red,
+            Colors.Blue,
+            Colors.Green,
+            Colors.Orange,
+            Colors.Purple,
+            Colors.Brown,
+            Colors.Cyan,
+            Colors.Magenta,
+            Colors.DarkGreen,
+            Colors.SaddleBrown
+        };
 
         #endregion
 
@@ -298,7 +313,9 @@ namespace Capital
                 line.X2 = x;
                 line.Y2 = y;
 
-                line.Stroke = Brushes.Black ; 
+                //line.Stroke = Brushes.Black ;
+                line.Stroke = new SolidColorBrush(LineColors[index]);
+                
                 line.StrokeThickness = 1;
 
                 _canvas.Children.Add(line);
