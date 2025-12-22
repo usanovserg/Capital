@@ -15,7 +15,7 @@ using System.Windows.Shapes;
 
 namespace Capital
 {
-    
+    //
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
