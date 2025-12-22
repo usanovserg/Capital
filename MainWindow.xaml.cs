@@ -298,7 +298,9 @@ namespace Capital
                 line.X2 = x;
                 line.Y2 = y;
 
-                line.Stroke = Brushes.Black ; 
+                line.Stroke = Brushes.Black ;
+               
+                
                 line.StrokeThickness = 1;
 
                 _canvas.Children.Add(line);
