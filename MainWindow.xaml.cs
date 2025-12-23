@@ -1,5 +1,7 @@
 ﻿using Capital.Entity;
 using Capital.Enums;
+using System;
+using System.Reflection;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -39,6 +41,10 @@ namespace Capital
 
         Random _random = new Random();
 
+        List<Data> datas = new List<Data>();
+
+        int g = 0;
+
         #endregion
 
         #region Methods ===========================================
@@ -66,14 +72,20 @@ namespace Capital
             ComboBox comboBox = (ComboBox)sender;
 
             int index = comboBox.SelectedIndex;
+
+             if ( g == 1 ) {Draw(datas, index);}
+
+            return;
+
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-           List<Data> datas = Calculate();
+          datas = Calculate();
 
-           Draw(datas);
+           Draw(datas, 0);
         }
+
         private List<Data> Calculate()
         {
             decimal depoStart = GetDecimalFromString(_depo.Text);
@@ -160,16 +172,20 @@ namespace Capital
 
             _dataGrid.ItemsSource = datas;
 
+            g = 1;
+
             return datas;
         }
 
-        private void Draw(List<Data> datas)
+        private void Draw(List<Data> datas, int index)
         {
             _canvas.Children.Clear();
 
-            int index = _comboBox.SelectedIndex;
+            index = _comboBox.SelectedIndex;
 
             List<decimal> listEquity = datas[index].GetListEquity();
+
+            if ( listEquity.Count == 0) return;
 
             int count = listEquity.Count;
             decimal maxEquity = listEquity.Max();
@@ -212,6 +228,17 @@ namespace Capital
 
                 
             }
+
+
+        }
+
+        private void Canvas_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+             int index = _comboBox.SelectedIndex;
+
+            if (g == 1) { Draw(datas, index); }
+
+            return;
         }
         private int CalculateLot(decimal currentDepo, decimal percent, decimal go)
         {

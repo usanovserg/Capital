@@ -49,7 +49,7 @@
         <TextBlock Text="Гарант.обесп."
            Grid.Row="9"/>
         <ComboBox Name="_comboBox"
-           Grid.Row="11" Margin="5,0"/>
+           Grid.Row="11" Margin="5,0" />
 
         <TextBox x:Name="_depo"
                  Grid.Column="1"/>
@@ -84,8 +84,8 @@
         <Canvas x:Name="_canvas"
                 Grid.Row="12"
                 Grid.ColumnSpan="3"
-                Margin="0,20,-90,0" Background="LightGray">
-        
+                Margin="5" Background="LightGray"
+            SizeChanged = "Canvas_SizeChanged">
         </Canvas>
 
     </Grid>
