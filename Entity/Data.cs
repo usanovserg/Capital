@@ -86,6 +86,9 @@ namespace Capital.Entity
         /// </summary>
         public decimal PercentDrawDown { get; set; }
 
+
+        public decimal Color { get; set; }
+
         #endregion Properties
 
 

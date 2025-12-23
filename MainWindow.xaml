@@ -50,6 +50,7 @@
         <TextBlock  Text="Гарант. обеспечение"
                     Grid.Row="9"/>
         <ComboBox   x:Name="_comboBox"
+                    SelectionChanged="_comboBox_SelectionChanged"
                     Margin="5, 0"
                     Grid.Row="11"/>
 

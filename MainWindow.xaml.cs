@@ -32,7 +32,17 @@ namespace Capital
             StrategyType.FIX,
             StrategyType.CAPITALISATION,
             StrategyType.PROGRESS,
-            StrategyType.DOWNGRADE
+            StrategyType.DOWNGRADE,
+            StrategyType.ALL
+        };
+
+
+        List<ColorsMy> _colors = new List<ColorsMy>()
+        {
+            ColorsMy.Red,
+            ColorsMy.Green,
+            ColorsMy.Blue, 
+            ColorsMy.Yellow
         };
 
 
@@ -45,35 +55,26 @@ namespace Capital
 
         #region Methods ====================================================================================
 
-
+        // начальное заполнение для текст-боксов и подписка на изменение комбо-бокса
         private void Init()
         {
-            _comboBox.ItemsSource = _strategies;
-
-
-            //// способ 2
-            //List<StrategyType> strategyTypes = new List<StrategyType>();
-            //strategyTypes.Add(StrategyType.FIX);
-            //strategyTypes.Add(StrategyType.CAPITALISATION);
-            //strategyTypes.Add(StrategyType.PROGRESS);
-            //strategyTypes.Add(StrategyType.DOWNGRADE);
-            //_comboBox.ItemsSource = strategyTypes;
-
-            _comboBox.SelectionChanged += _comboBox_SelectionChanged;
-            _comboBox.SelectedIndex = 0;
-
             _depo.Text = "100000";
             _startLot.Text = "10";
             _take.Text = "300";
             _stop.Text = "100";
             _commis.Text = "5";
-            _countTrades.Text = "1000";
             _percentProfit.Text = "30";
-            _go.Text = "5000";
+            _countTrades.Text = "1000";
             _minStartPersent.Text = "20";
-
+            _go.Text = "5000"; 
+            _comboBox.ItemsSource = _strategies;
+            _comboBox.SelectionChanged += _comboBox_SelectionChanged;
+            _comboBox.SelectedIndex = 0;            
         }
 
+
+
+        // Обработчик для комбо-бокса (что произойдёт при смене комбо-бокса)
         private void _comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             // способ 1
@@ -85,6 +86,9 @@ namespace Capital
             int index = comboBox.SelectedIndex;
         }
 
+
+
+        // нажать на кнопку "Рассчитать"
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             List<Data> datas = Calculate();
@@ -92,6 +96,8 @@ namespace Capital
         }
 
 
+
+        // метод для кнопки "Рассчитать". Он возвращает список объектов класса Datas: List<Data> datas и 
         private List<Data> Calculate()
         {
             decimal depoStart = GetDecimalFromString(_depo.Text);
@@ -103,8 +109,7 @@ namespace Capital
             decimal percProfit = GetDecimalFromString(_percentProfit.Text);
             decimal minStartPercent = GetDecimalFromString(_minStartPersent.Text);
             decimal go = GetDecimalFromString(_go.Text);
-
-            List<Data> datas = new List<Data>();
+            List<Data> datas = new List<Data>();    // создали список datas - из объектов Data
 
             //// способ 1 - через хард код
             //for (int i = 0; i < 4; i++)
@@ -122,6 +127,7 @@ namespace Capital
             //    datas.Add(new Data());
             //}
 
+            // в список datas добавляем объекты (стратегии со всеми полями)
             // способ 3 ещё покороче. В классе Data добавили конструктор
             foreach (StrategyType type in _strategies)
             {
@@ -139,12 +145,14 @@ namespace Capital
             int lotProgress = CalculateLot(depoStart, minStartPercent, go);
             int lotDown = startLot;
 
-            // цикл, который будет создавать рандомные сделки
+            // цикл, который:
+            // 1. создаёт рандомные сделки
+            // 2. для каждой стратегии считает ResultDepo
             for (int i = 0; i < countTrades; i++)
             {
                 int rnd = _random.Next(1, 100);     // эти цифры в проентах
 
-                if (rnd <= percProfit)  // если сделка прибыльная
+                if (rnd <= percProfit)              // если сделка прибыльная
                 {
                     // стратегия 1
                     datas[0].ResultDepo += (take - comiss) * startLot;
@@ -166,7 +174,7 @@ namespace Capital
                     lotDown = startLot;
 
                 }
-                else    // иначе сделка убыточная
+                else    // если сделка убыточная
                 {
                     // стратегия 1
                     datas[0].ResultDepo -= (stop + comiss) * startLot;
@@ -182,7 +190,8 @@ namespace Capital
                         lotDown = 1;
                 }
             }
-            // в самом конце в _dataGrid записываем datas
+
+            // в таблицу результатов _dataGrid записываем столбец datas.ResultDepo (по идее, запись надо вынести в отдельный метод)
             _dataGrid.ItemsSource = datas;
 
             return datas;
@@ -190,12 +199,13 @@ namespace Capital
 
 
 
+        // метод отрисовки на Canvas
         private void Draw(List<Data> datas)
         {
-            _canvas.Children.Clear();
+            _canvas.Children.Clear();   // очистка канваса
 
-            int index = _comboBox.SelectedIndex;
-            List<decimal> listEquity = datas[index].GetListEquity();
+            int index = _comboBox.SelectedIndex;            // выбрали индекс из комбо-бокса           
+            List<decimal> listEquity = datas[index].GetListEquity();    //получили список из 
             int count = listEquity.Count;
             decimal maxEquity = listEquity.Max();           // находим макс в списке
             decimal minEquity = listEquity.Min();           // находим мин в списке
@@ -219,8 +229,7 @@ namespace Capital
                 Canvas.SetLeft(ellipse, x);
                 Canvas.SetTop(ellipse, y);
 
-                _canvas.Children.Add(ellipse);
-                
+                _canvas.Children.Add(ellipse);                
                 
                 x += stepX;
             }
@@ -264,8 +273,5 @@ namespace Capital
         #endregion Methods
 
 
-
-
-
-    }   // class MainWindow : Window
-}       // namespace Capital
+    }   
+}       

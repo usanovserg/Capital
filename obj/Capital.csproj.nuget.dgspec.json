@@ -1,15 +1,15 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Leo\\source\\repos\\Capital\\Capital.csproj": {}
+    "C:\\Users\\Leo\\Source\\Repos\\Capital\\Capital.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Leo\\source\\repos\\Capital\\Capital.csproj": {
+    "C:\\Users\\Leo\\Source\\Repos\\Capital\\Capital.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Leo\\source\\repos\\Capital\\Capital.csproj",
+        "projectUniqueName": "C:\\Users\\Leo\\Source\\Repos\\Capital\\Capital.csproj",
         "projectName": "Capital",
-        "projectPath": "C:\\Users\\Leo\\source\\repos\\Capital\\Capital.csproj",
+        "projectPath": "C:\\Users\\Leo\\Source\\Repos\\Capital\\Capital.csproj",
         "packagesPath": "C:\\Users\\Leo\\.nuget\\packages\\",
         "outputPath": "C:\\Users\\Leo\\Source\\Repos\\Capital\\obj\\",
         "projectStyle": "PackageReference",
