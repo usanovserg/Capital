@@ -90,7 +90,8 @@
                 Grid.Row="13"
                 Grid.ColumnSpan="3"
                 Margin="10"
-                Background="LightGray"/>
+                Background="LightGray"
+                SizeChanged="_canvas_SizeChanged" />
 
 
 

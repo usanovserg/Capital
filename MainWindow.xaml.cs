@@ -1,5 +1,6 @@
 ﻿using Capital.Entity;
 using Capital.Enums;
+using System;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -36,7 +37,6 @@ namespace Capital
             StrategyType.ALL
         };
 
-
         List<ColorsMy> _colors = new List<ColorsMy>()
         {
             ColorsMy.Red,
@@ -45,8 +45,9 @@ namespace Capital
             ColorsMy.Yellow
         };
 
-
         Random _random = new Random();
+
+        //List<Data> datas = new List<Data>();
 
         #endregion Fields
 
@@ -83,7 +84,16 @@ namespace Capital
             // способ 2
             ComboBox comboBox = (ComboBox)sender;
 
-            int index = comboBox.SelectedIndex;
+            //int index = comboBox.SelectedIndex;
+            //Draw(datas, comboBox.SelectedIndex);
+        }
+
+
+
+        // Обработчик для изменения размера окна (canvas тоже поменяется)
+        private void _canvas_SizeChanged(object sender, SizeChangedEventArgs e)
+        {            
+            //Draw(datas, _comboBox.SelectedIndex);
         }
 
 
@@ -92,7 +102,8 @@ namespace Capital
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             List<Data> datas = Calculate();
-            Draw(datas);
+            //datas = Calculate();
+            Draw(datas, _comboBox.SelectedIndex);
         }
 
 
@@ -174,7 +185,7 @@ namespace Capital
                     lotDown = startLot;
 
                 }
-                else    // если сделка убыточная
+                else // если сделка убыточная
                 {
                     // стратегия 1
                     datas[0].ResultDepo -= (stop + comiss) * startLot;
@@ -199,12 +210,12 @@ namespace Capital
 
 
 
-        // метод отрисовки на Canvas
-        private void Draw(List<Data> datas)
+        // отрисовка на Canvas. Передаём список и индекс из комбо-бокса
+        private void Draw(List<Data> datas, int index)
         {
             _canvas.Children.Clear();   // очистка канваса
 
-            int index = _comboBox.SelectedIndex;            // выбрали индекс из комбо-бокса           
+            //int index = _comboBox.SelectedIndex;            // выбрали индекс из комбо-бокса            
             List<decimal> listEquity = datas[index].GetListEquity();    //получили список из 
             int count = listEquity.Count;
             decimal maxEquity = listEquity.Max();           // находим макс в списке
@@ -270,8 +281,9 @@ namespace Capital
         }
 
 
+
         #endregion Methods
 
-
+        
     }   
 }       
