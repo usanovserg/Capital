@@ -1,17 +1,28 @@
 ﻿using Capital.Enums;
-using static System.Windows.Media.Color;
+using OxyPlot;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Documents;
-using OxyPlot;
+using System.Windows.Media;
+using static System.Windows.Media.Color;
+using System.ComponentModel;       
+using System.Runtime.CompilerServices;
 
 namespace Capital.Entity
 {
-    public class Data
+    public class Data : INotifyPropertyChanged
     {
+        // 🟡 ДОБАВЛЕНО: событие для уведомления UI
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        // 🟡 ДОБАВЛЕНО: вспомогательный метод
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
         public Data(decimal depoStart, StrategyType strategyType)
         {
             
@@ -28,9 +39,25 @@ namespace Capital.Entity
 
         #region Properties=================================================
 
+
         public StrategyType StrategyType { get; set; }
 
         public OxyColor Color { get; set; }
+
+        public Brush ColorBrush
+        {
+            get
+            {
+                return StrategyType switch
+                {
+                    StrategyType.FIX => Brushes.Red,
+                    StrategyType.CAPITALIZATION => Brushes.Green,
+                    StrategyType.PROGRESS => Brushes.Blue,
+                    StrategyType.DOWNGRADE => Brushes.Orange,
+                    _ => Brushes.Gray
+                };
+            }
+        }
 
         public decimal Depo
         {
@@ -63,30 +90,59 @@ namespace Capital.Entity
                 ListEquity.Add(ResultDepo);
 
                 CalcDrawDown();
+
+                OnPropertyChanged(); // 👁️ UI получит уведомление!
             }
         }
         decimal _resultDepo;
 
-        public decimal Profit { get; set; }
+        private decimal _profit;
+        public decimal Profit
+        {
+            get => _profit;
+            set
+            {
+                if (_profit != value)
+                {
+                    _profit = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
         /// <summary>
         /// Относительный профит в процентах
         /// </summary>
-        public decimal PercentProfit { get; set; }
+        private decimal _percentProfit;
+        public decimal PercentProfit
+        {
+            get => _percentProfit;
+            set
+            {
+                if (_percentProfit != value)
+                {
+                    _percentProfit = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
         /// <summary>
         /// Максимальная абсолютная просадка в деньгах 
         /// </summary>
+        private decimal _maxDrownDown;
         public decimal MaxDrownDown
         {
-            get => _maxDrownDown; 
-
-            set 
-            { 
-                _maxDrownDown = value; 
-                CalcPercentDrawDown(); 
+            get => _maxDrownDown;
+            set
+            {
+                if (_maxDrownDown != value)
+                {
+                    _maxDrownDown = value;
+                    CalcPercentDrawDown();
+                    OnPropertyChanged();
+                }
             }
         }
-        decimal _maxDrownDown;
 
         /// <summary>
         /// Максимальная относительная просадка в процентах
