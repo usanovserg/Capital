@@ -1,12 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "ZxZw4YEKam8=",
+  "dgSpecHash": "0iBAOl/ipqc=",
   "success": true,
-  "projectFilePath": "C:\\CSharpApp\\Algo\\UsanovKursCS\\Capital\\Capital.csproj",
+  "projectFilePath": "C:\\Users\\Андрей\\source\\repos\\Capital\\Capital.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\Администратор\\.nuget\\packages\\oxyplot.core\\2.2.0\\oxyplot.core.2.2.0.nupkg.sha512",
-    "C:\\Users\\Администратор\\.nuget\\packages\\oxyplot.wpf\\2.2.0\\oxyplot.wpf.2.2.0.nupkg.sha512",
-    "C:\\Users\\Администратор\\.nuget\\packages\\oxyplot.wpf.shared\\2.2.0\\oxyplot.wpf.shared.2.2.0.nupkg.sha512"
+    "C:\\Users\\Андрей\\.nuget\\packages\\oxyplot.core\\2.2.0\\oxyplot.core.2.2.0.nupkg.sha512",
+    "C:\\Users\\Андрей\\.nuget\\packages\\oxyplot.wpf\\2.2.0\\oxyplot.wpf.2.2.0.nupkg.sha512",
+    "C:\\Users\\Андрей\\.nuget\\packages\\oxyplot.wpf.shared\\2.2.0\\oxyplot.wpf.shared.2.2.0.nupkg.sha512"
   ],
   "logs": []
 }
