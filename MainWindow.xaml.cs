@@ -32,7 +32,8 @@ namespace Capital
                 StrategyType.FIX,
                 StrategyType.CAPITALIZATION,
                 StrategyType.PROGRESS,
-                StrategyType.DOWNGRADE
+                StrategyType.DOWNGRADE,
+                StrategyType.ALL  // добавлена опция все стратегии
         };
 
         Random _random = new Random();
@@ -179,80 +180,120 @@ namespace Capital
         /// <summary>
         /// отрисовка графика эквити ЛИНИЕЙ (не точками)
         /// </summary>
-       
-        private void Draw(List<Data> datas) 
+
+
+        private void Draw(List<Data> datas)
         {
             // очищаем от предыдущего графика
-            _canvas.Children.Clear(); 
+            _canvas.Children.Clear();
             // защита от ошибок
-            if (datas == null) return; ///  
-            int index = _comboBox.SelectedIndex;
-            if (index <0 || index >= datas.Count) return;///
+            if (datas == null || datas.Count < 4) return;
 
-            List<decimal> listEquity = datas[index].GetListEquity();
+            int selectedIndex = _comboBox.SelectedIndex;
+            if (selectedIndex < 0) return;
 
-            if (listEquity == null || listEquity.Count ==0) return; ///
+            // Определяем, выбрана ли опция "все стратегии"
+            bool drawAll = _strategies[selectedIndex] == StrategyType.ALL;
+
+            // Определяем общий диапазон Y для всех стратегий (важно для масштаба!)
+            List<decimal> allEquities = new List<decimal>();
+            List<List<decimal>> equityLists = new List<List<decimal>>();
+
+            for (int i = 0; i < 4; i++) // только первые 4 — настоящие стратегии
+            {
+                var list = datas[i].GetListEquity();
+                equityLists.Add(list);
+                allEquities.AddRange(list);
+            }
+
+            if (allEquities.Count == 0) return;
 
             // находим максимум и минимум для масштабирования
-            int count = listEquity.Count;
-            decimal maxEquity = listEquity.Max();   
-            decimal minEquity = listEquity.Min();
+            decimal globalMin = allEquities.Min();
+            decimal globalMax = allEquities.Max();
 
             // защита от деления на ноль, если все значения одинаковые
-            if (maxEquity == minEquity) ///
-                minEquity = maxEquity - 1;  ///
-
-            // int count = listEquity.Count;
-
+            if (globalMax == globalMin)
+                globalMin = globalMax - 1; // избегаем деления на 0
             //  размер холста
-            double canvasWidth = _canvas.ActualWidth;///
-            double canvasHeight = _canvas.ActualHeight;///
-            // шаг по Х расстояниие между точками
-            double stepX = _canvas.ActualWidth / Math.Max(1,count -1);///
+            double canvasWidth = _canvas.ActualWidth;
+            double canvasHeight = _canvas.ActualHeight;
             // масштаб по  Y
-            double rangeY = (double)(maxEquity - minEquity); ///
-            double scaleY = rangeY > 0 ? canvasHeight / rangeY : 1; ///
+            double rangeY = (double)(globalMax - globalMin);
+            double scaleY = rangeY > 0 ? canvasHeight / rangeY : 1;
 
-            ///double koef = (double)(maxEquity - minEquity) / _canvas.ActualHeight;
-
-            ///double x = 0;
-            ///double y = 0;
-            // создаем ломаннную линию один раз
-            var polyline = new Polyline 
+            // Цвета для стратегий
+            var colors = new Brush[]
             {
-                Stroke = Brushes.Black, // цвет линии
-                StrokeThickness = 1.5   // толщина линии
-
+        Brushes.Blue,    // FIX
+        Brushes.Green,   // CAPITALIZATION
+        Brushes.Red,     // PROGRESS
+        Brushes.Purple   // DOWNGRADE
             };
-            // собираем точку графика
-            var points = new PointCollection();///
-            for (int i = 0; i< count; i++) 
+
+            if (drawAll)
             {
-               double x = i * stepX;///
-               double y = _canvas.ActualHeight - (double)(listEquity[i] - minEquity) * scaleY;///
-                points.Add(new Point(x, y)); ///
-                ///_canvas.Children.Add(polyline);
+                // Рисуем все 4 стратегии
+                for (int stratIndex = 0; stratIndex < 4; stratIndex++)
+                {
+                    var list = equityLists[stratIndex];
+                    if (list == null || list.Count == 0) continue;
 
-                ///y = _canvas.ActualHeight - (double)(listEquity[i] - minEquity) / koef;
+                    int count = list.Count;
+                    double stepX = canvasWidth / Math.Max(1, count - 1);
 
-                ////Ellipse ellipse = new Ellipse()
-                ///{
-                /// Width = 2,
-                /// Height = 2,
-                /// Stroke = Brushes.Black
+                    var polyline = new Polyline
+                    {
+                        Stroke = colors[stratIndex],
+                        StrokeThickness = 1.5  // толщина линии
+                    };
 
-                ///};
-                ///Canvas.SetLeft(ellipse, x);
-                ///Canvas.SetTop(ellipse, y);
-                ///x += stepX;
+                    var points = new PointCollection();
+                    for (int i = 0; i < count; i++)
+                    {
+                        double x = i * stepX;
+                        double y = canvasHeight - (double)(list[i] - globalMin) * scaleY;
+                        points.Add(new Point(x, y));
+                    }
+
+                    polyline.Points = points;
+                    _canvas.Children.Add(polyline);
+                }
             }
-            // присваеваем точки линии 
-            polyline.Points = points;
-            // добавляем на холст только один раз - после цикла
-            _canvas.Children.Add(polyline);
+            else
+            {
+                // Рисуем одну стратегию (старая логика)
+                // selectedIndex от 0 до 3
+                var list = equityLists[selectedIndex];
+                if (list == null || list.Count == 0) return;
 
-        ///if (_dataGrid == null)
+                int count = list.Count;
+                double stepX = canvasWidth / Math.Max(1, count - 1);
+                
+                // создаем ломаннную линию один раз
+                var polyline = new Polyline
+                {
+                    Stroke = colors[selectedIndex],
+                    StrokeThickness = 1.5  // толщина линии
+                };
+                
+                // собираем точку графика
+                var points = new PointCollection();
+                for (int i = 0; i < count; i++)
+                {
+                    double x = i * stepX;
+                    double y = canvasHeight - (double)(list[i] - globalMin) * scaleY;
+                    points.Add(new Point(x, y));
+                }
+                // присваеваем точки линии 
+                polyline.Points = points;
+                // добавляем на холст только один раз - после цикла
+                _canvas.Children.Add(polyline);
+            }
         }
+
+       
+        
         /// <summary>
         /// обновляем график при изменениие размера окна, вызывается автоматически
         /// </summary>
