@@ -7,6 +7,119 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="800" Width="1200">
     <Grid>
-        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="190"/>
+            <ColumnDefinition Width="*" MinWidth="50" MaxWidth="150"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*" MinHeight="350"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Депозит" 
+                   Grid.Row="0" 
+                   Grid.Column="0" 
+                   FontWeight="Bold" 
+                   FontSize="14" 
+                   Margin="10,0"/>
+        <TextBlock Text="Начальный лот" 
+                   Grid.Row="1" 
+                   Grid.Column="0"
+                   FontWeight="Bold" 
+                   FontSize="14" 
+                   Margin="10,0"/>
+        <TextBlock Text="Тейк" 
+                   Grid.Row="2" 
+                   Grid.Column="0" 
+                   FontWeight="Bold" 
+                   FontSize="14" 
+                   Margin="10,0"/>
+        <TextBlock Text="Стоп" 
+                   Grid.Row="3" 
+                   Grid.Column="0"
+                   FontWeight="Bold" 
+                   FontSize="14" 
+                   Margin="10,0"/>
+        <TextBlock Text="Комиссия" 
+                   Grid.Row="4" 
+                   Grid.Column="0" 
+                   FontWeight="Bold" 
+                   FontSize="14" 
+                   Margin="10,0"/>
+        <TextBlock Text="Прибыльные сделки (%)" 
+                   Grid.Row="5" 
+                   Grid.Column="0"
+                   FontWeight="Bold" 
+                   FontSize="14" 
+                   Margin="10,0"/>
+        <TextBlock Text="Кол-во сделок" 
+                   Grid.Row="6" 
+                   Grid.Column="0"
+                   FontWeight="Bold" 
+                   FontSize="14" 
+                   Margin="10,0"/>
+        <TextBlock Text="Мин. % депо" 
+                   Grid.Row="7" 
+                   Grid.Column="0"
+                   FontWeight="Bold" 
+                   FontSize="14" 
+                   Margin="10,0"/>
+        <TextBlock Grid.Row="8" 
+                   Grid.Column="0"/>
+        <TextBlock Text="ГО" 
+                   Grid.Row="9" 
+                   Grid.Column="0"
+                   FontWeight="Bold" 
+                   FontSize="14" 
+                   Margin="10,0"/>
+        <ComboBox x:Name="_comboBox" 
+                  Grid.Row="11" 
+                  Grid.Column="0" 
+                  FontWeight="Bold" 
+                  FontSize="14"
+                  Margin="10,0"/>
+
+        <TextBox x:Name="_depo" Margin="0,1"
+                 Grid.Row="0" Grid.Column="1"/>
+        <TextBox x:Name="_startLot" Margin="0,1"
+                 Grid.Row="1" Grid.Column="1"/>
+        <TextBox x:Name="_take"  Margin="0,1"
+                 Grid.Row="2" Grid.Column="1"/>
+        <TextBox x:Name="_stop" Margin="0,1"
+                 Grid.Row="3" Grid.Column="1"/>
+        <TextBox x:Name="_comiss" Margin="0,1"
+                 Grid.Row="4" Grid.Column="1"/>
+        <TextBox x:Name="_percentProfit" Margin="0,1"
+                 Grid.Row="5" Grid.Column="1"/>
+        <TextBox x:Name="_countTrades" Margin="0,1"
+                 Grid.Row="6" Grid.Column="1"/>
+        <TextBox x:Name="_minDepoPercent" Margin="0,1"
+                 Grid.Row="7" Grid.Column="1"/>
+        <TextBox x:Name="_go" Margin="0,1"
+                 Grid.Row="9" Grid.Column="1"/>
+        <Button Content="Рассчитать" 
+                Grid.Row="11" Grid.Column="1" 
+                FontWeight="Bold" FontSize="14"
+                Click="Button_Click"/>
+
+        <GroupBox Header="Таблица результатов" 
+                  FontWeight="Bold" FontSize="14"
+                  Grid.RowSpan="12" Grid.Column="2"
+                  Margin="10, 0">
+            <DataGrid x:Name="_dataGrid" Margin="5"/>
+        </GroupBox>
     </Grid>
 </Window>

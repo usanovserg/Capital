@@ -1,6 +1,4 @@
-﻿using Capital.Entity;
-using Capital.Enams;
-using System.Text;
+﻿using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -34,5 +32,10 @@ namespace Capital
 
 
         #endregion
-     }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+    }
 }
