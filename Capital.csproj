@@ -9,8 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Enams\" />
-    <Folder Include="Entity\" />
+    <Compile Remove="Enams\**" />
+    <EmbeddedResource Remove="Enams\**" />
+    <None Remove="Enams\**" />
+    <Page Remove="Enams\**" />
   </ItemGroup>
 
 </Project>
