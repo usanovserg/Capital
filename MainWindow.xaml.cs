@@ -38,6 +38,7 @@ namespace Capital
             _comboBox.ItemsSource = Enum.GetValues<StrategyType>();
             _comboBox.SelectedIndex = 0;
             _comboBox.SelectionChanged += (sender, e) => DrawSelectedStrategy();
+            _canvas.SizeChanged += (sender, e) => DrawSelectedStrategy();
             _button.Click += (sender, e) => { Calculate(); DrawSelectedStrategy(); };
             _depo.Text = "100000";
             _startLot.Text = "10";
