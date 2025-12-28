@@ -50,6 +50,11 @@ namespace Capital.Entity
 
 
         #region Methods =====================================
+        public List<decimal> GetEquity()
+        {
+            return _equity;
+        }
+
         private void CalculateDrawdown()
         {
             if (_max < ResultDepo)

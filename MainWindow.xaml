@@ -110,10 +110,9 @@
                  Grid.Row="7" Grid.Column="1"/>
         <TextBox x:Name="_go" Margin="0,1" FontSize="14"
                  Grid.Row="9" Grid.Column="1"/>
-        <Button Content="Рассчитать" 
+        <Button x:Name="_button" Content="Рассчитать" 
                 Grid.Row="11" Grid.Column="1" 
-                FontWeight="Bold" FontSize="14"
-                Click="Button_Click"/>
+                FontWeight="Bold" FontSize="14"/>
 
         <GroupBox Header="Таблица результатов" 
                   FontWeight="Bold" FontSize="14"
@@ -121,5 +120,7 @@
                   Margin="10, 0">
             <DataGrid x:Name="_dataGrid" Margin="5" FontWeight="Normal"/>
         </GroupBox>
+
+        <Canvas x:Name="_canvas" Grid.Row="13" Grid.ColumnSpan="3" Margin="10"/>
     </Grid>
 </Window>

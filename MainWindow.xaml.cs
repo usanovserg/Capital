@@ -9,6 +9,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Media.Media3D;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
@@ -27,18 +28,17 @@ namespace Capital
 
         #region Fields ========================================
         Random _random = new Random();
-
-
+        List<StrategyData> _strategiesData = new List<StrategyData>();
         #endregion
 
 
         #region Methods ===========================================
-
         private void Init()
         {
             _comboBox.ItemsSource = Enum.GetValues<StrategyType>();
             _comboBox.SelectedIndex = 0;
-            _comboBox.SelectionChanged += (sender, e) => Calculate();
+            _comboBox.SelectionChanged += (sender, e) => DrawSelectedStrategy();
+            _button.Click += (sender, e) => { Calculate(); DrawSelectedStrategy(); };
             _depo.Text = "100000";
             _startLot.Text = "10";
             _take.Text = "300";
@@ -48,11 +48,6 @@ namespace Capital
             _countTrades.Text = "1000";
             _minDepoPercent.Text = "20";
             _go.Text = "5000";
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            Calculate();
         }
 
         private void Calculate()
@@ -113,6 +108,7 @@ namespace Capital
             }
 
             _dataGrid.ItemsSource = data;
+            _strategiesData = data;
         }
 
         private int CalculateMaxLot(decimal currentDepo, decimal percentMaxLot, decimal go)
@@ -134,6 +130,48 @@ namespace Capital
             if (int.TryParse(textBox.Text, out int value))
                 return value;
             return 0;
+        }
+
+        private void DrawSelectedStrategy()
+        {
+            if (_strategiesData.Count == 0)
+                return;
+
+            _canvas.Children.Clear();
+
+            var equity = _strategiesData[_comboBox.SelectedIndex].GetEquity();
+
+            // Получаем размеры Canvas
+            double width = _canvas.ActualWidth;
+            double height = _canvas.ActualHeight;
+
+            // Находим минимальное и максимальное значения
+            decimal minValue = equity.Min();
+            decimal maxValue = equity.Max();
+
+            // Вычисляем расстояние между точками по оси X
+            double xStep = width / (equity.Count - 1);
+
+            // Вычисляем масштаб по оси Y
+            double yScale = height / (double)(maxValue - minValue);
+
+            // Создаем кривую линию для графика
+            Polyline polyline = new Polyline
+            {
+                Stroke = Brushes.Blue,
+                StrokeThickness = 2
+            };
+
+            // Добавляем точки, через которые должна проходить кривая
+            for (int i = 0; i < equity.Count; i++)
+            {
+                double x = i * xStep;
+                double y = height - ((double)(equity[i] - minValue) * yScale);
+                polyline.Points.Add(new Point(x, y));
+            }
+
+            // Добавляем кривую линию на Canvas
+            _canvas.Children.Add(polyline);
         }
 
         #endregion
