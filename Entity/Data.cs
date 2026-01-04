@@ -36,18 +36,18 @@ namespace Capital.Entity
 
 
         /// <summary>
-        /// Результат (депо) Equity
+        /// Результирующее депо (или Equity)
         /// </summary>
         public decimal ResultDepo
         {
             get { return _resultDepo; }
             set
             {
-                _resultDepo = value;
-                Profit = ResultDepo - Depo;
-                PercentProfit = Profit / Depo * 100;
-                ListEquity.Add(ResultDepo);
-                CalcDrawDown();
+                _resultDepo = value;                    // Результирующее депо (или Equity)
+                Profit = ResultDepo - Depo;             // Абсолютный профит 
+                PercentProfit = Profit / Depo * 100;    // Относительный профит в процентах
+                ListEquity.Add(ResultDepo);             // в список запишем после каждой сделки новое результирующее депо (сколько сделок, столько значений)
+                CalcDrawDown();                         // расчёт просадки DrawDown                       
             }
         }
         private decimal _resultDepo;
@@ -66,15 +66,15 @@ namespace Capital.Entity
 
 
         /// <summary>
-        /// Максимальная абсолютная просадка в деньгах
+        /// Максимальная абсолютная просадка в деньгах. И здесь же запустим метод для относительной в процентах. В нём будет значение для относительной
         /// </summary>
-        public decimal MaxDrawDown
+        public decimal MaxDrawDown      
         {
             get => _maxDrawDown;
             set
             {
-                _maxDrawDown = value;
-                CalcPercentDrawDown();
+                _maxDrawDown = value;   // это просадка MaxDrawDown, которая считается в методе CalcDrawDown, который запускается в свойстве ResultDepo
+                CalcPercentDrawDown();  // это метод для относительной просадки PercentDrawDown. В нём будет получено значение для неё
             }
         }
         decimal _maxDrawDown;
@@ -84,7 +84,7 @@ namespace Capital.Entity
         /// <summary>
         /// Максимальная относительная просадка в процентах
         /// </summary>
-        public decimal PercentDrawDown { get; set; }
+        public decimal PercentDrawDown { get; set; }    // это считается в методе CalcPercentDrawDown, который запускается в свойстве MaxDrawDown
 
 
         public decimal Color { get; set; }
@@ -95,7 +95,7 @@ namespace Capital.Entity
 
         #region Fields ========================================================
 
-        private List<decimal> ListEquity = new List<decimal>();
+        private List<decimal> ListEquity = new List<decimal>();     // на каждой сделке записываем значение текущего депо в список. Потом мы по нему можем пробежаться
         private decimal _max = 0;
         private decimal _min = 0;
 
@@ -105,6 +105,8 @@ namespace Capital.Entity
         #region Methods ========================================================
 
 
+
+        // публичный метод, чтобы был доступен приватный List<decimal> ListEquity для вызова (получить список где-то в коде). Что-то типа get
         public List<decimal> GetListEquity()
         {
             return ListEquity;
@@ -112,6 +114,7 @@ namespace Capital.Entity
 
 
 
+        // расчёт абсолютной просадки
         private void CalcDrawDown()
         {
             // если обновился max
@@ -134,6 +137,7 @@ namespace Capital.Entity
 
 
 
+        // расчёт относительной просадки
         private void CalcPercentDrawDown()
         {
             decimal percent = MaxDrawDown / ResultDepo * 100;
