@@ -65,8 +65,8 @@ namespace Capital
         };
 
         Random _random = new Random();
-
-        //List<Data> datas = new List<Data>();
+                
+        List<Data> datas;
 
         #endregion Fields
 
@@ -88,41 +88,37 @@ namespace Capital
             _minStartPersent.Text = "20";
             _go.Text = "5000"; 
             _comboBox.ItemsSource = _strategies;
-            _comboBox.SelectionChanged += _comboBox_SelectionChanged;
+            _comboBox.SelectionChanged += _comboBox_SelectionChanged;   // подписка на изменение комбо-бокса
             _comboBox.SelectedIndex = 0;            
         }
 
 
 
-        // Обработчик для комбо-бокса (что произойдёт при смене комбо-бокса)
+        // Обработчик: изменение комбо-бокса
         private void _comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             // способ 1
             //ComboBox? comboBox = sender as ComboBox;
-
             // способ 2
             ComboBox comboBox = (ComboBox)sender;
-
-            //int index = comboBox.SelectedIndex;
-            //Draw(datas, comboBox.SelectedIndex);
             
+            Draw(datas, comboBox.SelectedIndex);            
         }
 
 
 
-        // Обработчик для изменения размера окна (canvas тоже поменяется)
+        // Обработчик: изменения размера canvas (при изменении размера окна)
         private void _canvas_SizeChanged(object sender, SizeChangedEventArgs e)
         {            
-            //Draw(datas, _comboBox.SelectedIndex);
+            Draw(datas, _comboBox.SelectedIndex);
         }
 
 
 
-        // нажать на кнопку "Рассчитать"
+        // обработчик: нажать на кнопку "Рассчитать"
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            List<Data> datas = Calculate();
-            //datas = Calculate();
+            List<Data> datas = Calculate();            
             Draw(datas, _comboBox.SelectedIndex);
         }
 
@@ -147,8 +143,9 @@ namespace Capital
             int lotProgress = CalculateLot(depoStart, minStartPercent, go); // для стратегии 3
             int lotDown = startLot;                                 // для стратегии 4
 
-            // создали список datas, состоящий из объектов типа Data. Этот список потом засунем в _dataGrid. Названия колонок в _dataGrid - это свойства объектов Data
-            List<Data> datas = new List<Data>();
+            // создали список datas, состоящий из объектов типа Data. Этот список потом засунем в _dataGrid.
+            // Названия колонок в _dataGrid - это свойства объектов Data (потом я вручную их создал в XAML)
+            datas = new List<Data>();
 
             // теперь заполним список datas новыми объектами:            
             foreach (StrategyType type in _strategies)
@@ -213,7 +210,7 @@ namespace Capital
 
 
 
-        //// отрисовка на Canvas через Ellipse. Передаём список и индекс из комбо-бокса
+        //// Метод - отрисовка на Canvas через Ellipse. Передаём список и индекс из комбо-бокса
         //private void Draw(List<Data> datas, int index)
         //{
         //    _canvas.Children.Clear();   // очистка канваса
@@ -253,7 +250,7 @@ namespace Capital
 
 
 
-        //// отрисовка на Canvas через Line. Передаём список и индекс из комбо-бокса
+        //// Метод - отрисовка на Canvas через Line. Передаём список и индекс из комбо-бокса
         //private void Draw(List<Data> datas, int index)
         //{
         //    _canvas.Children.Clear();
@@ -294,27 +291,27 @@ namespace Capital
 
 
 
-        // отрисовка на Canvas через Polyline. Передаём список и индекс из комбо-бокса
+        // Метод - отрисовка на Canvas через Polyline. Передаём список и индекс из комбо-бокса
         private void Draw(List<Data> datas, int index)
         {
-            _canvas.Children.Clear();
+            _canvas.Children.Clear();                       // очистить от предыдущих
+            if (datas == null) return;                      // проверка на ошибку
 
             List<decimal> listEquity = datas[index].GetListEquity();
             int count = listEquity.Count;
-            if (count < 2) return;                  // Нужно хотя бы 2 точки, чтобы нарисовать линию
+            if (count < 2) return;                          // Нужно хотя бы 2 точки, чтобы нарисовать линию
 
             decimal maxEquity = listEquity.Max();
             decimal minEquity = listEquity.Min();
             double stepX = _canvas.ActualWidth / (count - 1);
             double koefY = (double)(maxEquity - minEquity) / _canvas.ActualHeight;
 
-            PointCollection points = new PointCollection(); // создали коллекцию точек.
-            // заполним эту коллекцию points
-            for (int i = 0; i < count; i++)
+            PointCollection points = new PointCollection(); // создали коллекцию точек            
+            for (int i = 0; i < count; i++)                 // заполним эту коллекцию points
             {
                 double x = i * stepX;
                 double y = _canvas.ActualHeight - (double)(listEquity[i] - minEquity) / koefY; // инвертируем Y
-                points.Add(new Point(x, y));    // добавляем точку в коллекцию
+                points.Add(new Point(x, y));                // добавляем точку в коллекцию
             }
 
             Polyline polyline = new Polyline()
