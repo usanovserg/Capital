@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Capital"
         mc:Ignorable="d"
-        Title="MainWindow" Height="800" Width="1200">
+        Title="Capital (урок 1-9)" Height="800" Width="1200">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="150"/>
@@ -125,7 +125,7 @@
                     <DataGridTemplateColumn Header="Тестовый Флаг">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <CheckBox/>
+                                <CheckBox Content="Выбрать"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
@@ -133,11 +133,11 @@
                     <DataGridTemplateColumn Header="Цвет">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding PercentDrawDown}"/>
+                                <TextBlock Text="{Binding StrategyType}"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    
+
                 </DataGrid.Columns>
             </DataGrid>
         </GroupBox>
