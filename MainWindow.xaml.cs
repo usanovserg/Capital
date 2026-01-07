@@ -159,7 +159,13 @@ namespace Capital
             foreach (StrategyType type in _strategies)
             {                
                 datas.Add(new Data(depoStart, type));
-            }            
+            }
+
+            // пока руками. Как автоматом, пока не понял
+            datas[0].StrategyColor = ColorsMy.Red;
+            datas[1].StrategyColor = ColorsMy.Green;
+            datas[2].StrategyColor = ColorsMy.Blue;
+            datas[3].StrategyColor = ColorsMy.Yellow;
 
             // цикл, который:
             // 1. создаёт рандомные сделки

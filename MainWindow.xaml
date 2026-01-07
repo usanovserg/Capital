@@ -133,7 +133,7 @@
                     <DataGridTemplateColumn Header="Цвет">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding StrategyType}"/>
+                                <TextBlock Text="{Binding StrategyColor}"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
