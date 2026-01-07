@@ -11,6 +11,6 @@ namespace Capital.Enums
         Red,
         Green,
         Blue,
-        Yellow        
+        Yellow
     }
 }

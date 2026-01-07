@@ -12,7 +12,7 @@ namespace Capital.Entity
         public Data(decimal depoStart, StrategyType strategyType)
         {
             Depo = depoStart;
-            StrategyType = strategyType;
+            StrategyType = strategyType;            
         }
 
 
@@ -20,6 +20,8 @@ namespace Capital.Entity
 
 
         public StrategyType StrategyType { get; set; }
+
+        public ColorsMy StrategyColor { get; set; }
 
 
         public decimal Depo

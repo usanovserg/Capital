@@ -101,8 +101,16 @@ namespace Capital
             //ComboBox? comboBox = sender as ComboBox;
             // способ 2
             ComboBox comboBox = (ComboBox)sender;
-            
-            Draw(datas, comboBox.SelectedIndex);            
+
+            //if (comboBox.SelectedIndex == 4)
+            //{
+            //    for (int i = 0; i < 4; i++)
+            //    {
+            //        Draw(datas, i);
+            //    }
+            //}
+            //else
+                Draw(datas, comboBox.SelectedIndex);            
         }
 
 
@@ -291,10 +299,18 @@ namespace Capital
 
 
 
+        //************************************************************************************************************************************************************
+        //********************************************************               СМ ВЕБИНАР ОТ 23.12.2025           **************************************************
+        //************************************************************************************************************************************************************
         // Метод - отрисовка на Canvas через Polyline. Передаём список и индекс из комбо-бокса
         private void Draw(List<Data> datas, int index)
         {
+            //if (index != 4)
+            //{
+            //    _canvas.Children.Clear();
+            //}
             _canvas.Children.Clear();                       // очистить от предыдущих
+
             if (datas == null) return;                      // проверка на ошибку
 
             List<decimal> listEquity = datas[index].GetListEquity();
@@ -306,12 +322,12 @@ namespace Capital
             double stepX = _canvas.ActualWidth / (count - 1);
             double koefY = (double)(maxEquity - minEquity) / _canvas.ActualHeight;
 
-            PointCollection points = new PointCollection(); // создали коллекцию точек            
-            for (int i = 0; i < count; i++)                 // заполним эту коллекцию points
+            PointCollection points = new PointCollection(); // создали points - коллекцию точек. И заполним её в цикле            
+            for (int i = 0; i < count; i++)                  
             {
                 double x = i * stepX;
                 double y = _canvas.ActualHeight - (double)(listEquity[i] - minEquity) / koefY; // инвертируем Y
-                points.Add(new Point(x, y));                // добавляем точку в коллекцию
+                points.Add(new Point(x, y));                
             }
 
             Polyline polyline = new Polyline()
