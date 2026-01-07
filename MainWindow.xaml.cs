@@ -1,9 +1,11 @@
 ﻿using Capital.Entity;
 using Capital.Enums;
 using OxyPlot;
-using OxyPlot.Wpf;
 using OxyPlot.Axes;
+using OxyPlot.Legends;
 using OxyPlot.Series;
+using OxyPlot.Wpf;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Text;
 using System.Windows;
@@ -16,7 +18,6 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Collections.ObjectModel;
 
 namespace Capital
 {
@@ -104,10 +105,10 @@ namespace Capital
             Draw(datas, _comboBox.SelectedIndex);
         }
 
-        // 🔑 ИСПРАВЛЕНО: метод без возврата (void)
+        // метод без возврата (void)
         private void Calculate()
         {
-            // 🔑 ИСПРАВЛЕНО: привязка ItemsSource один раз, безопасно
+            // привязка ItemsSource один раз, безопасно
             if (_dataGrid.ItemsSource == null)
             {
                 _dataGrid.ItemsSource = datas;
@@ -138,7 +139,7 @@ namespace Capital
             _totalProfitCount = 0;
             _totalLossCount = 0;
 
-            // 🔑 ИСПРАВЛЕНО: используем ГЛОБАЛЬНУЮ коллекцию
+            // используем ГЛОБАЛЬНУЮ коллекцию
             datas.Clear(); // Очищаем существующую ObservableCollection
 
             // Создаём объекты и добавляем в глобальную коллекцию
@@ -192,7 +193,7 @@ namespace Capital
             _totalLoss.Text = _totalLossCount.ToString();
         }
 
-        // 🔑 ИСПРАВЛЕНО: принимает ObservableCollection<Data>
+        // принимает ObservableCollection<Data>
         private void Draw(ObservableCollection<Data> datas, int index)
         {
             _plotView.Model = null;
@@ -205,33 +206,55 @@ namespace Capital
             }
 
             if (index < 0 || index >= datas.Count) return;
-            List<decimal> listEquity = datas[index].GetListEquity();
+            var listEquity = datas[index].GetListEquity();
             if (listEquity == null || listEquity.Count == 0) return;
 
             DrawSingleGraph(datas[index]);
         }
 
-        // 🔑 ИСПРАВЛЕНО: принимает ObservableCollection<Data>
+        // принимает ObservableCollection<Data>
         private void DrawAllStrategies(ObservableCollection<Data> datas)
         {
-            var plotModel = new PlotModel { Title = "Результаты всех стратегий" };
+            var plotModel = new PlotModel
+            {
+                Title = "Результаты всех стратегий"
+            };
 
+            // Создаём легенду
+            var legend = new Legend
+            {
+                LegendTitle = "Стратегии",
+                LegendPosition = LegendPosition.LeftTop,
+                //plotModel.LegendBorderColor = OxyColors.Black,
+                //plotModel.LegendBackgroundColor = OxyColor.FromAColor(150, OxyColors.White)
+            };
+
+            // Добавляем легенду в модель
+            plotModel.Legends.Add(legend);
+
+            // Ось Х с сеткой
             plotModel.Axes.Add(new LinearAxis
             {
                 Position = AxisPosition.Bottom,
                 Title = "Количество сделок",
                 Minimum = 0,
-                Maximum = datas[0].GetListEquity().Count - 1
+                Maximum = datas[0].GetListEquity().Count - 1,
+                MajorGridlineStyle = LineStyle.Automatic,
+                MajorGridlineColor = OxyColors.LightGray
             });
 
-            decimal min = datas.SelectMany(d => d.GetListEquity()).Min();
+            // ось Y с сеткой
+            decimal min = datas.SelectMany(d => d.GetListEquity()).Min(); // выбираем все значения депозита и помещаем в общий список, из которого выбираем минимум 
             decimal max = datas.SelectMany(d => d.GetListEquity()).Max();
             plotModel.Axes.Add(new LinearAxis
             {
                 Position = AxisPosition.Left,
                 Title = "Депозит (руб.)",
                 Minimum = (double)min,
-                Maximum = (double)max
+                Maximum = (double)max,
+                StringFormat = "N0",
+                MajorGridlineStyle = LineStyle.Solid,
+                MajorGridlineColor = OxyColors.LightGray
             });
 
             var colors = new[] { OxyColors.Red, OxyColors.Green, OxyColors.Blue, OxyColors.Orange };
@@ -245,7 +268,8 @@ namespace Capital
                     Color = colors[i],
                     MarkerType = MarkerType.None,
                     StrokeThickness = 2,
-                    LineStyle = LineStyle.Solid
+                    LineStyle = LineStyle.Solid,
+                    TrackerFormatString = "Стратегия: {0}\nСделка: {1}\nДепо: {2:N0} руб."
                 };
 
                 for (int j = 0; j < listEquity.Count; j++)

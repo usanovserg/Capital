@@ -15,14 +15,15 @@ namespace Capital.Entity
 {
     public class Data : INotifyPropertyChanged
     {
-        // 🟡 ДОБАВЛЕНО: событие для уведомления UI
+        // автоматическое обновление графика при изменении данных - через событие для уведомления UI
         public event PropertyChangedEventHandler PropertyChanged;
 
-        // 🟡 ДОБАВЛЕНО: вспомогательный метод
+        // вспомогательный метод
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
         public Data(decimal depoStart, StrategyType strategyType)
         {
             
@@ -73,7 +74,7 @@ namespace Capital.Entity
         decimal _depo;
 
         /// <summary>
-        /// Результат эквити (депо)
+        /// Результат эквити (депо) заносится в ListEquity
         /// </summary>
         public decimal ResultDepo
         {

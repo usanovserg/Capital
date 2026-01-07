@@ -7,8 +7,7 @@ using System.Threading.Tasks;
 namespace Capital.Enums
 {
     public enum StrategyType
-    {
-              
+    {              
         FIX,
 
         CAPITALIZATION,
@@ -17,7 +16,6 @@ namespace Capital.Enums
 
         DOWNGRADE,
         
-        ALL_STRATEGIES
-        
+        ALL_STRATEGIES        
     }
 }

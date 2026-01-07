@@ -9,7 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Enams\" />
+    <Compile Remove="Enams\**" />
+    <EmbeddedResource Remove="Enams\**" />
+    <None Remove="Enams\**" />
+    <Page Remove="Enams\**" />
   </ItemGroup>
 
   <ItemGroup>
