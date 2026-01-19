@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Capital.Enums
 {
     public enum ColorsMy
-    {
+    {        
         Red,
         Green,
         Blue,
