@@ -30,6 +30,7 @@
             <RowDefinition Height="*" MinHeight="350"/>
         </Grid.RowDefinitions>
 
+        <!--По умолчанию Grid.Row="0" Grid.Column="0". Есле нужно другое указвываем явно.--> 
         <TextBlock Text="Депозит"
                    Margin="5"
                    FontSize="14"
